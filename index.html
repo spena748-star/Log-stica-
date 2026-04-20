@@ -1,209 +1,388 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logística PRO · Demo</title>
-<style>
-*{box-sizing:border-box; margin:0;}
-body{background:#0f172a; font-family:'Segoe UI',Roboto,sans-serif; color:#e2e8f0; padding:20px;}
-.container{max-width:1300px; margin:auto;}
-.card{background:#1e293b; border-radius:1.5rem; padding:1.5rem; margin-bottom:1.5rem; border:1px solid #334155;}
-h3{margin-bottom:1rem; display:flex; align-items:center; gap:8px;}
-input,button{padding:10px 16px; border-radius:40px; border:none; font-weight:500;}
-input{background:#0f172a; color:white; border:1px solid #334155;}
-button{background:#22c55e; color:#0f172a; cursor:pointer; transition:0.2s;}
-button:hover{background:#16a34a;}
-.flex{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
-.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;}
-.axle-card{background:#0f172a; border-radius:1rem; padding:15px; text-align:center; border-top:3px solid #22c55e;}
-.axle-load{font-size:1.8rem; font-weight:bold;}
-.cargo-item{background:#0f172a; margin:8px 0; padding:10px 15px; border-radius:40px; display:flex; justify-content:space-between;}
-.warning{color:#f97316;}
-.danger{color:#ef4444;}
-.historial-item{background:#0f172a; padding:10px; border-radius:1rem; margin-bottom:8px; font-size:0.85rem;}
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logística PRO USA | Demo | Optimización de carga</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            background: #0a0f1e;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid #334155;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            display: block;
+        }
+        input, select, button {
+            padding: 10px 14px;
+            border-radius: 60px;
+            border: none;
+            background: #0f172a;
+            color: white;
+            font-weight: 500;
+            border: 1px solid #334155;
+        }
+        button {
+            background: #10b981;
+            color: #0f172a;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #059669;
+            transform: scale(0.98);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        .pallet-item {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        canvas {
+            background: #0f172a;
+            border-radius: 1rem;
+            width: 100%;
+            height: auto;
+            border: 1px solid #2d3a5e;
+            margin-top: 12px;
+        }
+        .warning {
+            color: #f97316;
+        }
+        .danger {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .badge {
+            background: #10b981;
+            color: #0f172a;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+        hr {
+            border-color: #334155;
+            margin: 15px 0;
+        }
+        .result-panel {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div class="container">
-    <div class="card" style="text-align:center; background:#020617;">
-        <h1>🚛 LOGÍSTICA PRO · DEMO</h1>
-        <p>Optimización de carga por ejes (modelo bogie) | Demostración de concepto</p>
+    <div class="card" style="background: #020617; text-align: center;">
+        <h1>🚛 LOGÍSTICA PRO USA · DEMO</h1>
+        <p>Optimización estilo Tetris | FMCSA | Múltiples trailers</p>
     </div>
 
-    <!-- Panel de acceso rápido (demo: usuario fijo) -->
     <div class="card">
-        <h3>🔐 Acceso rápido (demo)</h3>
-        <p>Usuario: <strong>demo</strong> | Contraseña: <strong>demo</strong></p>
-        <div class="flex">
-            <input type="text" id="demoUser" placeholder="Usuario" value="demo">
-            <input type="password" id="demoPass" placeholder="Contraseña" value="demo">
-            <button id="demoLoginBtn">Entrar</button>
+        <div class="flex-row" style="justify-content: space-between; align-items: center;">
+            <h2>📦 Gestión de pallets</h2>
+            <div class="flex-row">
+                <button id="exampleBtn" class="btn-outline">Cargar ejemplo</button>
+                <button id="clearBtn" class="btn-outline">Vaciar todo</button>
+            </div>
         </div>
-        <div id="demoStatus" style="margin-top:10px; font-size:0.8rem;"></div>
+        <div class="flex-row">
+            <div><label>Largo (in)</label><input type="number" id="palLargo" value="48" step="1"></div>
+            <div><label>Ancho (in)</label><input type="number" id="palAncho" value="40" step="1"></div>
+            <div><label>Alto (in)</label><input type="number" id="palAlto" value="48" step="1"></div>
+            <div><label>Peso (lbs)</label><input type="number" id="palPeso" value="1500" step="100"></div>
+            <div><button id="addPalletBtn">+ Agregar pallet</button></div>
+        </div>
+        <hr>
+        <div id="palletsList" style="max-height: 280px; overflow-y: auto;"></div>
     </div>
 
-    <!-- Panel principal (oculto hasta login) -->
-    <div id="mainPanel" style="display:none;">
-        <div class="grid">
-            <div class="card">
-                <h3>📦 Cargas (kg y largo en m)</h3>
-                <div class="flex">
-                    <input type="number" id="pesoKg" placeholder="Peso kg" style="flex:2">
-                    <input type="number" id="largoM" placeholder="Largo m" step="0.1" value="1.2" style="flex:1">
-                    <button id="agregarBtn">+ Agregar</button>
-                </div>
-                <div id="listaCargas" style="margin-top:15px; max-height:250px; overflow:auto;"></div>
-                <button id="vaciarBtn" style="background:#475569; margin-top:10px;">Vaciar todo</button>
+    <div class="card">
+        <h2>🚛 Configuración del remolque</h2>
+        <div class="flex-row">
+            <div><label>Tipo de trailer</label>
+                <select id="trailerSelect">
+                    <option value="dryvan">Dry Van 53' (636x102 in)</option>
+                    <option value="flatbed">Flatbed 48' (576x102 in)</option>
+                    <option value="stepdeck">Step Deck 48' (576x102 in)</option>
+                    <option value="container40">Container 40' (474x92 in)</option>
+                </select>
             </div>
-            <div class="card">
-                <h3>⚙️ Límites por eje (kg)</h3>
-                <div class="flex">
-                    <div><label>Eje delantero</label><input type="number" id="limFront" value="7000"></div>
-                    <div><label>Eje central</label><input type="number" id="limMid" value="10000"></div>
-                    <div><label>Eje trasero</label><input type="number" id="limRear" value="10000"></div>
-                </div>
-                <button id="optimizarBtn" style="width:100%; margin-top:15px;">⚡ OPTIMIZAR</button>
-            </div>
+            <div><label>Capacidad extra (lbs)</label><input type="number" id="extraCap" value="0"></div>
+            <div><label>N° ejes</label><input type="number" id="axlesCount" value="5" min="2" max="9"></div>
         </div>
-        <div class="card">
-            <h3>📊 Resultado de la optimización</h3>
-            <div id="resultadoText" style="background:#0f172a; padding:15px; border-radius:1rem; font-family:monospace;"></div>
-            <div class="grid" style="margin-top:20px;">
-                <div class="axle-card"><span>Eje Delantero</span><div id="eje1Val" class="axle-load">0 kg</div><div id="eje1Warn"></div></div>
-                <div class="axle-card"><span>Eje Central</span><div id="eje2Val" class="axle-load">0 kg</div><div id="eje2Warn"></div></div>
-                <div class="axle-card"><span>Eje Trasero</span><div id="eje3Val" class="axle-load">0 kg</div><div id="eje3Warn"></div></div>
-            </div>
-            <button id="pdfBtn" style="background:#3b82f6; margin-top:15px;">📄 Generar PDF</button>
-        </div>
-        <div class="card">
-            <h3>📋 Historial de viajes</h3>
-            <div id="historialDiv"></div>
+        <button id="optimizeBtn" style="background:#3b82f6; margin-top: 15px; width: 100%;">🧩 OPTIMIZAR (acomodo 2D + análisis ejes)</button>
+    </div>
+
+    <div class="card">
+        <h2>📐 Resultado: distribución óptima</h2>
+        <canvas id="packCanvas" width="800" height="400" style="width:100%; height:auto;"></canvas>
+        <div id="packDetails" class="result-panel" style="margin-top: 15px;"></div>
+        <div id="axleResult" style="margin-top: 12px; background:#0f172a; padding: 12px; border-radius: 1rem;"></div>
+        <div class="flex-row" style="margin-top: 20px;">
+            <button id="pdfDemoBtn">📄 Exportar PDF</button>
+            <button id="resetDemoBtn" class="btn-outline">Limpiar resultados</button>
         </div>
     </div>
 </div>
+
 <script>
-    // Demo: solo un usuario predefinido
-    let logged = false;
-    let cargas = [];
-    let historial = JSON.parse(localStorage.getItem("demo_historial")) || [];
-    let lastOptim = null;
+    // Trailer database
+    const TRAILERS = {
+        dryvan: { name: "Dry Van 53'", length: 636, width: 102, maxWeight: 45000 },
+        flatbed: { name: "Flatbed 48'", length: 576, width: 102, maxWeight: 48000 },
+        stepdeck: { name: "Step Deck 48'", length: 576, width: 102, maxWeight: 48000 },
+        container40: { name: "Container 40'", length: 474, width: 92, maxWeight: 44000 }
+    };
+    let pallets = []; // {length, width, height, weight}
+    let lastResult = null;
+    const canvas = document.getElementById("packCanvas");
+    const ctx = canvas.getContext("2d");
 
-    const loginBtn = document.getElementById("demoLoginBtn");
-    const mainPanel = document.getElementById("mainPanel");
-    const demoStatus = document.getElementById("demoStatus");
-    const listaDiv = document.getElementById("listaCargas");
-    const resultDiv = document.getElementById("resultadoText");
-    const historialDiv = document.getElementById("historialDiv");
-
-    function renderCargas() {
-        if(!listaDiv) return;
-        if(cargas.length===0){ listaDiv.innerHTML="<p style='text-align:center; opacity:0.7;'>Sin cargas agregadas</p>"; return; }
-        listaDiv.innerHTML = cargas.map((c,i)=>`<div class="cargo-item"><span>⚖️ ${c.weight} kg · 📏 ${c.length} m</span><button class="delCarga" data-idx="${i}" style="background:#ef4444; padding:5px 12px;">X</button></div>`).join("");
-        document.querySelectorAll(".delCarga").forEach(btn=>{
-            btn.addEventListener("click",(e)=>{
-                let idx = btn.getAttribute("data-idx");
-                cargas.splice(idx,1);
-                renderCargas();
-                clearResult();
+    function renderPallets() {
+        const div = document.getElementById("palletsList");
+        if (pallets.length === 0) { div.innerHTML = "<div style='padding:20px; text-align:center'>📭 No hay pallets cargados</div>"; return; }
+        div.innerHTML = pallets.map((p, i) => `
+            <div class="pallet-item">
+                <span>📦 Pallet ${i+1}: ${p.length}" x ${p.width}" x ${p.height}" | ⚖️ ${p.weight.toLocaleString()} lbs</span>
+                <button class="delPallet" data-idx="${i}" style="background:#ef4444; padding:5px 12px;">X</button>
+            </div>
+        `).join("");
+        document.querySelectorAll(".delPallet").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                let idx = parseInt(btn.dataset.idx);
+                pallets.splice(idx, 1);
+                renderPallets();
+                clearResults();
             });
         });
     }
-    function clearResult(){
-        resultDiv.innerHTML = "Presiona 'Optimizar' para calcular distribución.";
-        document.getElementById("eje1Val").innerText="0 kg";
-        document.getElementById("eje2Val").innerText="0 kg";
-        document.getElementById("eje3Val").innerText="0 kg";
-        document.getElementById("eje1Warn").innerHTML="";
-        document.getElementById("eje2Warn").innerHTML="";
-        document.getElementById("eje3Warn").innerHTML="";
+
+    function clearResults() {
+        lastResult = null;
+        document.getElementById("packDetails").innerHTML = "";
+        document.getElementById("axleResult").innerHTML = "";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    function renderHistorial(){
-        if(historial.length===0){ historialDiv.innerHTML="<p>No hay viajes registrados.</p>"; return; }
-        historialDiv.innerHTML = historial.map(h=>`<div class="historial-item">📅 ${h.fecha} | Total: ${h.total} kg | Ejes: ${h.eje1}/${h.eje2}/${h.eje3} kg</div>`).join("");
+
+    // Algoritmo greedy de empaquetado con rotación (shelf)
+    function packPallets(palletsList, trailerLen, trailerWid) {
+        let items = palletsList.map(p => ({ w: p.width, d: p.length, weight: p.weight, original: p }));
+        items.sort((a,b) => (b.w*b.d) - (a.w*a.d)); // mayor área primero
+        let shelves = []; // {y, remainingWidth}
+        let placed = [];
+        for (let item of items) {
+            let bestShelf = -1;
+            let bestFit = Infinity;
+            let finalW = item.w, finalD = item.d, rotated = false;
+            // probar rotación
+            for (let rot = 0; rot < 2; rot++) {
+                let w = (rot === 0) ? item.w : item.d;
+                let d = (rot === 0) ? item.d : item.w;
+                if (w > trailerWid || d > trailerLen) continue;
+                for (let i = 0; i < shelves.length; i++) {
+                    if (shelves[i].remainingWidth >= w) {
+                        let slack = shelves[i].remainingWidth - w;
+                        if (slack < bestFit) {
+                            bestFit = slack;
+                            bestShelf = i;
+                            finalW = w;
+                            finalD = d;
+                            rotated = rot;
+                        }
+                    }
+                }
+            }
+            if (bestShelf !== -1) {
+                let shelf = shelves[bestShelf];
+                let x = trailerWid - shelf.remainingWidth;
+                let y = shelf.y;
+                placed.push({ x, y, w: finalW, d: finalD, weight: item.weight, original: item.original, rotated });
+                shelf.remainingWidth -= finalW;
+            } else {
+                let y = shelves.reduce((max, s) => Math.max(max, s.y + (s.depth || 0)), 0);
+                if (y + finalD > trailerLen) continue; // no cabe verticalmente
+                let x = 0;
+                placed.push({ x, y, w: finalW, d: finalD, weight: item.weight, original: item.original, rotated });
+                shelves.push({ y: y, remainingWidth: trailerWid - finalW, depth: finalD });
+            }
+        }
+        let totalWeight = placed.reduce((s,p) => s + p.weight, 0);
+        let moment = placed.reduce((m,p) => m + p.weight * (p.x + p.w/2), 0);
+        let cog = totalWeight > 0 ? moment / totalWeight : 0;
+        // Cálculo de ejes
+        let axlesCount = parseInt(document.getElementById("axlesCount").value) || 5;
+        let axlePositions = [];
+        for (let i=0; i<axlesCount; i++) {
+            let pos = trailerLen - (i+1) * (trailerLen / (axlesCount+1));
+            axlePositions.push(Math.max(0, Math.min(trailerLen, pos)));
+        }
+        let axleLoads = new Array(axlesCount).fill(0);
+        for (let p of placed) {
+            let cargoX = p.x + p.w/2;
+            for (let a=0; a<axlesCount; a++) {
+                let dist = Math.abs(cargoX - axlePositions[a]);
+                let inv = 1 / (dist + 24);
+                axleLoads[a] += p.weight * inv;
+            }
+        }
+        let sumInv = axleLoads.reduce((s,v)=>s+v,0);
+        if (sumInv > 0) axleLoads = axleLoads.map(v => (v / sumInv) * totalWeight);
+        const maxPerAxle = 20000;
+        const maxTandem = 34000;
+        let warnings = [];
+        for (let i=0; i<axlesCount; i++) if (axleLoads[i] > maxPerAxle) warnings.push(`Eje ${i+1}: ${axleLoads[i].toFixed(0)} lbs > 20k lbs`);
+        for (let i=0; i<axlesCount-1; i+=2) if (axleLoads[i]+axleLoads[i+1] > maxTandem) warnings.push(`Tándem ${i+1}-${i+2}: ${(axleLoads[i]+axleLoads[i+1]).toFixed(0)} lbs > 34k lbs`);
+        return { placed, totalWeight, cog, axleLoads, warnings, trailerLen, trailerWid, success: placed.length > 0 };
     }
-    // Algoritmo de optimización simplificado pero efectivo para demo
-    function optimizarDemo(){
-        if(cargas.length===0){ resultDiv.innerHTML="❌ No hay cargas."; return; }
-        const limF=parseFloat(document.getElementById("limFront").value);
-        const limM=parseFloat(document.getElementById("limMid").value);
-        const limR=parseFloat(document.getElementById("limRear").value);
-        const totalWeight = cargas.reduce((s,c)=>s+c.weight,0);
-        // Modelo bogie: distribución teórica si todo estuviera centrado en 5m (centro de carga)
-        const bogiePos = 4.2;
-        const frontPos=0;
-        const moment = cargas.reduce((s,c)=> s + c.weight * 5.2,0); // posición media aproximada
-        let forceBogie = moment / bogiePos;
-        forceBogie = Math.min(forceBogie, totalWeight);
-        let front = totalWeight - forceBogie;
-        // dividir bogie entre central y trasero (50/50 por simplicidad demostrativa)
-        let mid = forceBogie * 0.5;
-        let rear = forceBogie * 0.5;
-        front = Math.max(0,front);
-        mid = Math.max(0,mid);
-        rear = Math.max(0,rear);
-        const result = { front, mid, rear, total:totalWeight };
-        document.getElementById("eje1Val").innerText = front.toFixed(0)+" kg";
-        document.getElementById("eje2Val").innerText = mid.toFixed(0)+" kg";
-        document.getElementById("eje3Val").innerText = rear.toFixed(0)+" kg";
-        let w1 = front>limF ? `⚠️ Excede (${limF} kg)` : "✅ OK";
-        let w2 = mid>limM ? `⚠️ Excede (${limM} kg)` : "✅ OK";
-        let w3 = rear>limR ? `⚠️ Excede (${limR} kg)` : "✅ OK";
-        document.getElementById("eje1Warn").innerHTML = w1;
-        document.getElementById("eje2Warn").innerHTML = w2;
-        document.getElementById("eje3Warn").innerHTML = w3;
-        resultDiv.innerHTML = `📦 Peso total: ${totalWeight} kg<br>📐 Distribución estimada (centro de gravedad aproximado).`;
-        // guardar historial
-        const viaje = { fecha:new Date().toLocaleString(), total:totalWeight, eje1:front.toFixed(0), eje2:mid.toFixed(0), eje3:rear.toFixed(0) };
-        historial.unshift(viaje);
-        if(historial.length>10) historial.pop();
-        localStorage.setItem("demo_historial",JSON.stringify(historial));
-        renderHistorial();
-        lastOptim = { totalWeight, front, mid, rear, limits:{f:limF,m:limM,r:limR}, cargas:cargas.slice() };
+
+    function drawResult(result) {
+        if (!result) return;
+        canvas.width = 800; canvas.height = 400;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        let scaleX = (canvas.width-60) / result.trailerLen;
+        let scaleY = (canvas.height-60) / result.trailerWid;
+        let offX = 30, offY = 30;
+        ctx.strokeStyle = "#aaa";
+        ctx.strokeRect(offX, offY, result.trailerLen*scaleX, result.trailerWid*scaleY);
+        ctx.fillStyle = "#1e2a3e";
+        ctx.fillRect(offX, offY, result.trailerLen*scaleX, result.trailerWid*scaleY);
+        for (let i=0; i<result.placed.length; i++) {
+            let p = result.placed[i];
+            let x = offX + p.x * scaleX;
+            let y = offY + p.y * scaleY;
+            let w = p.w * scaleX;
+            let h = p.d * scaleY;
+            ctx.fillStyle = `hsl(${i*37 % 360}, 70%, 55%)`;
+            ctx.fillRect(x,y,w,h);
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(x,y,w,h);
+            ctx.fillStyle = "white";
+            ctx.font = "9px monospace";
+            ctx.fillText(`${p.weight} lbs`, x+2, y+12);
+        }
+        let html = `<strong>✅ Pallets colocados:</strong> ${result.placed.length} de ${pallets.length}<br>`;
+        html += `<strong>Peso total:</strong> ${result.totalWeight.toLocaleString()} lbs<br>`;
+        html += `<strong>Centro de gravedad:</strong> ${result.cog.toFixed(1)} in desde el frente<br>`;
+        document.getElementById("packDetails").innerHTML = html;
+        let axleHtml = `<strong>⚖️ Carga por eje (FMCSA):</strong><br>`;
+        for (let i=0; i<result.axleLoads.length; i++) axleHtml += `Eje ${i+1}: ${result.axleLoads[i].toFixed(0)} lbs &nbsp; `;
+        if (result.warnings.length) {
+            axleHtml += `<br><span class="danger">⚠️ ADVERTENCIAS:</span><br>${result.warnings.join("<br>")}`;
+        } else {
+            axleHtml += `<br><span class="badge">✅ Todos los ejes dentro de límites legales</span>`;
+        }
+        document.getElementById("axleResult").innerHTML = axleHtml;
     }
-    function generarPDFDemo(){
-        if(!lastOptim){ alert("Primero realiza una optimización."); return; }
+
+    function optimize() {
+        if (pallets.length === 0) { alert("Agrega al menos un pallet."); return; }
+        const trailerId = document.getElementById("trailerSelect").value;
+        const trailer = TRAILERS[trailerId];
+        let extra = parseFloat(document.getElementById("extraCap").value) || 0;
+        let maxW = trailer.maxWeight + extra;
+        let totalW = pallets.reduce((s,p)=>s+p.weight,0);
+        if (totalW > maxW) alert(`⚠️ El peso total (${totalW} lbs) excede la capacidad (${maxW} lbs). Aún se intentará acomodar.`);
+        let result = packPallets(pallets, trailer.length, trailer.width);
+        if (!result.success || result.placed.length === 0) {
+            document.getElementById("packDetails").innerHTML = "❌ No se pudo acomodar ningún pallet. Revisa dimensiones o cambia de trailer.";
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            return;
+        }
+        lastResult = result;
+        drawResult(result);
+    }
+
+    function generatePDF() {
+        if (!lastResult) { alert("Primero realiza una optimización."); return; }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        doc.setFontSize(16);
-        doc.text("Informe Logística PRO - Demo", 20, 20);
-        doc.setFontSize(11);
-        doc.text(`Fecha: ${new Date().toLocaleString()}`,20,32);
-        doc.text(`Peso total: ${lastOptim.totalWeight} kg`,20,42);
-        doc.text(`Cargas: ${lastOptim.cargas.map(c=>`${c.weight}kg`).join(", ")}`,20,52);
-        doc.text(`Resultado por ejes: Delantero ${lastOptim.front.toFixed(0)} kg | Central ${lastOptim.mid.toFixed(0)} kg | Trasero ${lastOptim.rear.toFixed(0)} kg`,20,70);
-        doc.save("demo_logistica.pdf");
+        doc.text("LOGÍSTICA PRO USA - DEMO", 15, 20);
+        doc.text(`Fecha: ${new Date().toLocaleString()}`, 15, 32);
+        doc.text(`Peso total: ${lastResult.totalWeight.toLocaleString()} lbs`, 15, 44);
+        doc.text(`Centro de gravedad: ${lastResult.cog.toFixed(1)} in`, 15, 54);
+        doc.text("Pallets colocados:", 15, 66);
+        let y=76;
+        lastResult.placed.forEach((p,i)=>{
+            if(y>270){ doc.addPage(); y=20; }
+            doc.text(`${i+1}. ${p.original.length}x${p.original.width} in, ${p.weight} lbs`, 15, y);
+            y+=6;
+        });
+        doc.save(`demo_carga_${Date.now()}.pdf`);
     }
-    loginBtn.onclick = ()=>{
-        const u = document.getElementById("demoUser").value;
-        const p = document.getElementById("demoPass").value;
-        if(u==="demo" && p==="demo"){
-            logged=true;
-            mainPanel.style.display="block";
-            demoStatus.innerHTML="✅ Sesión iniciada (demo)";
-            cargas = [];
-            renderCargas();
-            clearResult();
-            renderHistorial();
-        }else{
-            demoStatus.innerHTML="❌ Credenciales incorrectas. Usuario: demo / contraseña: demo";
-        }
+
+    document.getElementById("addPalletBtn").onclick = () => {
+        let l = parseInt(document.getElementById("palLargo").value);
+        let w = parseInt(document.getElementById("palAncho").value);
+        let h = parseInt(document.getElementById("palAlto").value);
+        let peso = parseInt(document.getElementById("palPeso").value);
+        if (isNaN(l)||l<=0||isNaN(w)||w<=0||isNaN(peso)||peso<=0) { alert("Valores válidos"); return; }
+        pallets.push({ length:l, width:w, height:h, weight:peso });
+        renderPallets();
+        clearResults();
     };
-    document.getElementById("agregarBtn").onclick=()=>{
-        let peso = parseFloat(document.getElementById("pesoKg").value);
-        let largo = parseFloat(document.getElementById("largoM").value);
-        if(isNaN(peso)||peso<=0){ alert("Peso válido >0"); return; }
-        if(isNaN(largo)||largo<=0.2||largo>5){ alert("Largo entre 0.2 y 5 metros"); return; }
-        cargas.push({weight:peso, length:largo});
-        renderCargas();
-        clearResult();
-        document.getElementById("pesoKg").value="";
+    document.getElementById("clearBtn").onclick = () => { pallets = []; renderPallets(); clearResults(); };
+    document.getElementById("exampleBtn").onclick = () => {
+        pallets = [
+            { length:48, width:40, height:48, weight:1800 },
+            { length:48, width:40, height:48, weight:1800 },
+            { length:42, width:42, height:50, weight:2200 },
+            { length:48, width:40, height:48, weight:1700 },
+            { length:36, width:36, height:40, weight:1200 }
+        ];
+        renderPallets();
+        clearResults();
     };
-    document.getElementById("vaciarBtn").onclick=()=>{ cargas=[]; renderCargas(); clearResult(); };
-    document.getElementById("optimizarBtn").onclick=optimizarDemo;
-    document.getElementById("pdfBtn").onclick=generarPDFDemo;
-    renderHistorial();
+    document.getElementById("optimizeBtn").onclick = optimize;
+    document.getElementById("pdfDemoBtn").onclick = generatePDF;
+    document.getElementById("resetDemoBtn").onclick = clearResults;
+    renderPallets();
 </script>
 </body>
 </html>
