@@ -94,46 +94,6 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        canvas {
-            background: #0f172a;
-            border-radius: 1rem;
-            width: 100%;
-            height: auto;
-            border: 1px solid #2d3a5e;
-            margin-top: 12px;
-        }
-        .warning {
-            color: #f97316;
-        }
-        .danger {
-            color: #ef4444;
-            font-weight: bold;
-        }
-        .badge {
-            background: #10b981;
-            color: #0f172a;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            display: inline-block;
-        }
-        hr {
-            border-color: #334155;
-            margin: 15px 0;
-        }
-        .result-panel {
-            font-family: monospace;
-            font-size: 0.85rem;
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 1rem;
-        }
-        .example-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -152,6 +112,7 @@
             padding: 4px 12px;
             border-radius: 40px;
             font-size: 0.7rem;
+            display: inline-block;
         }
         .upgrade-banner {
             background: #f59e0b;
@@ -162,9 +123,31 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
-        .upgrade-banner a {
+        .warning {
+            color: #f97316;
+        }
+        .danger {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .badge {
+            background: #10b981;
             color: #0f172a;
-            text-decoration: underline;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .result-panel {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        hr {
+            border-color: #334155;
+            margin: 15px 0;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -183,7 +166,7 @@
     <!-- Botones de ejemplos predefinidos -->
     <div class="card">
         <h2>📋 Ejemplos reales de carga</h2>
-        <div class="example-buttons">
+        <div class="flex-row">
             <button id="example1Btn" class="btn-example">Ejemplo 1: 3 pallets iguales apilables</button>
             <button id="example2Btn" class="btn-example">Ejemplo 2: Pallet alto que excede altura</button>
             <button id="example3Btn" class="btn-example">Ejemplo 3: Sobrepeso en el trailer</button>
@@ -259,7 +242,6 @@
         container40: { name: "Container 40'", length: 474, width: 92, height: 96, maxWeight: 44000 }
     };
 
-    // Estado de la demo
     let pallets = [];      // cada pallet: {length, width, height, weight, stackable, maxStacks}
     let lastAnalysis = null;
 
@@ -277,7 +259,6 @@
     // FUNCIONES DE CONVERSIÓN A STACKS (apilamiento realista)
     // --------------------------------------------------------------
     function buildStacks(palletsList) {
-        // Agrupar pallets por huella (largo x ancho) y altura individual, respetando apilabilidad
         let groups = new Map();
         for (let p of palletsList) {
             let key = `${p.length}x${p.width}x${p.height}_stackable_${p.stackable}_max${p.maxStacks}`;
@@ -306,7 +287,7 @@
         return stacks;
     }
 
-    // Simulación de optimización (sin algoritmo de empaquetado complejo, pero con cálculos realistas)
+    // Análisis completo de la carga
     function analyzeLoad(palletsList, trailer) {
         if (palletsList.length === 0) return null;
         
@@ -321,38 +302,39 @@
         let totalWeight = stacks.reduce((sum, s) => sum + s.weight, 0);
         let capacityExceed = totalWeight > trailer.maxWeight;
         
-        // 4. Centro de gravedad aproximado (suponiendo distribución uniforme en el espacio disponible)
-        //    Simulamos que los stacks se colocan secuencialmente desde el frente (x=0)
+        // 4. Simular colocación secuencial de stacks (orden por área descendente para mejor uso)
+        let sortedStacks = [...stacks].sort((a,b) => (b.length*b.width) - (a.length*a.width));
+        let placedStacks = [];
         let currentX = 0;
-        let moment = 0;
-        let totalLengthUsed = 0;
-        for (let s of stacks) {
-            let stackLength = s.length;
-            let centerX = currentX + stackLength / 2;
-            moment += s.weight * centerX;
-            currentX += stackLength;
-            totalLengthUsed += stackLength;
+        for (let s of sortedStacks) {
+            if (currentX + s.length > trailer.length) {
+                // No cabe más, se detiene (en demo solo mostramos lo que cabe)
+                break;
+            }
+            let centerX = currentX + s.length / 2;
+            placedStacks.push({
+                ...s,
+                startX: currentX,
+                centerX: centerX
+            });
+            currentX += s.length;
         }
+        
+        let totalLengthUsed = currentX;
+        let moment = placedStacks.reduce((sum, s) => sum + s.weight * s.centerX, 0);
         let cog = totalWeight > 0 ? moment / totalWeight : 0;
         
-        // 5. Distribución por ejes (modelo simplificado con 5 ejes típicos)
+        // 5. Distribución por ejes
         let axlesCount = parseInt(document.getElementById("axlesCount").value) || 5;
-        let trailerLen = trailer.length;
-        // Posiciones de ejes desde el frente (en pulgadas)
         let axlePositions = [];
         for (let i = 0; i < axlesCount; i++) {
-            let pos = trailerLen - (i + 1) * (trailerLen / (axlesCount + 1));
-            axlePositions.push(Math.max(0, Math.min(trailerLen, pos)));
+            let pos = trailer.length - (i + 1) * (trailer.length / (axlesCount + 1));
+            axlePositions.push(Math.max(0, Math.min(trailer.length, pos)));
         }
         let axleLoads = new Array(axlesCount).fill(0);
-        // Asignamos cada stack a los ejes usando influencia inversa a la distancia
-        for (let s of stacks) {
-            let stackCenterX = (currentX - s.length) + s.length/2; // posición real aproximada
-            // Recalcular posición real: lo hacemos más simple, simulamos que los stacks se colocan en orden
-            // Para este demo, usamos una posición ficticia pero coherente
-            let posX = Math.min(stackCenterX, trailerLen);
+        for (let s of placedStacks) {
             for (let a = 0; a < axlesCount; a++) {
-                let dist = Math.abs(posX - axlePositions[a]);
+                let dist = Math.abs(s.centerX - axlePositions[a]);
                 let inv = 1 / (dist + 20);
                 axleLoads[a] += s.weight * inv;
             }
@@ -375,7 +357,7 @@
         if (capacityExceed) warnings.push(`Peso total (${totalWeight.toFixed(0)} lbs) supera la capacidad del trailer (${trailer.maxWeight} lbs).`);
         
         return {
-            stacks,
+            stacks: placedStacks,
             totalWeight,
             maxStackHeight,
             cog,
@@ -383,6 +365,7 @@
             warnings,
             trailerHeight: trailer.height,
             trailerCapacity: trailer.maxWeight,
+            trailerLength: trailer.length,
             heightExceed,
             capacityExceed,
             totalLengthUsed
@@ -409,11 +392,11 @@
         cogSpan.innerText = `${analysis.cog.toFixed(1)} in`;
         
         // Mostrar detalles de stacks
-        let stacksHtml = `<strong>📦 Stacks generados (${analysis.stacks.length} stacks):</strong><br>`;
+        let stacksHtml = `<strong>📦 Stacks generados y colocados (${analysis.stacks.length} stacks):</strong><br>`;
         analysis.stacks.forEach((s, i) => {
-            stacksHtml += `Stack ${i+1}: ${s.length}" x ${s.width}" | altura ${s.height}" | peso ${s.weight} lbs (${s.palletCount} pallets)<br>`;
+            stacksHtml += `Stack ${i+1}: ${s.length}" x ${s.width}" | altura ${s.height}" | peso ${s.weight} lbs (${s.palletCount} pallets) | posición central: ${s.centerX.toFixed(0)}"<br>`;
         });
-        stacksHtml += `<br><strong>📐 Espacio lineal utilizado:</strong> ${analysis.totalLengthUsed.toFixed(0)} in de ${analysis.trailerLength || 636} in disponibles.<br>`;
+        stacksHtml += `<br><strong>📐 Espacio lineal utilizado:</strong> ${analysis.totalLengthUsed.toFixed(0)} in de ${analysis.trailerLength} in disponibles.<br>`;
         resultDiv.innerHTML = stacksHtml;
         
         // Mostrar advertencias
@@ -439,11 +422,9 @@
         const trailerId = document.getElementById("trailerSelect").value;
         const trailer = TRAILERS[trailerId];
         let extraCap = parseFloat(document.getElementById("extraCap").value) || 0;
-        // Ajustar capacidad máxima con extra
         let effectiveTrailer = { ...trailer, maxWeight: trailer.maxWeight + extraCap };
         let analysis = analyzeLoad(pallets, effectiveTrailer);
         if (analysis) {
-            analysis.trailerLength = trailer.length;
             displayAnalysis(analysis);
             lastAnalysis = analysis;
         } else {
@@ -468,12 +449,78 @@
                 let idx = parseInt(btn.getAttribute("data-idx"));
                 pallets.splice(idx, 1);
                 renderPallets();
-                // Limpiar resultados anteriores
                 displayAnalysis(null);
             });
         });
     }
     
-    // Cargar ejemplos predefinidos
+    // Cargar ejemplos predefinidos (respetando límite de 3 pallets)
     function loadExample(exampleId) {
-  
+        pallets = [];
+        switch(exampleId) {
+            case 1: // 3 pallets iguales apilables (2 niveles cada uno)
+                pallets.push({ length:48, width:40, height:48, weight:1800, stackable:true, maxStacks:2 });
+                pallets.push({ length:48, width:40, height:48, weight:1800, stackable:true, maxStacks:2 });
+                pallets.push({ length:48, width:40, height:48, weight:1800, stackable:true, maxStacks:2 });
+                break;
+            case 2: // Pallet alto que excede altura (apilable 2 niveles = 120" > 110")
+                pallets.push({ length:48, width:40, height:60, weight:2200, stackable:true, maxStacks:2 });
+                pallets.push({ length:48, width:40, height:60, weight:2200, stackable:true, maxStacks:2 });
+                pallets.push({ length:48, width:40, height:48, weight:1500, stackable:false, maxStacks:1 });
+                break;
+            case 3: // Sobrepeso (tres pallets muy pesados)
+                pallets.push({ length:48, width:40, height:48, weight:18000, stackable:false, maxStacks:1 });
+                pallets.push({ length:48, width:40, height:48, weight:18000, stackable:false, maxStacks:1 });
+                pallets.push({ length:48, width:40, height:48, weight:18000, stackable:false, maxStacks:1 });
+                break;
+            case 4: // Mixto: dos apilables (2 niveles) y uno no apilable
+                pallets.push({ length:48, width:40, height:48, weight:1800, stackable:true, maxStacks:2 });
+                pallets.push({ length:48, width:40, height:48, weight:1800, stackable:true, maxStacks:2 });
+                pallets.push({ length:42, width:42, height:50, weight:2200, stackable:false, maxStacks:1 });
+                break;
+        }
+        renderPallets();
+        displayAnalysis(null);
+        // Auto-optimizar para mostrar resultados inmediatos
+        optimize();
+    }
+    
+    // Eventos
+    document.getElementById("addPalletBtn").addEventListener("click", () => {
+        let l = parseInt(document.getElementById("palLargo").value);
+        let w = parseInt(document.getElementById("palAncho").value);
+        let h = parseInt(document.getElementById("palAlto").value);
+        let peso = parseInt(document.getElementById("palPeso").value);
+        let stackable = document.getElementById("stackable").checked;
+        let maxStacks = parseInt(document.getElementById("maxStacks").value);
+        if (isNaN(l) || l<=0 || isNaN(w) || w<=0 || isNaN(h) || h<=0 || isNaN(peso) || peso<=0) {
+            alert("Ingrese valores válidos (positivos).");
+            return;
+        }
+        if (stackable && (isNaN(maxStacks) || maxStacks < 1)) maxStacks = 1;
+        pallets.push({ length:l, width:w, height:h, weight:peso, stackable, maxStacks: stackable ? maxStacks : 1 });
+        renderPallets();
+        displayAnalysis(null);
+    });
+    
+    document.getElementById("clearPalletsBtn").addEventListener("click", () => {
+        pallets = [];
+        renderPallets();
+        displayAnalysis(null);
+    });
+    
+    document.getElementById("optimizeBtn").addEventListener("click", optimize);
+    document.getElementById("resetDemoBtn").addEventListener("click", () => displayAnalysis(null));
+    
+    // Ejemplos
+    document.getElementById("example1Btn").addEventListener("click", () => loadExample(1));
+    document.getElementById("example2Btn").addEventListener("click", () => loadExample(2));
+    document.getElementById("example3Btn").addEventListener("click", () => loadExample(3));
+    document.getElementById("example4Btn").addEventListener("click", () => loadExample(4));
+    
+    // Inicializar
+    renderPallets();
+    displayAnalysis(null);
+</script>
+</body>
+</html>
