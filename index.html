@@ -3,1640 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omega Load Planner PRO | Manual Integrado</title>
+    <title>Omega Load Planner v4.0 | Seguridad y Visuales</title>
     <style>
-        * { box-sizing: border-box; margin: 0; }
+        :root {
+            --bg-dark: #020617;
+            --bg-panel: #0f172a;
+            --bg-card: #1e293b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; outline: none; }
         body {
-            background: radial-gradient(circle at top, #111827 0%, #0a0f1e 50%, #020617 100%);
+            background: radial-gradient(circle at top, #111827 0%, #020617 100%);
+            color: var(--text-main);
             font-family: 'Segoe UI', system-ui, sans-serif;
-            color: #e2e8f0;
-            padding: 14px;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 1rem;
         }
         .container { max-width: 1600px; margin: auto; }
         .card {
-            background: #1e293b;
+            background: var(--bg-card);
             border-radius: 1rem;
-            padding: 1.1rem;
+            padding: 1.5rem;
             margin-bottom: 1rem;
-            border: 1px solid #334155;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
-        h2 { font-size: 1.15rem; margin-bottom: 0.7rem; display: flex; align-items: center; gap: 8px; }
-        .flex-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        label {
-            font-size: 0.62rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #94a3b8;
-            display: block;
-            margin-bottom: 3px;
-        }
-        input, select, button {
-            padding: 9px 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            font-weight: 500;
-            font-family: inherit;
-            font-size: 0.88rem;
-        }
-        input:focus, select:focus { outline: none; border-color: #3b82f6; }
-        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-        input[type="file"] { padding: 6px; font-size: 0.8rem; }
-        button {
-            background: #10b981;
-            color: #0f172a;
-            cursor: pointer;
-            transition: 0.15s;
-            font-weight: 700;
-            border: none;
-        }
-        button:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        button:active { transform: scale(0.97); }
-        .btn-blue { background: #3b82f6; color: white; }
-        .btn-blue:hover { background: #2563eb; }
-        .btn-red { background: #ef4444; color: white; }
-        .btn-red:hover { background: #dc2626; }
-        .btn-amber { background: #f59e0b; color: #0f172a; }
-        .btn-amber:hover { background: #d97706; }
-        .btn-purple { background: #8b5cf6; color: white; }
-        .btn-outline { background: transparent; border: 1px solid #475569; color: #94a3b8; }
-        .btn-outline:hover { border-color: #10b981; color: #10b981; background: #10b98110; }
-        .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 8px; }
+        h1 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        h2 { font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted); text-transform: uppercase; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        
+        label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+        input, select { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px; font-size: 0.9rem; }
+        input:focus { border-color: var(--accent); }
+        .flex { display: flex; gap: 8px; flex-wrap: wrap; }
+        .flex > div { flex: 1; min-width: 80px; }
 
-        .manual-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 9998;
-            opacity: 0; visibility: hidden;
-            transition: 0.3s;
-        }
-        .manual-overlay.active { opacity: 1; visibility: visible; }
-        .manual-panel {
-            position: fixed; top: 0; right: -500px;
-            width: 100%; max-width: 480px; height: 100vh;
-            background: #0f172a;
-            border-left: 1px solid #334155;
-            z-index: 9999;
-            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .manual-panel.active { right: 0; }
-        .manual-header {
-            background: #1e293b;
-            padding: 16px 20px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .manual-header h2 { margin: 0; font-size: 1.1rem; }
-        .manual-close {
-            background: #334155;
-            color: #e2e8f0;
-            border: none;
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .manual-close:hover { background: #475569; }
-        .manual-content { padding: 20px; flex: 1; }
-        .manual-section {
-            margin-bottom: 28px;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 20px;
-        }
-        .manual-section:last-child { border-bottom: none; }
-        .manual-section h3 {
-            color: #3b82f6;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .manual-section p, .manual-section li {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-        .manual-section ul { margin-left: 18px; }
-        .manual-section li { margin-bottom: 6px; }
-        .manual-tip {
-            background: #1e3a5f30;
-            border-left: 3px solid #3b82f6;
-            padding: 10px 14px;
-            border-radius: 0 8px 8px 0;
-            margin: 10px 0;
-            font-size: 0.82rem;
-            color: #bfdbfe;
-        }
-        .manual-warning {
-            background: #450a0a30;
-            border-left: 3px solid #ef4444;
-            padding: 10px 14px;
-            border-radius: 0 8px 8px 0;
-            margin: 10px 0;
-            font-size: 0.82rem;
-            color: #fca5a5;
-        }
-        .manual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
-        .manual-key {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 0.78rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .manual-key kbd {
-            background: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #e2e8f0;
-        }
-        .manual-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-right: 6px;
-        }
+        button { cursor: pointer; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: white; width: 100%; margin-top: 10px; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-success { background: var(--success); color: #064e3b; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); }
+
+        /* Canvas */
         .canvas-wrapper {
-            background: #020617;
+            background: var(--bg-dark);
             border-radius: 0.8rem;
-            padding: 8px;
+            padding: 10px;
             position: relative;
             overflow: auto;
-            border: 1px solid #1e293b;
-            touch-action: none;
+            border: 1px solid var(--border);
         }
-        canvas { display: block; margin: auto; cursor: grab; touch-action: none; }
-        canvas:active { cursor: grabbing; }
-        .canvas-legend {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-            font-size: 0.75rem;
-            justify-content: center;
-            color: #64748b;
+        canvas { display: block; margin: auto; }
+
+        /* Visual Safety Indicators */
+        .status-light {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px; border-radius: 8px; margin-bottom: 8px;
+            font-weight: 600; font-size: 0.95rem;
         }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .legend-color { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #475569; }
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-            gap: 10px;
-            max-height: 420px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-        .item-card {
-            background: #0f172a;
-            border-radius: 0.7rem;
-            padding: 10px;
-            border: 2px solid #1e293b;
-            transition: 0.15s;
-            position: relative;
-        }
-        .item-card:hover { border-color: #334155; }
-        .item-card.selected { border-color: #3b82f6; box-shadow: 0 0 0 2px #3b82f630; }
-        .item-card.unplaced { border-color: #ef4444; border-style: dashed; opacity: 0.85; }
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-        .item-type-badge {
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-radius: 40px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .item-fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 5px;
-            margin-bottom: 6px;
-        }
-        .item-fields input {
-            padding: 5px 8px;
-            font-size: 0.8rem;
-            border-radius: 6px;
-            width: 100%;
-        }
-        .item-meta {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            font-size: 0.74rem;
-            color: #64748b;
-            align-items: center;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .stat-card {
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 0.7rem;
-            text-align: center;
-            border: 1px solid #1e293b;
-        }
-        .stat-card strong { display: block; font-size: 0.95rem; margin-bottom: 2px; color: #f1f5f9; }
-        .stat-card span { font-size: 0.72rem; color: #94a3b8; }
-        .warning-box {
-            background: #450a0a40;
-            border: 1px solid #ef4444;
-            color: #fca5a5;
-            padding: 10px 14px;
-            border-radius: 0.7rem;
-            margin-top: 8px;
-            font-size: 0.84rem;
-        }
-        .ok-box {
-            background: #064e3b40;
-            border: 1px solid #10b981;
-            color: #6ee7b7;
-            padding: 10px 14px;
-            border-radius: 0.7rem;
-            margin-top: 8px;
-            font-size: 0.84rem;
-        }
-        .info-box {
-            background: #1e3a5f40;
-            border: 1px solid #3b82f6;
-            color: #93c5fd;
-            padding: 10px 14px;
-            border-radius: 0.7rem;
-            margin-top: 8px;
-            font-size: 0.84rem;
-        }
-        .view-toggle {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .view-toggle button { border-radius: 8px; padding: 7px 14px; font-size: 0.78rem; }
-        .view-toggle button.active { background: #3b82f6; color: white; }
-        .cargo-type-selector {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-        .cargo-type-btn {
-            padding: 7px 12px;
-            border-radius: 8px;
-            font-size: 0.74rem;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #94a3b8;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .cargo-type-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        .checkbox-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #cbd5e1; }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 40px;
-            font-size: 0.65rem;
-            font-weight: 700;
-        }
-        .badge-green { background: #10b98130; color: #34d399; border: 1px solid #10b98150; }
-        .badge-red { background: #ef444430; color: #fca5a5; border: 1px solid #ef444450; }
-        .badge-amber { background: #f59e0b30; color: #fcd34d; border: 1px solid #f59e0b50; }
-        .toolbar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #10b981;
-            color: #0f172a;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-weight: 700;
-            z-index: 10000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
-            font-size: 0.9rem;
-        }
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .card { background: white; border: 1px solid #ccc; box-shadow: none; color: black; break-inside: avoid; }
-            .no-print { display: none !important; }
-            canvas { max-width: 100% !important; height: auto !important; }
-            .item-grid { max-height: none; overflow: visible; }
-            .stats { grid-template-columns: repeat(4, 1fr); }
-            .warning-box, .ok-box, .info-box { border: 1px solid #999; color: black; background: #f5f5f5; }
-            .stat-card { background: #f5f5f5; border: 1px solid #ddd; color: black; }
-            .stat-card strong { color: black; }
-            input, select, button { border: 1px solid #999; background: white; color: black; }
-        }
-        @media (max-width: 768px) {
-            .item-grid { grid-template-columns: 1fr; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            canvas { max-width: 100%; }
-            .flex-row { gap: 6px; }
-            input, select, button { font-size: 0.85rem; padding: 7px 10px; }
-            h2 { font-size: 1rem; }
-            .manual-panel { max-width: 100%; }
-        }
+        .status-light i { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+        .status-safe { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: var(--success); }
+        .status-warn { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: var(--danger); }
+        
+        .gauge { background: var(--bg-dark); border-radius: 6px; height: 10px; overflow: hidden; margin-top: 6px; border: 1px solid var(--border); }
+        .gauge-fill { height: 100%; transition: width 0.3s; }
+
+        .stat-box { background: var(--bg-dark); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+        .stat-val { font-size: 1.4rem; font-weight: 800; color: white; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+
+        .item-card { background: var(--bg-dark); border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .item-card.unplaced { border-color: var(--danger); border-style: dashed; }
+        
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); border: 1px solid var(--accent); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; opacity: 0; transition: 0.3s; z-index: 1000; }
+        .toast.show { opacity: 1; bottom: 40px; }
     </style>
-    <base target="_blank">
 </head>
 <body>
-<div class="manual-overlay" id="manualOverlay" onclick="toggleManual()"></div>
-<div class="manual-panel" id="manualPanel">
-    <div class="manual-header">
-        <h2>📖 Manual de Usuario</h2>
-        <button class="manual-close" onclick="toggleManual()">✕</button>
-    </div>
-    <div class="manual-content">        <div class="manual-section">
-            <h3>ðŸš€ Empezar RÃ¡pido</h3>
-            <p><strong>Paso 1:</strong> Selecciona tu tipo de trailer o configura uno personalizado.</p>
-            <p><strong>Paso 2:</strong> Elige el tipo de carga y ajusta dimensiones si es necesario.</p>
-            <p><strong>Paso 3:</strong> Presiona <kbd>+ Agregar</kbd>. Repite para todos los bultos.</p>
-            <p><strong>Paso 4:</strong> Presiona <kbd>ðŸ§  Optimizar Auto</kbd> o acomoda manualmente arrastrando en el canvas.</p>
-            <p><strong>Paso 5:</strong> Revisa las alertas DOT. Si todo estÃ¡ verde, imprime o guarda el plano.</p>
-            <div class="manual-tip">ðŸ’¡ <strong>Consejo:</strong> Usa los botones de ejemplo para aprender viendo cÃ³mo funciona.</div>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸ“¦ Campos de Carga Explicados</h3>
-            <ul>
-                <li><strong>Largo/Ancho/Alto (in):</strong> Dimensiones reales del bulto en pulgadas.</li>
-                <li><strong>Peso (lbs):</strong> Peso real.</li>
-                <li><strong>Cantidad:</strong> CuÃ¡ntos bultos idÃ©nticos agregar de golpe.</li>
-                <li><strong>Stop #:</strong> Orden de descarga. Stop 1 va cerca de las puertas.</li>
-                <li><strong>Apilable:</strong> Â¿Se puede poner algo encima?</li>
-                <li><strong>Max capas:</strong> LÃ­mite de altura del mismo bulto.</li>
-                <li><strong>FrÃ¡gil:</strong> Nunca se apilarÃ¡ ni soportarÃ¡ peso encima.</li>
-                <li><strong>Peso max soportado:</strong> CuÃ¡ntos lbs puede aguantar el bulto de abajo.</li>
-            </ul>
-            <div class="manual-warning">âš ï¸ <strong>Importante:</strong> Si pones "Peso max soportado" muy bajo, el sistema no apilarÃ¡ encima por seguridad.</div>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸ‘ï¸ Vistas del Plano</h3>
-            <ul>
-                <li><strong>Planta:</strong> Vista superior del piso del trailer.</li>
-                <li><strong>Perfil:</strong> Vista lateral para revisar alturas.</li>
-                <li><strong>IsomÃ©trico 3D:</strong> Ayuda a visualizar el volumen.</li>
-                <li><strong>Heatmap Peso:</strong> Colorea los bultos segÃºn su peso.</li>
-            </ul>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸŽ® Controles y Atajos</h3>
-            <div class="manual-grid">
-                <div class="manual-key"><span>Seleccionar</span> <kbd>Click</kbd></div>
-                <div class="manual-key"><span>Mover</span> <kbd>Arrastrar</kbd></div>
-                <div class="manual-key"><span>Rotar 90Â°</span> <kbd>R</kbd></div>
-                <div class="manual-key"><span>Eliminar</span> <kbd>Del</kbd></div>
-                <div class="manual-key"><span>Optimizar</span> <kbd>BotÃ³n</kbd></div>
-                <div class="manual-key"><span>Guardar</span> <kbd>.json</kbd></div>
-            </div>
-            <p><strong>En tablet/tÃ¡ctil:</strong> Toca para seleccionar, arrastra para mover.</p>
-            <p><strong>Snap automÃ¡tico:</strong> Al soltar un bulto, se ajusta a la cuadrÃ­cula de 6 pulgadas.</p>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸš› MÃ©tricas DOT y FMCSA</h3>
-            <ul>
-                <li><strong>Steer Axle:</strong> LÃ­mite federal: <strong>12,000 lbs</strong>.</li>
-                <li><strong>Drive Axle:</strong> LÃ­mite: <strong>34,000 lbs</strong>.</li>
-                <li><strong>Trailer Axle:</strong> LÃ­mite: <strong>34,000 lbs</strong>.</li>
-                <li><strong>Bridge Formula:</strong> El sistema la calcula automÃ¡ticamente.</li>
-                <li><strong>COG:</strong> Idealmente entre 40% y 60% de la longitud del trailer.</li>
-            </ul>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸš¨ Alertas y QuÃ© Hacer</h3>
-            <p><span class="manual-badge badge-red">Altura excedida</span> Reduce capas o usa trailer mÃ¡s alto.</p>
-            <p><span class="manual-badge badge-red">Peso excedido</span> Elimina bultos o divide en otro trailer.</p>
-            <p><span class="manual-badge badge-amber">COG adelante</span> Mueve carga pesada hacia el centro o atrÃ¡s.</p>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸ’¾ Guardar y Compartir</h3>
-            <p><strong>Guardar .json:</strong> Descarga un archivo con toda la configuraciÃ³n.</p>
-            <p><strong>Cargar .json:</strong> Restaura exactamente el mismo plano.</p>
-            <p><strong>Imprimir / PDF:</strong> El navegador generarÃ¡ un PDF optimizado.</p>
-            <p><strong>PNG:</strong> Exporta solo la imagen del canvas.</p>
-        </div>
-        <div class="manual-section">
-            <h3>ðŸŽ¯ Tips del Cargador Profesional</h3>
-            <ul>
-                <li><strong>Rollos de acero:</strong> Nunca los apiles.</li>
-                <li><strong>LÃ­quidos (IBC):</strong> Siempre a piso.</li>
-                <li><strong>FrÃ¡giles:</strong> Ponlos cerca de las puertas.</li>
-                <li><strong>Pesados abajo, ligeros arriba:</strong> VerifÃ­calo siempre.</li>
-            </ul>
-        </div>
-        <div class="manual-section">
-            <h3>â“ Preguntas Frecuentes</h3>
-            <p><strong>Â¿Puedo editar despuÃ©s de calcular?</strong> SÃ­. Arrastra, edita o elimina bultos.</p>
-            <p><strong>Â¿QuÃ© pasa si no tengo kingpin?</strong> Para containers o plataformas, pon kingpin = 0.</p>
-            <p><strong>Â¿Es legal este plano ante DOT?</strong> Es una herramienta de apoyo. Siempre verifica con bÃ¡sculas certificadas.</p>
-        </div>
-        <div style="text-align:center; padding: 20px 0; color:#475569; font-size:0.8rem;">Omega Load Planner PRO v1.0<br>Motor MaxRects Â· Bridge Formula FMCSA Â· COG 3D</div>
-    </div>
-</div>
 <div class="container">
-    <div class="card" style="background: #020617; text-align: center; border: 1px solid #1e293b;">
-        <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div style="flex: 1;">
-                <h1 style="font-size: 1.5rem; margin-bottom: 4px;">ðŸš› OMEGA LOAD PLANNER PRO</h1>
-                <p style="color: #64748b; font-size: 0.85rem;">Bridge Formula FMCSA Â· Apilamiento fÃ­sico real Â· COG 3D Â· Guardar/Compartir JSON</p>
+    <div class="card" style="text-align:center; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+        <h1>🚛 OMEGA LOAD PLANNER <span style="font-size:0.8rem; background:var(--accent); padding:2px 8px; border-radius:4px;">v4.0</span></h1>
+        <p style="color:var(--text-muted);">Visuales 3D Mejorados · Seguridad FMCSA / North American Cargo Securement · Interpretación Universal</p>
+    </div>
+
+    <div class="grid-2">
+        <!-- LEFT: CONFIG -->
+        <div>
+            <div class="card">
+                <h2>⚙️ Configuración del Camión</h2>
+                <div class="flex">
+                    <div style="flex:2;">
+                        <label>Tipo de Remolque</label>
+                        <select id="trailerType" onchange="app.updateTrailer()">
+                            <option value="dryvan53">Dry Van 53' (Estándar)</option>
+                            <option value="reefer53">Reefer 53' (Refrigerado)</option>
+                            <option value="flatbed48">Flatbed 48' (Plataforma)</option>
+                        </select>
+                    </div>
+                    <div><label>Largo (in)</label><input type="number" id="tL" value="636" disabled></div>
+                    <div><label>Ancho (in)</label><input type="number" id="tW" value="102" disabled></div>
+                    <div><label>Alto (in)</label><input type="number" id="tH" value="110" disabled></div>
+                    <div><label>Cap. (lbs)</label><input type="number" id="tWt" value="45000" disabled></div>
+                </div>
             </div>
-            <button class="btn-blue btn-sm no-print" onclick="toggleManual()" style="white-space: nowrap;">ðŸ“– Manual</button>
-        </div>
-    </div>
-    <div class="card">
-        <h2>ðŸš› ConfiguraciÃ³n DOT</h2>
-        <div class="flex-row">
-            <div>
-                <label>Unidad</label>
-                <select id="trailerSelect">
-                    <option value="dryvan53">Dry Van 53' (636Ã—102Ã—110)</option>
-                    <option value="dryvan48">Dry Van 48' (576Ã—102Ã—108)</option>
-                    <option value="flatbed48">Flatbed 48' (576Ã—102Ã—96)</option>
-                    <option value="stepdeck">Step Deck 48' (576Ã—102Ã—120)</option>
-                    <option value="reefer53">Reefer 53' (636Ã—102Ã—110)</option>
-                    <option value="container40">Container 40' HC (474Ã—92Ã—96)</option>
-                    <option value="custom">Personalizado</option>
-                </select>
+
+            <div class="card">
+                <h2>📦 Agregar Carga</h2>
+                <div class="flex">
+                    <div style="flex:2;">
+                        <label>Tipo de Empaque</label>
+                        <select id="cargoType" onchange="app.setPreset()">
+                            <option value="pallet">Pallet (48x40)</option>
+                            <option value="tote">IBC Tote (Líquido)</option>
+                            <option value="coil">Rollo de Acero</option>
+                            <option value="machinery">Maquinaria Pesada</option>
+                        </select>
+                    </div>
+                    <div><label>Largo</label><input type="number" id="cL" value="48"></div>
+                    <div><label>Ancho</label><input type="number" id="cW" value="40"></div>
+                    <div><label>Alto</label><input type="number" id="cH" value="48"></div>
+                    <div><label>Peso (lbs)</label><input type="number" id="cWt" value="1500"></div>
+                    <div><label>Cantidad</label><input type="number" id="cQty" value="1" min="1"></div>
+                </div>
+                <button class="btn-primary" onclick="app.addItems()">➕ Agregar al Manifiesto</button>
             </div>
-            <div><label>Largo"</label><input type="number" id="trailerL" value="636" style="width:75px;"></div>
-            <div><label>Ancho"</label><input type="number" id="trailerW" value="102" style="width:75px;"></div>
-            <div><label>Alto"</label><input type="number" id="trailerH" value="110" style="width:75px;"></div>
-            <div><label>Capacidad lbs</label><input type="number" id="trailerMaxW" value="45000" style="width:95px;"></div>
-            <div><label>Kingpin"</label><input type="number" id="kingpin" value="36" style="width:65px;" title="Desde nariz trailer"></div>
-            <div><label>Tandems trailer"</label><input type="number" id="trailerAxleDist" value="240" style="width:80px;" title="Distancia entre ejes trailer"></div>
-            <div><label>Dist. Steer-Drive"</label><input type="number" id="steerDriveDist" value="120" style="width:80px;" title="Steer a centro drive"></div>
-            <div><label>Tara tractor lbs</label><input type="number" id="taraTractor" value="12000" style="width:90px;"></div>
-        </div>
-    </div>
-    <div class="card">
-        <h2>âž• Nueva Carga</h2>
-        <div class="cargo-type-selector" id="cargoTypeSelector">
-            <button class="cargo-type-btn active" data-type="pallet">ðŸ“¦ Pallet</button>
-            <button class="cargo-type-btn" data-type="caja">ðŸ“¦ Caja</button>
-            <button class="cargo-type-btn" data-type="rollo">ðŸ›ž Rollo</button>
-            <button class="cargo-type-btn" data-type="barril">ðŸ›¢ï¸ Barril</button>
-            <button class="cargo-type-btn" data-type="liquido">ðŸ§´ LÃ­quido</button>
-            <button class="cargo-type-btn" data-type="suelta">ðŸ“‹ Suelta</button>
-            <button class="cargo-type-btn" data-type="maquinaria">âš™ï¸ Maquina</button>
-        </div>
-        <div class="flex-row">
-            <div><label>Largo"</label><input type="number" id="newLargo" value="48" style="width:65px;"></div>
-            <div><label>Ancho"</label><input type="number" id="newAncho" value="40" style="width:65px;"></div>
-            <div><label>Alto"</label><input type="number" id="newAlto" value="48" style="width:65px;"></div>
-            <div><label>Peso lbs</label><input type="number" id="newPeso" value="1500" style="width:85px;"></div>
-            <div><label>Cantidad</label><input type="number" id="newCantidad" value="1" min="1" style="width:55px;"></div>
-            <div><label>Stop #</label><input type="number" id="newStop" value="1" min="1" style="width:50px;"></div>
-            <div class="checkbox-row"><input type="checkbox" id="newApilable" checked><label for="newApilable" style="margin:0;">Apilable</label></div>
-            <div><label>Max capas</label><input type="number" id="newMaxStack" value="2" min="1" style="width:50px;"></div>
-            <div class="checkbox-row"><input type="checkbox" id="newFragile"><label for="newFragile" style="margin:0;">FrÃ¡gil</label></div>
-            <div><label>Peso max soportado lbs</label><input type="number" id="newMaxTop" value="5000" style="width:85px;"></div>
-            <div><button id="addBtn" class="btn-blue">âž• Agregar</button></div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="flex-row" style="justify-content: space-between; align-items: center;">
-            <h2>ðŸ“‹ Carga (Editable)</h2>
-            <div class="toolbar no-print">
-                <button id="clearBtn" class="btn-outline btn-sm">ðŸ—‘ï¸ Vaciar</button>
-                <button id="saveJsonBtn" class="btn-outline btn-sm">ðŸ’¾ Guardar .json</button>
-                <label class="btn-outline btn-sm" style="cursor:pointer; display:inline-flex; align-items:center;">
-                    ðŸ“‚ Cargar .json
-                    <input type="file" id="loadJsonInput" accept=".json" style="display:none;">
-                </label>
-                <button id="demo1Btn" class="btn-amber btn-sm">Ej: Mixto</button>
-                <button id="demo2Btn" class="btn-amber btn-sm">Ej: Rollos</button>
-                <button id="demo3Btn" class="btn-amber btn-sm">Ej: Barriles</button>
+
+            <div class="card">
+                <h2>📋 Manifiesto de Carga</h2>
+                <div style="max-height: 200px; overflow-y: auto;" id="itemsList">
+                    <div style="text-align:center; color:var(--text-muted);">Sin carga agregada.</div>
+                </div>
+                <button class="btn-danger" style="width:100%; margin-top:10px;" onclick="app.clearAll()">🗑️ Vaciar Todo</button>
             </div>
         </div>
-        <div id="itemsList" class="item-grid" style="margin-top:8px;">
-            <div style="grid-column:1/-1; text-align:center; padding:30px; color:#475569;">Sin carga. Agrega items o carga un ejemplo.</div>
+
+        <!-- RIGHT: VISUAL SAFETY DASHBOARD -->
+        <div>
+            <div class="card">
+                <h2>📊 Tablero de Seguridad Visual</h2>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">Diseñado para que cualquier operador entienda el riesgo al instante.</p>
+                
+                <!-- Traffic Light System -->
+                <div id="statusWeight" class="status-light status-safe">
+                    <i style="background:var(--success);"></i> Peso Total: OK
+                </div>
+                <div id="statusAxles" class="status-light status-safe">
+                    <i style="background:var(--success);"></i> Ejes (DOT): OK
+                </div>
+                <div id="statusSecurement" class="status-light status-safe">
+                    <i style="background:var(--success);"></i> Sujeción (Correas): OK
+                </div>
+
+                <div style="margin-top:15px;">
+                    <h3>Distribución de Ejes (Límites Federales)</h3>
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Eje Direccional (Steer)</span><span id="axleSteerTxt">0 / 12,000 lbs</span></div>
+                        <div class="gauge"><div id="gaugeSteer" class="gauge-fill" style="width:0%; background:var(--success);"></div></div>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Tandem Tractor (Drive)</span><span id="axleDriveTxt">0 / 34,000 lbs</span></div>
+                        <div class="gauge"><div id="gaugeDrive" class="gauge-fill" style="width:0%; background:var(--success);"></div></div>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Tandem Remolque (Trailer)</span><span id="axleTrailerTxt">0 / 34,000 lbs</span></div>
+                        <div class="gauge"><div id="gaugeTrailer" class="gauge-fill" style="width:0%; background:var(--success);"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🛡️ Plan de Sujeción (Cargo Securement)</h3>
+                <div id="securementDetails" style="font-size:0.85rem; color:var(--text-muted);">
+                    Calculando requerimientos de correas y cadenas...
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- CANVAS AREA -->
     <div class="card">
-        <h2>ðŸ‘ï¸ Plano de Carga</h2>
-        <div class="view-toggle no-print">
-            <button class="active" data-view="top">Planta</button>
-            <button data-view="side">Perfil</button>
-            <button data-view="iso">3D</button>
-            <button data-view="heatmap">Heatmap</button>
-        </div>
-        <div class="toolbar no-print" style="justify-content: center;">
-            <button id="optimizeBtn" class="btn-purple">ðŸ§  Optimizar Auto</button>
-            <button id="exportPngBtn" class="btn-outline btn-sm">ðŸ“· PNG</button>
-            <button id="printBtn" class="btn-outline btn-sm">ðŸ–¨ï¸ Imprimir / PDF</button>
+        <h2>👁️ Plano de Carga Visual</h2>
+        <div style="display:flex; gap:10px; margin-bottom:10px; justify-content:center;">
+            <button class="btn-success" onclick="app.optimize()">🧠 Calcular y Optimizar</button>
+            <button class="btn-outline" onclick="app.exportPNG()">📷 Exportar Imagen</button>
         </div>
         <div class="canvas-wrapper">
-            <canvas id="mainCanvas" width="1400" height="520"></canvas>
+            <canvas id="mainCanvas" width="1200" height="500"></canvas>
         </div>
-        <div class="canvas-legend" id="canvasLegend"></div>
-        <div style="text-align:center; margin-top:6px; font-size:0.75rem; color:#64748b;">
-            ðŸ–±ï¸ Arrastra para mover Â· Click para seleccionar Â· <strong>R</strong> rotar Â· <strong>Del</strong> eliminar Â· <button class="btn-sm btn-outline" onclick="toggleManual()" style="padding:2px 8px; font-size:0.7rem;">Â¿Necesitas ayuda?</button>
+        <div style="text-align:center; margin-top:8px; font-size:0.75rem; color:var(--text-muted);">
+            🟢 Verde = Colocado Seguro · 🔴 Rojo = No Cabe o Inestable · 🎯 = Centro de Gravedad (COG)
         </div>
-    </div>
-    <div class="card">
-        <h2>ðŸ“Š AnÃ¡lisis FMCSA & FÃ­sico</h2>
-        <div class="stats">
-            <div class="stat-card"><strong id="stTotalWeight">0</strong><span>lbs carga</span></div>
-            <div class="stat-card"><strong id="stTotalItems">0</strong><span>bultos</span></div>
-            <div class="stat-card"><strong id="stPlaced">0</strong><span>colocados</span></div>
-            <div class="stat-card"><strong id="stMaxHeight">0"</strong><span>altura max</span></div>
-            <div class="stat-card"><strong id="stLengthUsed">0"</strong><span>long usada</span></div>
-            <div class="stat-card"><strong id="stWeightPct">0%</strong><span>capacidad</span></div>
-            <div class="stat-card"><strong id="stCOGX">0"</strong><span>COG Long</span></div>
-            <div class="stat-card"><strong id="stCOGY">0"</strong><span>COG Lat</span></div>
-            <div class="stat-card"><strong id="stCOGZ">0"</strong><span>COG Altura</span></div>
-            <div class="stat-card"><strong id="stSteer">0</strong><span>lbs Steer</span></div>
-            <div class="stat-card"><strong id="stDrive">0</strong><span>lbs Drive</span></div>
-            <div class="stat-card"><strong id="stTrailer">0</strong><span>lbs Trailer</span></div>
-            <div class="stat-card"><strong id="stBridge">0</strong><span>Bridge OK</span></div>
-        </div>
-        <div id="warningsArea"></div>
-        <div id="recommendationsArea" style="margin-top:8px;"></div>
-        <div id="efficiencyArea" style="margin-top:8px;"></div>
     </div>
 </div>
+
+<div class="toast" id="toast">Mensaje</div>
+
 <script>
 const TRAILERS = {
-    dryvan53: { L:636, W:102, H:110, maxW:45000, kingpin:36, tandems:240 },
-    dryvan48: { L:576, W:102, H:108, maxW:45000, kingpin:36, tandems:240 },
-    flatbed48: { L:576, W:102, H:96, maxW:48000, kingpin:36, tandems:240 },
-    stepdeck: { L:576, W:102, H:120, maxW:48000, kingpin:36, tandems:240 },
-    reefer53: { L:636, W:102, H:110, maxW:44000, kingpin:36, tandems:240 },
-    container40: { L:474, W:92, H:96, maxW:44000, kingpin:0, tandems:0 },
-    custom: { L:636, W:102, H:110, maxW:45000, kingpin:36, tandems:240 }
+    dryvan53: { L:636, W:102, H:110, cap:45000 },
+    reefer53: { L:636, W:102, H:105, cap:43500 },
+    flatbed48:{ L:576, W:102, H:102, cap:48000 }
 };
-const CARGO_TYPES = {
-    pallet: { label:"Pallet", color:"#10b981" },
-    caja: { label:"Caja", color:"#8b5cf6" },
-    rollo: { label:"Rollo", color:"#f59e0b" },
-    barril: { label:"Barril", color:"#ef4444" },
-    liquido: { label:"Liquido", color:"#06b6d4" },
-    suelta: { label:"Suelta", color:"#64748b" },
-    maquinaria: { label:"Maquina", color:"#ec4899" }
+const COLORS = { pallet: '#3b82f6', tote: '#06b6d4', coil: '#f59e0b', machinery: '#ec4899' };
+
+const state = {
+    trailer: { ...TRAILERS.dryvan53 },
+    items: [],
+    analysis: null
 };
-let items = [];
-let currentView = 'top';
-let selectedItemId = null;
-let analysisResult = null;
-let isDragging = false;
-let dragStackId = null;
-let dragOffset = { x:0, y:0 };
+
 const canvas = document.getElementById('mainCanvas');
 const ctx = canvas.getContext('2d');
 
-function uid() { return Math.random().toString(36).slice(2, 9); }
-function esc(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-function round6(v) { return Math.round(v / 6) * 6; }
-function getSelectedStack() { return analysisResult?.placedStacks?.find(s => s.items.some(it => it.id === selectedItemId)) || null; }
+const app = {
+    updateTrailer: () => {
+        const t = TRAILERS[document.getElementById('trailerType').value];
+        state.trailer = { ...t };
+        document.getElementById('tL').value = t.L;
+        document.getElementById('tW').value = t.W;
+        document.getElementById('tH').value = t.H;
+        document.getElementById('tWt').value = t.cap;
+        drawCanvas();
+    },
 
-function showToast(text) {
-    const old = document.querySelector('.toast');
-    if (old) old.remove();
-    const div = document.createElement('div');
-    div.className = 'toast';
-    div.textContent = text;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 2200);
-}
-
-function toggleManual() {
-    document.getElementById('manualOverlay').classList.toggle('active');
-    document.getElementById('manualPanel').classList.toggle('active');
-}
-
-function getTrailer() {
-    const sel = document.getElementById('trailerSelect').value;
-    let t;
-    if (sel === 'custom') {
-        t = {
-            L: parseFloat(document.getElementById('trailerL').value) || 636,
-            W: parseFloat(document.getElementById('trailerW').value) || 102,
-            H: parseFloat(document.getElementById('trailerH').value) || 110,
-            maxW: parseFloat(document.getElementById('trailerMaxW').value) || 45000,
-            kingpin: parseFloat(document.getElementById('kingpin').value) || 36,
-            tandems: parseFloat(document.getElementById('trailerAxleDist').value) || 240
+    setPreset: () => {
+        const type = document.getElementById('cargoType').value;
+        const presets = {
+            pallet: [48, 40, 48, 1500],
+            tote: [48, 48, 50, 2500],
+            coil: [60, 60, 40, 5000],
+            machinery: [72, 96, 60, 8000]
         };
-    } else {
-        t = { ...TRAILERS[sel] };
-    }
-    t.name = sel === 'custom' ? 'Personalizado' : document.querySelector(`#trailerSelect option[value="${sel}"]`).text.split('(')[0].trim();
-    return t;
-}
+        const p = presets[type];
+        document.getElementById('cL').value = p[0];
+        document.getElementById('cW').value = p[1];
+        document.getElementById('cH').value = p[2];
+        document.getElementById('cWt').value = p[3];
+    },
 
-function hexToRgb(hex) { return { r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) }; }
-function rgbToRgba(hex, a) { const c = hexToRgb(hex); return `rgba(${c.r},${c.g},${c.b},${a})`; }
+    addItems: () => {
+        const type = document.getElementById('cargoType').value;
+        const qty = parseInt(document.getElementById('cQty').value) || 1;
+        for(let i=0; i<qty; i++) {
+            state.items.push({
+                id: Math.random().toString(36).substr(2,9),
+                type: type,
+                l: parseFloat(document.getElementById('cL').value),
+                w: parseFloat(document.getElementById('cW').value),
+                h: parseFloat(document.getElementById('cH').value),
+                weight: parseFloat(document.getElementById('cWt').value),
+                placed: false, x:0, y:0
+            });
+        }
+        app.renderItems();
+        app.showToast(`${qty} items agregados`);
+    },
 
-class MaxRects {
-    constructor(width, height) {
-        this.binWidth = width;
-        this.binHeight = height;
-        this.freeRects = [{ x:0, y:0, w:width, h:height }];
-        this.placed = [];
-    }
-    place(rect) {
-        const best = this.findBestPosition(rect.l, rect.w);
-        if (!best) return null;
-        return this.commitPlacement(rect, best.x, best.y, best.rotated, best.node);
-    }
-    placeAt(rect, x, y) {
-        const node = this.freeRects.find(r => x >= r.x && y >= r.y && x + rect.l <= r.x + r.w && y + rect.w <= r.y + r.h);
-        if (!node) return null;
-        return this.commitPlacement(rect, x, y, false, node);
-    }
-    commitPlacement(rect, x, y, rotated, node) {
-        const placed = { ...rect, x, y, rotated };
-        if (rotated) { placed.l = rect.w; placed.w = rect.l; }
-        this.placed.push(placed);
-        this.splitFreeRect(node, placed);
-        this.pruneFreeRects();
-        return placed;
-    }
-    findBestPosition(l, w) {
-        let best = null, bestArea = Infinity;
-        for (const r of this.freeRects) {
-            if (l <= r.w && w <= r.h) {
-                const area = r.w * r.h;
-                if (area < bestArea) { bestArea = area; best = { x:r.x, y:r.y, node:r, rotated:false }; }
-            }
-        }
-        let bestRot = null, bestAreaRot = Infinity;
-        for (const r of this.freeRects) {
-            if (w <= r.w && l <= r.h) {
-                const area = r.w * r.h;
-                if (area < bestAreaRot) { bestAreaRot = area; bestRot = { x:r.x, y:r.y, node:r, rotated:true }; }
-            }
-        }
-        if (best && bestRot) {
-            const wasteNormal = (best.node.w - l) * (best.node.h - w);
-            const wasteRot = (bestRot.node.w - w) * (bestRot.node.h - l);
-            return wasteRot < wasteNormal ? bestRot : best;
-        }
-        return best || bestRot;
-    }
-    splitFreeRect(node, placed) {
-        const newRects = [];
-        for (let i = this.freeRects.length - 1; i >= 0; i--) {
-            const r = this.freeRects[i];
-            if (this.intersects(r, node)) {
-                if (node.x < r.x + r.w && node.x + placed.l > r.x) {
-                    if (node.y > r.y && node.y < r.y + r.h) newRects.push({ x:r.x, y:r.y, w:r.w, h:node.y - r.y });
-                    if (node.y + placed.w < r.y + r.h) newRects.push({ x:r.x, y:node.y + placed.w, w:r.w, h:(r.y+r.h)-(node.y+placed.w) });
-                }
-                if (node.y < r.y + r.h && node.y + placed.w > r.y) {
-                    if (node.x > r.x && node.x < r.x + r.w) newRects.push({ x:r.x, y:r.y, w:node.x - r.x, h:r.h });
-                    if (node.x + placed.l < r.x + r.w) newRects.push({ x:node.x + placed.l, y:r.y, w:(r.x+r.w)-(node.x+placed.l), h:r.h });
-                }
-                this.freeRects.splice(i, 1);
-            }
-        }
-        this.freeRects.push(...newRects.filter(r => r.w > 0 && r.h > 0));
-    }
-    intersects(a, b) { return !(a.x+a.w <= b.x || b.x+b.w <= a.x || a.y+a.h <= b.y || b.y+b.h <= a.y); }
-    pruneFreeRects() {
-        for (let i = this.freeRects.length - 1; i >= 0; i--) {
-            for (let j = this.freeRects.length - 1; j >= 0; j--) {
-                if (i !== j && this.contains(this.freeRects[j], this.freeRects[i])) { this.freeRects.splice(i, 1); break; }
-            }
-        }
-    }
-    contains(outer, inner) {
-        return inner.x >= outer.x && inner.y >= outer.y && inner.x+inner.w <= outer.x+outer.w && inner.y+inner.h <= outer.y+outer.h;
-    }
-}
+    clearAll: () => {
+        state.items = []; state.analysis = null; app.renderItems(); drawCanvas(); app.updateStats();
+    },
 
-function createStackObj(stackItems, totalH, totalW) {
-    const base = stackItems[0];
-    const baseMin = Math.min(base.l, base.w);
-    const stability = baseMin / totalH;
-    return {
-        items: stackItems,
-        l: base.l, w: base.w, h: totalH,
-        weight: totalW,
-        type: base.type,
-        stop: base.stop,
-        fragile: base.fragile,
-        name: stackItems.length > 1 ? `${base.name} (Ã—${stackItems.length})` : base.name,
-        stackable: stackItems.length < base.maxStack,
-        stability,
-        manualX: stackItems[0].manualX ?? null,
-        manualY: stackItems[0].manualY ?? null
-    };
-}
-
-function buildPhysicalStacks(itemsList) {
-    const groups = [];
-    const used = new Set();
-    for (let i = 0; i < itemsList.length; i++) {
-        if (used.has(i)) continue;
-        const group = [itemsList[i]];
-        used.add(i);
-        for (let j = i + 1; j < itemsList.length; j++) {
-            if (used.has(j)) continue;
-            const a = itemsList[i], b = itemsList[j];
-            if (a.type === b.type && a.l === b.l && a.w === b.w && a.h === b.h &&
-                a.weight === b.weight && a.stackable === b.stackable &&
-                a.maxStack === b.maxStack && a.fragile === b.fragile && a.maxTop === b.maxTop && a.stop === b.stop) {
-                group.push(b);
-                used.add(j);
-            }
-        }
-        groups.push(group);
-    }
-
-    const stacks = [];
-    groups.forEach(group => {
-        const base = group[0];        if (!base.stackable || base.maxStack <= 1 || base.fragile) {
-            group.forEach(it => stacks.push({
-                items: [it], l: it.l, w: it.w, h: it.h,
-                weight: it.weight, type: it.type, stop: it.stop,
-                fragile: it.fragile, name: it.name, stackable: false, stability: 1.0,
-                manualX: it.manualX ?? null, manualY: it.manualY ?? null
-            }));
+    renderItems: () => {
+        const list = document.getElementById('itemsList');
+        if(state.items.length === 0) {
+            list.innerHTML = '<div style="text-align:center; color:var(--text-muted);">Sin carga agregada.</div>';
             return;
         }
-        let currentStack = [];
-        let totalHeight = 0;
-        let totalWeight = 0;
-        group.forEach(item => {
-            if (currentStack.length === 0) {
-                currentStack.push(item);
-                totalHeight = item.h;
-                totalWeight = item.weight;
-                return;
-            }
-            const bottomItem = currentStack[0];
-            const weightWillBeAboveBottom = totalWeight + item.weight - bottomItem.weight;
-            if (weightWillBeAboveBottom > bottomItem.maxTop) {
-                stacks.push(createStackObj(currentStack, totalHeight, totalWeight));
-                currentStack = [item];
-                totalHeight = item.h;
-                totalWeight = item.weight;
-                return;
-            }
-            const immediateBelow = currentStack[currentStack.length - 1];
-            const weightAboveImmediate = totalWeight - immediateBelow.weight;
-            if (item.weight + weightAboveImmediate > immediateBelow.maxTop) {
-                stacks.push(createStackObj(currentStack, totalHeight, totalWeight));
-                currentStack = [item];
-                totalHeight = item.h;
-                totalWeight = item.weight;
-                return;
-            }
-            const baseMin = Math.min(bottomItem.l, bottomItem.w);
-            if (totalHeight + item.h > baseMin * 3) {
-                stacks.push(createStackObj(currentStack, totalHeight, totalWeight));
-                currentStack = [item];
-                totalHeight = item.h;
-                totalWeight = item.weight;
-                return;
-            }
-            currentStack.push(item);
-            totalHeight += item.h;
-            totalWeight += item.weight;
-        });
-        if (currentStack.length > 0) stacks.push(createStackObj(currentStack, totalHeight, totalWeight));
-    });
-    return stacks;
-}
-
-function bridgeFormulaLimit(axleCount, spacingInches) {
-    const L = spacingInches / 12;
-    const N = axleCount;
-    if (N < 2) return 20000;
-    const W = 500 * (L / (N - 1) + 12 * N + 36);
-    const practicalLimits = { 2: 34000, 3: 42500, 4: 50000, 5: 54000 };
-    return Math.min(Math.floor(W), practicalLimits[N] || 54000);
-}
-
-function calculateAxleLoads(totalWeight, cogX, trailer) {
-    const kingpinX = trailer.kingpin;
-    const tandemsCenter = kingpinX + trailer.tandems / 2;
-    const driveX = parseFloat(document.getElementById('steerDriveDist').value) || 120;
-    const taraTractor = parseFloat(document.getElementById('taraTractor').value) || 12000;
-    const distKingpinToTandems = trailer.tandems;
-    const distCGToTandems = Math.abs(tandemsCenter - cogX);
-    if (distKingpinToTandems < 1) {
-        return { steer: 0, drive: 0, trailer: totalWeight, bridgeOK: false, driveLimit: 34000, trailerLimit: 34000, weightOnKingpin: 0, weightOnTrailerTandems: totalWeight };
-    }
-    const weightOnKingpin = totalWeight * (distCGToTandems / distKingpinToTandems);
-    const weightOnTrailerTandems = totalWeight - weightOnKingpin;
-    const distSteerToDrive = driveX;
-    const distKingpinToDrive = Math.abs(driveX - kingpinX);
-    const distKingpinToSteer = Math.abs(kingpinX);
-    let kingpinToSteer = 0, kingpinToDrive = 0;
-    if (distSteerToDrive > 0) {
-        kingpinToSteer = weightOnKingpin * (distKingpinToDrive / distSteerToDrive);
-        kingpinToDrive = weightOnKingpin * (distKingpinToSteer / distSteerToDrive);
-    }
-    const steerLoad = kingpinToSteer + (taraTractor * 0.35);
-    const driveLoad = kingpinToDrive + (taraTractor * 0.65);
-    const trailerLoad = weightOnTrailerTandems;
-    const driveLimit = bridgeFormulaLimit(2, distSteerToDrive);
-    const trailerLimit = bridgeFormulaLimit(2, trailer.tandems);
-    const bridgeOK = (driveLoad <= driveLimit) && (trailerLoad <= trailerLimit) && (steerLoad <= 12000);
-    return { steer: steerLoad, drive: driveLoad, trailer: trailerLoad, bridgeOK, driveLimit, trailerLimit, weightOnKingpin, weightOnTrailerTandems };
-}
-
-function addItem() {
-    const type = document.querySelector('.cargo-type-btn.active').dataset.type;
-    const l = parseFloat(document.getElementById('newLargo').value) || 48;
-    const w = parseFloat(document.getElementById('newAncho').value) || 40;
-    const h = parseFloat(document.getElementById('newAlto').value) || 48;
-    const weight = parseFloat(document.getElementById('newPeso').value) || 1500;
-    const qty = parseInt(document.getElementById('newCantidad').value) || 1;
-    const stop = parseInt(document.getElementById('newStop').value) || 1;
-    const stackable = document.getElementById('newApilable').checked;
-    const maxStack = parseInt(document.getElementById('newMaxStack').value) || 1;
-    const fragile = document.getElementById('newFragile').checked;
-    const maxTop = parseFloat(document.getElementById('newMaxTop').value) || 5000;
-    for (let i = 0; i < qty; i++) {
-        items.push({
-            id: uid(), type, l, w, h, weight,
-            stackable, maxStack, fragile, maxTop, stop,
-            name: `${CARGO_TYPES[type].label} #${items.length + 1}`,
-            placed: false, x: 0, y: 0, manualX: null, manualY: null
-        });
-    }
-    renderItemsList();
-    calculateLoad();
-}
-
-function updateItem(id, field, value) {
-    const item = items.find(x => x.id === id);
-    if (!item) return;
-    if (field === 'stackable' || field === 'fragile') item[field] = value;
-    else if (field === 'stop' || field === 'maxStack') item[field] = parseInt(value) || 1;
-    else item[field] = parseFloat(value) || 0;
-    renderItemsList();
-    calculateLoad();
-}
-
-function deleteItem(id) {
-    items = items.filter(x => x.id !== id);
-    if (selectedItemId === id) selectedItemId = null;
-    renderItemsList();
-    calculateLoad();
-}
-
-function clearAll() {
-    items = [];
-    selectedItemId = null;
-    analysisResult = null;
-    renderItemsList();
-    drawEmpty();
-    clearStats();
-}
-
-function loadDemo(num) {
-    clearAll();
-    if (num === 1) {
-        items.push({ id: uid(), type:'pallet', l:48, w:40, h:48, weight:1800, stackable:true, maxStack:2, fragile:false, maxTop:5000, stop:2, name:'Pallet ElectrÃ³nica', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'pallet', l:48, w:40, h:48, weight:1800, stackable:true, maxStack:2, fragile:false, maxTop:5000, stop:2, name:'Pallet ElectrÃ³nica', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'pallet', l:48, w:40, h:48, weight:1800, stackable:true, maxStack:2, fragile:false, maxTop:5000, stop:2, name:'Pallet ElectrÃ³nica', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'caja', l:36, w:36, h:60, weight:2500, stackable:false, maxStack:1, fragile:true, maxTop:0, stop:1, name:'Caja Fragil Stop 1', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'caja', l:24, w:24, h:30, weight:800, stackable:true, maxStack:4, fragile:false, maxTop:3000, stop:3, name:'Cajas Refacciones', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'caja', l:24, w:24, h:30, weight:800, stackable:true, maxStack:4, fragile:false, maxTop:3000, stop:3, name:'Cajas Refacciones', placed:false, manualX:null, manualY:null });
-    } else if (num === 2) {
-        items.push({ id: uid(), type:'rollo', l:60, w:60, h:48, weight:5000, stackable:false, maxStack:1, fragile:false, maxTop:0, stop:1, name:'Rollo Acero A', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'rollo', l:60, w:60, h:48, weight:5000, stackable:false, maxStack:1, fragile:false, maxTop:0, stop:1, name:'Rollo Acero B', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'rollo', l:48, w:48, h:36, weight:3500, stackable:true, maxStack:2, fragile:false, maxTop:4000, stop:2, name:'Bobina Chica', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'rollo', l:48, w:48, h:36, weight:3500, stackable:true, maxStack:2, fragile:false, maxTop:4000, stop:2, name:'Bobina Chica', placed:false, manualX:null, manualY:null });
-    } else if (num === 3) {
-        items.push({ id: uid(), type:'barril', l:24, w:24, h:36, weight:450, stackable:true, maxStack:3, fragile:false, maxTop:2000, stop:1, name:'Barril QuÃ­mico', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'barril', l:24, w:24, h:36, weight:450, stackable:true, maxStack:3, fragile:false, maxTop:2000, stop:1, name:'Barril QuÃ­mico', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'barril', l:24, w:24, h:36, weight:450, stackable:true, maxStack:3, fragile:false, maxTop:2000, stop:1, name:'Barril QuÃ­mico', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'barril', l:24, w:24, h:36, weight:450, stackable:true, maxStack:3, fragile:false, maxTop:2000, stop:1, name:'Barril QuÃ­mico', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'caja', l:48, w:40, h:30, weight:800, stackable:true, maxStack:4, fragile:false, maxTop:3000, stop:2, name:'Cajas Refacciones', placed:false, manualX:null, manualY:null });
-        items.push({ id: uid(), type:'caja', l:48, w:40, h:30, weight:800, stackable:true, maxStack:4, fragile:false, maxTop:3000, stop:2, name:'Cajas Refacciones', placed:false, manualX:null, manualY:null });
-    }
-    renderItemsList();
-    calculateLoad();
-}
-
-function renderItemsList() {
-    const container = document.getElementById('itemsList');
-    if (items.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:#475569;">Sin carga. Agrega items o carga un ejemplo. <button onclick="toggleManual()" class="btn-sm btn-outline" style="margin-left:8px;">Â¿CÃ³mo empezar?</button></div>`;
-        return;
-    }
-    container.innerHTML = items.map(it => {
-        const info = CARGO_TYPES[it.type];
-        const isSel = it.id === selectedItemId;
-        const isUnplaced = analysisResult && !it.placed && analysisResult.attempted;
-        return `
-        <div class="item-card ${isSel ? 'selected' : ''} ${isUnplaced ? 'unplaced' : ''}" data-id="${it.id}">
-            <div class="item-header">
+        list.innerHTML = state.items.map(it => `
+            <div class="item-card ${!it.placed ? 'unplaced' : ''}">
                 <div>
-                    <span class="item-type-badge" style="background:${info.color}20; color:${info.color}; border:1px solid ${info.color}40;">${info.label}</span>
-                    <span style="font-weight:600; margin-left:6px; font-size:0.88rem;">${esc(it.name)}</span>
-                    ${it.placed ? '<span class="badge badge-green" style="margin-left:6px;">âœ“</span>' : (analysisResult && analysisResult.attempted ? '<span class="badge badge-red" style="margin-left:6px;">âœ—</span>' : '')}
+                    <strong>${it.type.toUpperCase()}</strong> ${it.l}x${it.w}x${it.h}
+                    <br><span style="color:var(--text-muted); font-size:0.8rem;">${it.weight} lbs</span>
                 </div>
-                <button onclick="event.stopPropagation(); deleteItem('${it.id}')" class="btn-red btn-sm">âœ•</button>
+                <span style="color:${it.placed ? 'var(--success)' : 'var(--danger)'};">${it.placed ? '✅' : '⚠️'}</span>
             </div>
-            <div class="item-fields">
-                <div><label style="font-size:0.6rem;">Largo"</label><input type="number" value="${it.l}" onchange="updateItem('${it.id}','l',this.value)"></div>
-                <div><label style="font-size:0.6rem;">Ancho"</label><input type="number" value="${it.w}" onchange="updateItem('${it.id}','w',this.value)"></div>
-                <div><label style="font-size:0.6rem;">Alto"</label><input type="number" value="${it.h}" onchange="updateItem('${it.id}','h',this.value)"></div>
-                <div><label style="font-size:0.6rem;">Peso</label><input type="number" value="${it.weight}" onchange="updateItem('${it.id}','weight',this.value)"></div>
-                <div><label style="font-size:0.6rem;">Stop</label><input type="number" value="${it.stop}" min="1" onchange="updateItem('${it.id}','stop',this.value)"></div>
-                <div><label style="font-size:0.6rem;">MaxTop</label><input type="number" value="${it.maxTop}" onchange="updateItem('${it.id}','maxTop',this.value)"></div>
-            </div>
-            <div class="item-meta">
-                <label class="checkbox-row" style="font-size:0.72rem;"><input type="checkbox" ${it.stackable?'checked':''} onchange="updateItem('${it.id}','stackable',this.checked)"> Apilable</label>
-                <label class="checkbox-row" style="font-size:0.72rem;"><input type="checkbox" ${it.fragile?'checked':''} onchange="updateItem('${it.id}','fragile',this.checked)"> FrÃ¡gil</label>
-                <span>Max:${it.maxStack}</span>
-                <span style="color:${info.color};">â— ${it.type}</span>
-            </div>
-        </div>`;
-    }).join('');
-    container.querySelectorAll('.item-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-            selectedItemId = card.dataset.id;
-            renderItemsList();
-            drawAnalysis();
+        `).join('');
+    },
+
+    // ALGORITHM: MaxRects simplified + Safety Calculations
+    optimize: () => {
+        if(state.items.length === 0) return;
+        state.items.forEach(it => { it.placed = false; it.x=0; it.y=0; });
+        
+        // Sort: Heaviest/Bulkiest first
+        const sorted = [...state.items].sort((a,b) => (b.l*b.w) - (a.l*a.w));
+        const spaces = [{ x:0, y:0, w:state.trailer.L, h:state.trailer.W }];
+
+        sorted.forEach(item => {
+            let placed = false;
+            for(let i=0; i<spaces.length; i++) {
+                const s = spaces[i];
+                if(item.l <= s.w && item.w <= s.h) {
+                    item.x = s.x; item.y = s.y; item.placed = true; placed = true;
+                    spaces.splice(i, 1);
+                    if(s.w > item.l) spaces.push({ x: s.x + item.l, y: s.y, w: s.w - item.l, h: item.w });
+                    if(s.h > item.w) spaces.push({ x: s.x, y: s.y + item.w, w: s.w, h: s.h - item.w });
+                    break;
+                }
+                // Try rotated
+                if(item.w <= s.w && item.l <= s.h) {
+                    item.x = s.x; item.y = s.y; item.placed = true; placed = true;
+                    const temp = item.l; item.l = item.w; item.w = temp; // Swap
+                    spaces.splice(i, 1);
+                    if(s.w > item.l) spaces.push({ x: s.x + item.l, y: s.y, w: s.w - item.l, h: item.w });
+                    if(s.h > item.w) spaces.push({ x: s.x, y: s.y + item.w, w: s.w, h: s.h - item.w });
+                    break;
+                }
+            }
         });
-    });
-}
 
-function calculateLoad() {
-    const trailer = getTrailer();
-    if (items.length === 0) { clearStats(); drawEmpty(); return; }
+        app.calculateSafety();
+        app.renderItems();
+        drawCanvas();
+        app.showToast("Optimización y Seguridad Calculadas");
+    },
 
-    const stacks = buildPhysicalStacks(items).sort((a, b) => {
-        if (b.stop !== a.stop) return b.stop - a.stop;
-        return (b.l * b.w) - (a.l * a.w);
-    });
+    calculateSafety: () => {
+        const placed = state.items.filter(i => i.placed);
+        const totalW = placed.reduce((s, i) => s + i.weight, 0);
+        
+        // 1. COG (Center of Gravity) - Longitudinal
+        let moment = 0;
+        placed.forEach(i => moment += i.weight * (i.x + i.l/2));
+        const cogX = totalW > 0 ? moment / totalW : 0;
 
-    const packer = new MaxRects(trailer.L, trailer.W);
-    const placedStacks = [];
-    const unplacedStacks = [];
-    let totalWeight = 0;
-    let maxHeight = 0;
-    let totalLengthUsed = 0;
-    let maxWidthUsed = 0;
+        // 2. Axle Calculation (Simplified FMCSA Bridge Formula)
+        // Kingpin @ 36", Trailer Tandems @ 420" approx.
+        const wOnKingpin = totalW * Math.max(0, (420 - cogX) / (420 - 36));
+        const wOnTrailerTandems = totalW - wOnKingpin;
+        const wOnDrive = wOnKingpin * (36 / 120); // Drive ~120" from steer
+        const wOnSteer = wOnKingpin - wOnDrive;
 
-    items.forEach(it => { it.placed = false; });
+        // Add Tractor Tare (Steer 12k, Drive 15k)
+        const finalSteer = wOnSteer + 12000;
+        const finalDrive = wOnDrive + 15000;
+        const finalTrailer = wOnTrailerTandems + 10000;
 
-    const fixed = stacks.filter(s => s.manualX !== null && s.manualY !== null);
-    const movable = stacks.filter(s => !(s.manualX !== null && s.manualY !== null));
-    for (const stack of fixed) {
-        if (stack.h > trailer.H) { unplacedStacks.push({ ...stack, reason: `Altura ${stack.h}" > ${trailer.H}"` }); continue; }
-        const placed = packer.placeAt(stack, clamp(round6(stack.manualX), 0, trailer.L - stack.l), clamp(round6(stack.manualY), 0, trailer.W - stack.w));
-        if (placed) {
-            placedStacks.push(placed);
-            placed.items.forEach(it => it.placed = true);
-            totalWeight += placed.weight;
-            maxHeight = Math.max(maxHeight, placed.h);
-            totalLengthUsed = Math.max(totalLengthUsed, placed.x + placed.l);
-            maxWidthUsed = Math.max(maxWidthUsed, placed.y + placed.w);
-        } else {
-            unplacedStacks.push({ ...stack, reason: 'Posición manual inválida' });
+        // 3. Securement Calculation (North American Cargo Securement Standard)
+        // Rule: Aggregate WLL must be >= 50% of cargo weight.
+        // Assume standard 2" Ratchet Strap (WLL 1000 lbs) and Grade 43 Chain (WLL 3400 lbs).
+        let strapsNeeded = 0, chainsNeeded = 0;
+        if(totalW > 0) {
+            const wllRequired = totalW * 0.5;
+            // Use chains for heavy items (>10k), straps for rest
+            if(totalW > 10000) {
+                chainsNeeded = Math.ceil(wllRequired / 3400);
+                strapsNeeded = 2; // Minimum 2 straps for any load
+            } else {
+                strapsNeeded = Math.max(2, Math.ceil(wllRequired / 1000));
+            }
         }
+
+        // Forward Force Check (0.8g - 0.8 * weight must be resisted by blocking or friction)
+        // Assume friction coefficient 0.4 for dry van. Need to resist 0.4g forward.
+        const forwardForce = totalW * 0.8;
+        const frictionResistance = totalW * 0.4;
+        const needsBlocking = forwardForce > frictionResistance + (strapsNeeded * 1000 * 0.5); // Simplified logic
+
+        state.analysis = {
+            totalW, cogX,
+            axles: { steer: finalSteer, drive: finalDrive, trailer: finalTrailer },
+            securement: { straps: strapsNeeded, chains: chainsNeeded, needsBlocking }
+        };
+
+        app.updateStats();
+    },
+
+    updateStats: () => {
+        if(!state.analysis) return;
+        const a = state.analysis;
+        
+        // Update Gauges
+        const steerPct = Math.min(100, (a.axles.steer / 12000) * 100);
+        const drivePct = Math.min(100, (a.axles.drive / 34000) * 100);
+        const trailerPct = Math.min(100, (a.axles.trailer / 34000) * 100);
+
+        document.getElementById('axleSteerTxt').innerText = `${Math.round(a.axles.steer).toLocaleString()} / 12,000 lbs`;
+        document.getElementById('axleDriveTxt').innerText = `${Math.round(a.axles.drive).toLocaleString()} / 34,000 lbs`;
+        document.getElementById('axleTrailerTxt').innerText = `${Math.round(a.axles.trailer).toLocaleString()} / 34,000 lbs`;
+
+        document.getElementById('gaugeSteer').style.width = steerPct + '%';
+        document.getElementById('gaugeDrive').style.width = drivePct + '%';
+        document.getElementById('gaugeTrailer').style.width = trailerPct + '%';
+
+        const colorSteer = steerPct > 100 ? 'var(--danger)' : steerPct > 85 ? 'var(--warning)' : 'var(--success)';
+        document.getElementById('gaugeSteer').style.background = colorSteer;
+        const colorDrive = drivePct > 100 ? 'var(--danger)' : drivePct > 85 ? 'var(--warning)' : 'var(--success)';
+        document.getElementById('gaugeDrive').style.background = colorDrive;
+        const colorTrailer = trailerPct > 100 ? 'var(--danger)' : trailerPct > 85 ? 'var(--warning)' : 'var(--success)';
+        document.getElementById('gaugeTrailer').style.background = colorTrailer;
+
+        // Update Traffic Lights
+        const sW = document.getElementById('statusWeight');
+        sW.className = 'status-light ' + (a.totalW > state.trailer.cap ? 'status-danger' : 'status-safe');
+        sW.innerHTML = `<i></i> Peso Total: ${a.totalW.toLocaleString()} / ${state.trailer.cap.toLocaleString()} lbs`;
+
+        const sA = document.getElementById('statusAxles');
+        const axlesOK = steerPct <= 100 && drivePct <= 100 && trailerPct <= 100;
+        sA.className = 'status-light ' + (axlesOK ? 'status-safe' : 'status-danger');
+        sA.innerHTML = `<i></i> Ejes (DOT): ${axlesOK ? 'Dentro de Límites' : 'Sobrecarga Excedida'}`;
+
+        // Securement Details
+        const sS = document.getElementById('statusSecurement');
+        const sec = a.securement;
+        let secMsg = `Necesitas <strong>${sec.straps} correas</strong>`;
+        if(sec.chains > 0) secMsg += ` y <strong>${sec.chains} cadenas</strong>`;
+        if(sec.needsBlocking) secMsg += ` + <strong>Bloqueo frontal</strong> (Calzos de madera)`;
+        
+        sS.className = 'status-light ' + (sec.needsBlocking ? 'status-warn' : 'status-safe');
+        sS.innerHTML = `<i></i> Sujeción: ${secMsg}`;
+
+        document.getElementById('securementDetails').innerHTML = `
+            <p>📋 <strong>Norma:</strong> North American Cargo Securement (FMCSA).</p>
+            <p>⚖️ <strong>Requisito WLL:</strong> La capacidad total de las correas debe ser al menos el 50% del peso de la carga (${(a.totalW*0.5).toLocaleString()} lbs).</p>
+            <p>🛑 <strong>Fuerza Hacia Adelante:</strong> ${sec.needsBlocking ? 'El rozamiento solo no basta. Usa calzos contra la pared frontal.' : 'El rozamiento y las correas son suficientes.'}</p>
+        `;
+    },
+
+    exportPNG: () => {
+        const link = document.createElement('a');
+        link.download = 'omega-load-plan.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    },
+
+    showToast: (msg) => {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
     }
-    movable.forEach(stack => {
-        if (stack.h > trailer.H) { unplacedStacks.push({ ...stack, reason: `Altura ${stack.h}" > ${trailer.H}"` }); return; }
-        const placed = packer.place(stack);
-        if (placed) {
-            placedStacks.push(placed);
-            placed.items.forEach(it => it.placed = true);
-            totalWeight += placed.weight;
-            maxHeight = Math.max(maxHeight, placed.h);
-            totalLengthUsed = Math.max(totalLengthUsed, placed.x + placed.l);
-            maxWidthUsed = Math.max(maxWidthUsed, placed.y + placed.w);
-        } else {
-            unplacedStacks.push({ ...stack, reason: 'Sin espacio' });
-        }
-    });
+};
 
-    let momentX = 0, momentY = 0, momentZ = 0, placedWeight = 0;
-    placedStacks.forEach(p => {
-        const cx = p.x + p.l / 2, cy = p.y + p.w / 2, cz = p.h / 2;
-        momentX += p.weight * cx; momentY += p.weight * cy; momentZ += p.weight * cz;
-        placedWeight += p.weight;
-    });
-    const cogX = placedWeight > 0 ? momentX / placedWeight : 0;
-    const cogY = placedWeight > 0 ? momentY / placedWeight : 0;
-    const cogZ = placedWeight > 0 ? momentZ / placedWeight : 0;
-    const axleLoads = calculateAxleLoads(totalWeight, cogX, trailer);
+// --- RENDER ENGINE ---
+function drawCanvas() {
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const warnings = [];
-    const recommendations = [];
-    const usedArea = placedStacks.reduce((s, p) => s + p.l * p.w, 0);
-    const efficiency = {
-        area: (usedArea / (trailer.L * trailer.W)) * 100,
-        weight: (totalWeight / trailer.maxW) * 100,
-        volume: placedStacks.reduce((s, p) => s + p.l * p.w * p.h, 0) / (trailer.L * trailer.W * trailer.H) * 100
-    };
+    const t = state.trailer;
+    const margin = 60;
+    const scale = Math.min((canvas.width - margin*2) / t.L, (canvas.height - margin*2) / t.W);
+    const tw = t.L * scale;
+    const th = t.W * scale;
+    const offX = (canvas.width - tw) / 2;
+    const offY = (canvas.height - th) / 2;
 
-    if (unplacedStacks.length > 0) {
-        warnings.push(`${unplacedStacks.length} stack(s) no caben.`);
-        recommendations.push('Considere trailer adicional o reduzca carga.');
-    }
-    if (maxHeight > trailer.H) warnings.push(`Altura ${maxHeight}" excede ${trailer.H}".`);
-    if (totalWeight > trailer.maxW) warnings.push(`Peso ${totalWeight.toLocaleString()} lbs excede ${trailer.maxW.toLocaleString()} lbs.`);
-    if (axleLoads.steer > 12000) warnings.push(`Steer axle: ${axleLoads.steer.toFixed(0)} lbs > 12,000 lbs (FMCSA).`);
-    if (axleLoads.drive > axleLoads.driveLimit) warnings.push(`Drive tandem: ${axleLoads.drive.toFixed(0)} lbs > ${axleLoads.driveLimit.toLocaleString()} lbs (Bridge Formula).`);
-    if (axleLoads.trailer > axleLoads.trailerLimit) warnings.push(`Trailer tandem: ${axleLoads.trailer.toFixed(0)} lbs > ${axleLoads.trailerLimit.toLocaleString()} lbs (Bridge Formula).`);
-    if (!axleLoads.bridgeOK) warnings.push('Distribución NO cumple Bridge Formula Federal.');
-    const lateralImbalance = Math.abs(cogY - trailer.W/2) / (trailer.W/2);
-    if (lateralImbalance > 0.15) warnings.push(`Desbalance lateral: ${(lateralImbalance*100).toFixed(0)}%. Riesgo de volcadura.`);
-    if (cogX < trailer.L * 0.2) recommendations.push('COG muy adelante. Sobrecarga en ejes tractor.');
-    if (cogX > trailer.L * 0.7) recommendations.push('COG muy atrás. Riesgo de levantar eje delantero.');
-    placedStacks.forEach(s => { if (s.stability < 0.3) warnings.push(`Stack "${s.name}" inestable (ratio ${s.stability.toFixed(2)}). Riesgo de vuelco.`); });
+    // Trailer Floor
+    ctx.fillStyle = '#0f172a';
+    roundRect(ctx, offX, offY, tw, th, 8); ctx.fill();
+    ctx.strokeStyle = '#475569'; ctx.lineWidth = 4;
+    roundRect(ctx, offX, offY, tw, th, 8); ctx.stroke();
 
-    analysisResult = { trailer, placedStacks, unplacedStacks, totalWeight, placedWeight, maxHeight, totalLengthUsed, maxWidthUsed, cogX, cogY, cogZ, axleLoads, warnings, recommendations, efficiency, attempted:true };
-    updateStats();
-    drawAnalysis();
-    renderCanvasLegend();
-}
-
-function calculateScore(a) {
-    const placedScore = a.placedStacks.length * 100;
-    const effScore = a.efficiency.area * 2 + a.efficiency.weight;
-    const warnPen = a.warnings.length * 300;
-    const balanceScore = 100 - Math.abs(a.cogX - a.trailer.L/2) / a.trailer.L * 100;
-    const bridgeBonus = a.axleLoads.bridgeOK ? 200 : 0;
-    return placedScore + effScore - warnPen + balanceScore + bridgeBonus;
-}
-
-function optimizeAutomatically() {
-    if (items.length === 0) return;
-    const original = JSON.parse(JSON.stringify(items));
-    const strategies = [
-        (a,b) => b.stop - a.stop || (b.l*b.w)-(a.l*a.w),
-        (a,b) => (b.l*b.w)-(a.l*a.w) || b.stop - a.stop,
-        (a,b) => b.weight - a.weight || b.stop - a.stop
-    ];
-    let bestScore = -Infinity;
-    let bestItems = null;
-    strategies.forEach(sortFn => {
-        const temp = JSON.parse(JSON.stringify(original)).map(x => ({ ...x, manualX:null, manualY:null }));
-        temp.sort(sortFn);
-        items = temp;
-        calculateLoad();
-        if (analysisResult) {
-            const s = calculateScore(analysisResult);
-            if (s > bestScore) { bestScore = s; bestItems = JSON.parse(JSON.stringify(items)); }
-        }
-    });
-    if (bestItems) {
-        items = bestItems.map(x => ({ ...x, manualX:null, manualY:null }));
-        calculateLoad();
-        showToast(`Optimización completada (${bestScore.toFixed(0)} pts)`);
-    } else {
-        items = original;
-        calculateLoad();
-    }
-}
-
-function updateStats() {
-    if (!analysisResult) return;
-    const a = analysisResult;
-    const t = a.trailer;
-    document.getElementById('stTotalWeight').textContent = a.totalWeight.toLocaleString();
-    document.getElementById('stTotalItems').textContent = items.length;
-    document.getElementById('stPlaced').textContent = a.placedStacks.length;
-    document.getElementById('stMaxHeight').textContent = a.maxHeight + '" / ' + t.H + '"';
-    document.getElementById('stLengthUsed').textContent = a.totalLengthUsed.toFixed(0) + '" / ' + t.L + '"';
-    document.getElementById('stWeightPct').textContent = a.efficiency.weight.toFixed(1) + '%';
-    document.getElementById('stCOGX').textContent = a.cogX.toFixed(1) + '"';
-    document.getElementById('stCOGY').textContent = a.cogY.toFixed(1) + '"';
-    document.getElementById('stCOGZ').textContent = a.cogZ.toFixed(1) + '"';
-    document.getElementById('stSteer').textContent = a.axleLoads.steer.toFixed(0);
-    document.getElementById('stDrive').textContent = a.axleLoads.drive.toFixed(0);
-    document.getElementById('stTrailer').textContent = a.axleLoads.trailer.toFixed(0);
-    document.getElementById('stBridge').textContent = a.axleLoads.bridgeOK ? 'âœ“' : 'âœ—';
-    document.getElementById('stBridge').style.color = a.axleLoads.bridgeOK ? '#10b981' : '#ef4444';
-
-    const warnDiv = document.getElementById('warningsArea');
-    warnDiv.innerHTML = a.warnings.length > 0
-        ? `<div class="warning-box"><strong>âš ï¸ ALERTAS DOT/FÃSICAS:</strong><ul style="margin:6px 0 0 18px;">${a.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul></div>`
-        : `<div class="ok-box">âœ… Cumple FMCSA & Bridge Formula. Sin advertencias.</div>`;
-    const recDiv = document.getElementById('recommendationsArea');
-    recDiv.innerHTML = a.recommendations.length > 0
-        ? `<div class="info-box"><strong>ðŸ’¡ Recomendaciones:</strong><ul style="margin:4px 0 0 18px;">${a.recommendations.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>`
-        : '';
-    const effDiv = document.getElementById('efficiencyArea');
-    effDiv.innerHTML = `
-        <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.8rem; color:#94a3b8;">
-            <span>ðŸ“ Ãrea: <strong style="color:#e2e8f0;">${a.efficiency.area.toFixed(1)}%</strong></span>
-            <span>âš–ï¸ Peso: <strong style="color:#e2e8f0;">${a.efficiency.weight.toFixed(1)}%</strong></span>
-            <span>ðŸ“¦ Vol: <strong style="color:#e2e8f0;">${a.efficiency.volume.toFixed(1)}%</strong></span>
-            <span>ðŸŽ¯ Score: <strong style="color:${a.axleLoads.bridgeOK && a.warnings.length===0 ? '#10b981' : '#f59e0b'};">${calculateScore(a).toFixed(0)}</strong></span>
-        </div>`;
-}
-
-function clearStats() {
-    ['stTotalWeight','stTotalItems','stPlaced','stMaxHeight','stLengthUsed','stWeightPct','stCOGX','stCOGY','stCOGZ','stSteer','stDrive','stTrailer'].forEach(id => document.getElementById(id).textContent = '0');
-    document.getElementById('stBridge').textContent = '-';
-    document.getElementById('stBridge').style.color = '#94a3b8';
-    document.getElementById('warningsArea').innerHTML = '';
-    document.getElementById('recommendationsArea').innerHTML = '';
-    document.getElementById('efficiencyArea').innerHTML = '';
-}
-
-function getMetrics() {
-    const t = analysisResult ? analysisResult.trailer : getTrailer();
-    const margin = 50;
-    const availW = canvas.width - margin * 2;
-    const availH = canvas.height - margin * 2;
-    const scale = Math.min(availW / t.L, availH / t.W) * 0.95;
-    const offX = margin + (availW - t.L * scale) / 2;
-    const offY = margin + (availH - t.W * scale) / 2;
-    return { t, scale, offX, offY };
-}function drawEmpty() {
-    const { t, scale, offX, offY } = getMetrics();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const tw = t.L * scale, th = t.W * scale;
-    ctx.fillStyle = '#0f172a'; ctx.fillRect(offX, offY, tw, th);
-    ctx.strokeStyle = '#334155'; ctx.lineWidth = 3; ctx.strokeRect(offX, offY, tw, th);
+    // Grid
     ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
-    for (let x = 0; x <= t.L; x += 48) { const gx = offX + x * scale; ctx.beginPath(); ctx.moveTo(gx, offY); ctx.lineTo(gx, offY + th); ctx.stroke(); }
-    for (let y = 0; y <= t.W; y += 48) { const gy = offY + y * scale; ctx.beginPath(); ctx.moveTo(offX, gy); ctx.lineTo(offX + tw, gy); ctx.stroke(); }
-    ctx.fillStyle = '#475569'; ctx.font = '13px Segoe UI'; ctx.fillText(`${t.name} â€” Agrega carga y calcula`, offX, offY - 10);
-    renderCanvasLegend();
-}
+    for(let x=0; x<=t.L; x+=50) { ctx.beginPath(); ctx.moveTo(offX + x*scale, offY); ctx.lineTo(offX + x*scale, offY + th); ctx.stroke(); }
+    for(let y=0; y<=t.W; y+=50) { ctx.beginPath(); ctx.moveTo(offX, offY + y*scale); ctx.lineTo(offX + tw, offY + y*scale); ctx.stroke(); }
 
-function projectIso(x, y, z, s, ox, oy) {
-    const angle = Math.PI / 6;
-    return {
-        x: ox + (x - y) * Math.cos(angle) * s,
-        y: oy + (x + y) * Math.sin(angle) * 0.5 * s - z * s * 0.8
-    };
-}
+    // Labels
+    ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('🚛 NARIZ (Front)', offX, offY - 15);
+    ctx.textAlign = 'right';
+    ctx.fillText('PUERTAS (Back)', offX + tw, offY - 15);
 
-function drawBox3D(x, y, z, l, w, h, color, selected, label) {
-    const p0 = projectIso(x, y, z, 0.55, 0, 0);
-    const ox = p0.x, oy = p0.y;
-    const p = (xx, yy, zz) => projectIso(x + xx, y + yy, z + zz, 0.55, 0, 0);
-    const top = [p(0,0,h), p(l,0,h), p(l,w,h), p(0,w,h)];
-    const left = [p(0,0,0), p(0,w,0), p(0,w,h), p(0,0,h)];
-    const right = [p(0,0,0), p(l,0,0), p(l,0,h), p(0,0,h)];
-    ctx.save();
-    ctx.translate(260, 90);
-    ctx.fillStyle = rgbToRgba(color, selected ? 0.75 : 0.45);
-    ctx.strokeStyle = selected ? '#ffffff' : color;
-    ctx.lineWidth = selected ? 2 : 1;
-    ctx.beginPath(); top.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = rgbToRgba(color, selected ? 0.58 : 0.28);
-    ctx.beginPath(); left.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = rgbToRgba(color, selected ? 0.68 : 0.36);
-    ctx.beginPath(); right.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-    if (label) {
-        const c = top.reduce((a,p) => ({ x:a.x+p.x/4, y:a.y+p.y/4 }), { x:0, y:0 });
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(label, c.x, c.y - 4);
-    }
-    ctx.restore();
-}
+    // Draw Items
+    state.items.forEach(item => {
+        if(!item.placed) return;
+        const x = offX + item.x * scale;
+        const y = offY + item.y * scale;
+        const w = item.l * scale;
+        const h = item.w * scale;
+        
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(x+3, y+3, w, h);
+        
+        // Box
+        ctx.fillStyle = COLORS[item.type] || '#64748b';
+        ctx.globalAlpha = 0.8;
+        roundRect(ctx, x, y, w, h, 4); ctx.fill();
+        ctx.globalAlpha = 1;
+        
+        // Border
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
+        roundRect(ctx, x, y, w, h, 4); ctx.stroke();
 
-function drawAnalysis() {
-    if (!analysisResult) return drawEmpty();
-    const view = currentView;
-    const { t, scale, offX, offY } = getMetrics();
-    const tw = t.L * scale, th = t.W * scale;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    if (view === 'top' || view === 'heatmap') {
-        ctx.fillStyle = '#0f172a'; ctx.fillRect(offX, offY, tw, th);
-        ctx.strokeStyle = '#475569'; ctx.lineWidth = 4; ctx.strokeRect(offX, offY, tw, th);
-        if (t.kingpin > 0) {
-            const kx = offX + t.kingpin * scale;
-            ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.arc(kx, offY + th + 10, 4, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#f59e0b'; ctx.font = '9px Segoe UI'; ctx.fillText('Kingpin', kx - 12, offY + th + 22);
-        }
-        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
-        for (let x = 0; x <= t.L; x += 48) { const gx = offX + x * scale; ctx.beginPath(); ctx.moveTo(gx, offY); ctx.lineTo(gx, offY + th); ctx.stroke(); }
-        for (let y = 0; y <= t.W; y += 48) { const gy = offY + y * scale; ctx.beginPath(); ctx.moveTo(offX, gy); ctx.lineTo(offX + tw, gy); ctx.stroke(); }
-
-        analysisResult.placedStacks.forEach(stack => {
-            const sx = offX + stack.x * scale, sy = offY + stack.y * scale;
-            const sw = stack.l * scale, sh = stack.w * scale;
-            const color = CARGO_TYPES[stack.type].color;
-            const isSel = stack.items.some(it => it.id === selectedItemId);
-            ctx.fillStyle = view === 'heatmap'
-                ? `rgba(${Math.floor(16 + Math.min(stack.weight / 4000, 1) * 220)},${Math.floor(185 * (1 - Math.min(stack.weight / 4000, 1)))},${Math.floor(129 * (1 - Math.min(stack.weight / 4000, 1)))},0.75)`
-                : (isSel ? color + '80' : color + '45');
-            if (isSel) { ctx.shadowColor = color; ctx.shadowBlur = 12; }
-            ctx.fillRect(sx, sy, sw, sh);
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = isSel ? '#fff' : color;
-            ctx.lineWidth = isSel ? 2.5 : 1.2;
-            ctx.strokeRect(sx, sy, sw, sh);
-            if (stack.stability < 0.3) {
-                ctx.fillStyle = '#ef4444';
-                ctx.beginPath(); ctx.moveTo(sx + sw - 10, sy); ctx.lineTo(sx + sw, sy); ctx.lineTo(sx + sw, sy + 10); ctx.closePath(); ctx.fill();
-            }
-            if (sw > 35 && sh > 22) {
-                ctx.fillStyle = '#fff'; ctx.font = isSel ? 'bold 10px Segoe UI' : '9px Segoe UI';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(stack.items.length > 1 ? `Ã—${stack.items.length}` : stack.name.substring(0, 8), sx + sw/2, sy + sh/2 - 5);
-                ctx.font = '8px Segoe UI'; ctx.fillStyle = '#e2e8f0';
-                ctx.fillText(`${stack.weight}lbs`, sx + sw/2, sy + sh/2 + 5);
-                ctx.fillStyle = '#94a3b8'; ctx.font = '8px Segoe UI';
-                ctx.fillText(`S${stack.stop}`, sx + sw/2, sy + sh/2 + 14);
-            }
-        });
-        let nx = offX + tw + 20, ny = offY;
-        analysisResult.unplacedStacks.forEach(stack => {
-            const uw = Math.min(stack.l * scale * 0.5, 70);
-            const uh = Math.min(stack.w * scale * 0.5, 70);
-            if (ny + uh > offY + th) { ny = offY; nx += 80; }
-            const color = CARGO_TYPES[stack.type].color;
-            ctx.fillStyle = color + '25';
-            ctx.strokeStyle = '#ef4444'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5;
-            ctx.fillRect(nx, ny, uw, uh); ctx.strokeRect(nx, ny, uw, uh); ctx.setLineDash([]);
-            ctx.fillStyle = '#ef4444'; ctx.font = '8px Segoe UI'; ctx.textAlign = 'center';
-            ctx.fillText('NO CABE', nx + uw/2, ny + uh/2);
-            ny += uh + 6;
-        });
-        ctx.fillStyle = '#94a3b8'; ctx.font = '12px Segoe UI'; ctx.textAlign = 'left';
-        ctx.fillText(view === 'heatmap' ? 'Heatmap Peso' : `Planta â€” ${t.name}`, offX, offY - 12);
-        ctx.fillStyle = '#64748b'; ctx.font = '9px Segoe UI';
-        for (let x = 0; x <= t.L; x += 120) ctx.fillText(x + '"', offX + x * scale + 2, offY + th + 12);
-    } else if (view === 'side') {
-        const sScale = Math.min((canvas.width - 100) / t.L, (canvas.height - 100) / t.H) * 0.9;
-        const soffX = 50 + ((canvas.width - 100) - t.L * sScale) / 2;
-        const soffY = 50 + ((canvas.height - 100) - t.H * sScale) / 2;
-        const stw = t.L * sScale, sth = t.H * sScale;
-        ctx.fillStyle = '#0f172a'; ctx.fillRect(soffX, soffY, stw, sth);
-        ctx.strokeStyle = '#475569'; ctx.lineWidth = 4; ctx.strokeRect(soffX, soffY, stw, sth);
-        ctx.fillStyle = '#334155'; ctx.fillRect(soffX, soffY + sth - 3, stw, 3);
-        if (t.kingpin > 0) {
-            const kx = soffX + t.kingpin * sScale;
-            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
-            ctx.beginPath(); ctx.moveTo(kx, soffY); ctx.lineTo(kx, soffY + sth); ctx.stroke(); ctx.setLineDash([]);
-        }
-        analysisResult.placedStacks.forEach(stack => {
-            const sx = soffX + stack.x * sScale;
-            const sy = soffY + sth - stack.h * sScale;
-            const sw = stack.l * sScale;
-            const sh = stack.h * sScale;
-            const color = CARGO_TYPES[stack.type].color;
-            const isSel = stack.items.some(it => it.id === selectedItemId);
-            ctx.fillStyle = isSel ? color + '70' : color + '40';
-            ctx.strokeStyle = isSel ? '#fff' : color;
-            ctx.lineWidth = isSel ? 2.2 : 1;
-            ctx.fillRect(sx, sy, sw, sh);
-            ctx.strokeRect(sx, sy, sw, sh);
-            ctx.fillStyle = '#fff'; ctx.font = '9px Segoe UI'; ctx.textAlign = 'center';
-            ctx.fillText(stack.items.length > 1 ? `Ã—${stack.items.length}` : stack.name.substring(0, 10), sx + sw/2, sy + sh/2 - 4);
-            ctx.fillStyle = '#cbd5e1'; ctx.font = '8px Segoe UI';
-            ctx.fillText(`${stack.h}"`, sx + sw/2, sy + sh/2 + 6);
-        });
-        ctx.fillStyle = '#94a3b8'; ctx.font = '12px Segoe UI'; ctx.textAlign = 'left';
-        ctx.fillText(`Perfil â€” ${t.name}`, soffX, soffY - 12);
-    } else if (view === 'iso') {
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(40, 40, canvas.width - 80, canvas.height - 80);
-        const colorBase = '#1e293b';
-        ctx.strokeStyle = colorBase;
-        ctx.lineWidth = 2;
-        const originX = canvas.width * 0.36;
-        const originY = canvas.height * 0.74;
-        const scaleIso = Math.min((canvas.width - 180) / t.L, (canvas.height - 160) / (t.W * 1.5), 1.15);
-        const projectedBase = (x, y, z) => {
-            const angle = Math.PI / 6;
-            return {
-                x: originX + (x - y) * Math.cos(angle) * scaleIso,
-                y: originY + (x + y) * Math.sin(angle) * 0.5 * scaleIso - z * 0.8 * scaleIso
-            };
-        };
-        const box = (stack) => {
-            const p = (xx, yy, zz) => projectedBase(stack.x + xx, stack.y + yy, zz);
-            const top = [p(0,0,stack.h), p(stack.l,0,stack.h), p(stack.l,stack.w,stack.h), p(0,stack.w,stack.h)];
-            const left = [p(0,0,0), p(0,stack.w,0), p(0,stack.w,stack.h), p(0,0,stack.h)];
-            const right = [p(0,0,0), p(stack.l,0,0), p(stack.l,0,stack.h), p(0,0,stack.h)];
-            const color = CARGO_TYPES[stack.type].color;
-            const isSel = stack.items.some(it => it.id === selectedItemId);
-            ctx.save();
-            ctx.fillStyle = isSel ? color + '70' : color + '40';
-            ctx.strokeStyle = isSel ? '#fff' : color;
-            ctx.lineWidth = isSel ? 2 : 1;
-            ctx.beginPath(); top.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = isSel ? color + '55' : color + '25';
-            ctx.beginPath(); left.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = isSel ? color + '60' : color + '30';
-            ctx.beginPath(); right.forEach((pt, i) => i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
-            const c = top.reduce((acc, pt) => ({ x: acc.x + pt.x/4, y: acc.y + pt.y/4 }), { x:0, y:0 });
-            ctx.fillStyle = '#fff'; ctx.font = '9px Segoe UI'; ctx.textAlign = 'center';
-            ctx.fillText(stack.items.length > 1 ? `Ã—${stack.items.length}` : stack.name.substring(0, 8), c.x, c.y - 2);
-            ctx.fillText(`${stack.weight}lbs`, c.x, c.y + 8);
-            ctx.restore();
-        };
-        analysisResult.placedStacks.slice().sort((a,b) => a.x + a.y - (b.x + b.y)).forEach(box);
-        ctx.fillStyle = '#94a3b8'; ctx.font = '12px Segoe UI'; ctx.textAlign = 'left';
-        ctx.fillText(`IsomÃ©trico 3D â€” ${t.name}`, 60, 40);
-    }
-    renderCanvasLegend();
-}
-
-function renderCanvasLegend() {
-    const legend = document.getElementById('canvasLegend');
-    const itemsLegend = [
-        ['Planta', '#3b82f6'],
-        ['Perfil', '#8b5cf6'],
-        ['3D', '#10b981'],
-        ['Heatmap', '#f59e0b']
-    ];
-    legend.innerHTML = itemsLegend.map(([label, color]) => `<span class="legend-item"><span class="legend-color" style="background:${color}"></span>${label}</span>`).join('');
-}
-
-function setView(view) {
-    currentView = view;
-    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
-    drawAnalysis();
-}
-
-function syncTrailerFields() {
-    const t = getTrailer();
-    document.getElementById('trailerL').value = t.L;
-    document.getElementById('trailerW').value = t.W;
-    document.getElementById('trailerH').value = t.H;
-    document.getElementById('trailerMaxW').value = t.maxW;
-    document.getElementById('kingpin').value = t.kingpin;
-    document.getElementById('trailerAxleDist').value = t.tandems;
-    calculateLoad();
-}
-
-function downloadText(filename, text) {
-    const blob = new Blob([text], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
-}
-
-function saveJson() {
-    const payload = { trailer: getTrailer(), items, currentView };
-    downloadText('omega-load-plan.json', JSON.stringify(payload, null, 2));
-    showToast('JSON guardado');
-}
-
-function loadJsonFile(file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-        try {
-            const data = JSON.parse(reader.result);
-            if (data.items) items = data.items.map(x => ({ manualX:null, manualY:null, placed:false, x:0, y:0, ...x }));
-            if (data.currentView) currentView = data.currentView;
-            if (data.trailer) {
-                const sel = Object.entries(TRAILERS).find(([k,v]) => v.L === data.trailer.L && v.W === data.trailer.W && v.H === data.trailer.H) ? Object.entries(TRAILERS).find(([k,v]) => v.L === data.trailer.L && v.W === data.trailer.W && v.H === data.trailer.H)[0] : 'custom';
-                document.getElementById('trailerSelect').value = sel;
-                document.getElementById('trailerL').value = data.trailer.L;
-                document.getElementById('trailerW').value = data.trailer.W;
-                document.getElementById('trailerH').value = data.trailer.H;
-                document.getElementById('trailerMaxW').value = data.trailer.maxW;
-                document.getElementById('kingpin').value = data.trailer.kingpin;
-                document.getElementById('trailerAxleDist').value = data.trailer.tandems;
-            }
-            document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
-            renderItemsList();
-            calculateLoad();
-            showToast('JSON cargado');
-        } catch (err) {
-            alert('No se pudo leer el JSON: ' + err.message);
-        }
-    };
-    reader.readAsText(file);
-}
-
-function exportPng() {
-    const a = document.createElement('a');
-    a.download = 'omega-load-plan.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-    showToast('PNG exportado');
-}
-
-function rotateSelectedStack() {
-    const stack = getSelectedStack();
-    if (!stack) return;
-    stack.items.forEach(it => {
-        const tmp = it.l; it.l = it.w; it.w = tmp;
-        if (it.manualX !== null && it.manualY !== null) {
-            const tmp2 = it.manualX; it.manualX = it.manualY; it.manualY = tmp2;
+        // Text
+        if(w > 40 && h > 30) {
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Segoe UI'; ctx.textAlign = 'center';
+            ctx.fillText(`${item.weight} lbs`, x + w/2, y + h/2);
         }
     });
-    calculateLoad();
-}
 
-function deleteSelected() {
-    const stack = getSelectedStack();
-    if (!stack) return;
-    const ids = new Set(stack.items.map(it => it.id));
-    items = items.filter(it => !ids.has(it.id));
-    selectedItemId = null;
-    renderItemsList();
-    calculateLoad();
-}
-
-function hitTestStack(mx, my) {
-    if (!analysisResult || (currentView !== 'top' && currentView !== 'heatmap')) return null;
-    const { t, scale, offX, offY } = getMetrics();
-    const x = (mx - offX) / scale;
-    const y = (my - offY) / scale;
-    return analysisResult.placedStacks.find(stack => x >= stack.x && x <= stack.x + stack.l && y >= stack.y && y <= stack.y + stack.w) || null;
-}
-
-function handleCanvasPointerStart(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    const mx = (clientX - rect.left) * (canvas.width / rect.width);
-    const my = (clientY - rect.top) * (canvas.height / rect.height);
-    const stack = hitTestStack(mx, my);
-    if (!stack) return;
-    selectedItemId = stack.items[0].id;
-    renderItemsList();
-    drawAnalysis();
-    isDragging = true;
-    dragStackId = stack.items[0].id;
-    dragOffset = { x: mx, y: my };
-}
-
-function handleCanvasPointerMove(clientX, clientY) {
-    if (!isDragging || !analysisResult) return;
-    const rect = canvas.getBoundingClientRect();
-    const mx = (clientX - rect.left) * (canvas.width / rect.width);
-    const my = (clientY - rect.top) * (canvas.height / rect.height);
-    const { scale, offX, offY } = getMetrics();
-    const stack = analysisResult.placedStacks.find(s => s.items.some(it => it.id === dragStackId));
-    if (!stack) return;
-    const nx = round6((mx - offX) / scale - stack.l / 2);
-    const ny = round6((my - offY) / scale - stack.w / 2);
-    stack.items.forEach(it => {
-        it.manualX = clamp(nx, 0, getTrailer().L - stack.l);
-        it.manualY = clamp(ny, 0, getTrailer().W - stack.w);
-    });
-    calculateLoad();
-}
-
-function handleCanvasPointerEnd() {
-    if (!isDragging) return;
-    isDragging = false;
-    dragStackId = null;
-}
-
-canvas.addEventListener('mousedown', (e) => {
-    handleCanvasPointerStart(e.clientX, e.clientY);
-});
-canvas.addEventListener('touchstart', (e) => {
-    if (!e.touches || e.touches.length === 0) return;
-    const touch = e.touches[0];
-    handleCanvasPointerStart(touch.clientX, touch.clientY);
-    e.preventDefault();
-}, { passive: false });
-window.addEventListener('mousemove', (e) => {
-    handleCanvasPointerMove(e.clientX, e.clientY);
-});
-canvas.addEventListener('touchmove', (e) => {
-    if (!e.touches || e.touches.length === 0) return;
-    const touch = e.touches[0];
-    handleCanvasPointerMove(touch.clientX, touch.clientY);
-    e.preventDefault();
-}, { passive: false });
-window.addEventListener('mouseup', () => {
-    handleCanvasPointerEnd();
-});
-canvas.addEventListener('touchend', () => {
-    handleCanvasPointerEnd();
-});
-
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        const panelOpen = document.getElementById('manualPanel').classList.contains('active');
-        if (panelOpen) toggleManual();
+    // Draw COG Marker (Center of Gravity)
+    if(state.analysis && state.analysis.cogX > 0) {
+        const cogX = offX + state.analysis.cogX * scale;
+        const cogY = offY + (t.W/2) * scale; // Assuming balanced laterally
+        
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cogX - 15, cogY); ctx.lineTo(cogX + 15, cogY);
+        ctx.moveTo(cogX, cogY - 15); ctx.lineTo(cogX, cogY + 15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath(); ctx.arc(cogX, cogY, 6, 0, Math.PI*2); ctx.fill();
+        
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
+        ctx.fillText('COG', cogX, cogY - 18);
     }
-    if (!selectedItemId) return;
-    if (e.key.toLowerCase() === 'r') rotateSelectedStack();
-    if (e.key === 'Delete') deleteSelected();
-});
-
-document.getElementById('addBtn').addEventListener('click', addItem);
-document.getElementById('clearBtn').addEventListener('click', clearAll);
-document.getElementById('saveJsonBtn').addEventListener('click', saveJson);
-document.getElementById('loadJsonInput').addEventListener('change', e => { if (e.target.files[0]) loadJsonFile(e.target.files[0]); });
-document.getElementById('demo1Btn').addEventListener('click', () => loadDemo(1));
-document.getElementById('demo2Btn').addEventListener('click', () => loadDemo(2));
-document.getElementById('demo3Btn').addEventListener('click', () => loadDemo(3));
-document.getElementById('optimizeBtn').addEventListener('click', optimizeAutomatically);
-document.getElementById('exportPngBtn').addEventListener('click', exportPng);
-document.getElementById('printBtn').addEventListener('click', () => window.print());
-document.getElementById('trailerSelect').addEventListener('change', syncTrailerFields);
-document.getElementById('trailerL').addEventListener('change', calculateLoad);
-document.getElementById('trailerW').addEventListener('change', calculateLoad);
-document.getElementById('trailerH').addEventListener('change', calculateLoad);
-document.getElementById('trailerMaxW').addEventListener('change', calculateLoad);
-document.getElementById('kingpin').addEventListener('change', calculateLoad);
-document.getElementById('trailerAxleDist').addEventListener('change', calculateLoad);
-document.getElementById('steerDriveDist').addEventListener('change', calculateLoad);
-document.getElementById('taraTractor').addEventListener('change', calculateLoad);
-document.getElementById('cargoTypeSelector').addEventListener('click', (e) => {
-    const btn = e.target.closest('.cargo-type-btn');
-    if (!btn) return;
-    document.querySelectorAll('.cargo-type-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const type = btn.dataset.type;
-    const presets = {
-        pallet: [48, 40, 48, 1500, true, 2, false, 5000],
-        caja: [36, 36, 36, 1000, true, 2, false, 3000],
-        rollo: [60, 60, 48, 5000, false, 1, false, 0],
-        barril: [24, 24, 36, 450, true, 3, false, 2000],
-        liquido: [48, 48, 72, 2000, false, 1, false, 0],
-        suelta: [30, 30, 30, 500, true, 2, false, 1500],
-        maquinaria: [72, 48, 60, 5000, false, 1, false, 0]
-    };
-    const p = presets[type];
-    document.getElementById('newLargo').value = p[0];
-    document.getElementById('newAncho').value = p[1];
-    document.getElementById('newAlto').value = p[2];
-    document.getElementById('newPeso').value = p[3];
-    document.getElementById('newApilable').checked = p[4];
-    document.getElementById('newMaxStack').value = p[5];
-    document.getElementById('newFragile').checked = p[6];
-    document.getElementById('newMaxTop').value = p[7];
-});
-document.querySelectorAll('.view-toggle button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
-
-window.addEventListener('resize', () => {
-    if (analysisResult) drawAnalysis();
-    else drawEmpty();
-});
-
-function init() {
-    renderItemsList();
-    syncTrailerFields();
-    drawEmpty();
-    renderCanvasLegend();
 }
-init();});
-document.querySelectorAll('.view-toggle button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
 
-window.addEventListener('resize', () => {
-    if (analysisResult) drawAnalysis();
-    else drawEmpty();
-});
-
-function init() {
-    renderItemsList();
-    syncTrailerFields();
-    drawEmpty();
-    renderCanvasLegend();
+function roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
 }
-init();
+
+// Init
+app.updateTrailer();
+drawCanvas();
 </script>
 </body>
 </html>
