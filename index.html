@@ -3,598 +3,343 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARGOS · Guardián de Carga Segura | Auditoría Inteligente</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" onerror="window.__qrFail=true"></script>
+<title>ARGOS v2.0 · Carga Precisa + Auditor IA</title>
 <style>
 :root{--bg-dark:#020617;--bg-card:#1e293b;--accent:#3b82f6;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--text-main:#f1f5f9;--text-muted:#94a3b8;--border:#334155;}
-body.light{--bg-dark:#f1f5f9;--bg-card:#fff;--accent:#2563eb;--text-main:#0f172a;--text-muted:#475569;--border:#cbd5e1;}
 *{box-sizing:border-box;margin:0;outline:none;}
 body{background:radial-gradient(circle at top,#0a0f1e,#000);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:1rem;}
-body.light{background:linear-gradient(180deg,#e2e8f0,#cbd5e1);}
 .container{max-width:1650px;margin:auto;}
-.card{background:var(--bg-card);border-radius:1rem;padding:1.4rem;margin-bottom:1rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.5);}
-body.light .card{box-shadow:0 4px 16px rgba(15,23,42,.12);}
-h1{font-size:1.4rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;}
-h2{font-size:1.02rem;margin-bottom:.9rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:.5rem;}
-h3{font-size:.8rem;margin:.7rem 0 .4rem;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}@media(max-width:820px){.grid-2{grid-template-columns:1fr;}}
-label{display:block;font-size:.68rem;color:var(--text-muted);margin-bottom:3px;font-weight:700;text-transform:uppercase;}
-input,select,textarea{width:100%;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-main);padding:8px;border-radius:6px;font-size:.86rem;}
-input[type=range]{padding:0;accent-color:var(--accent);}
-.flex{display:flex;gap:8px;flex-wrap:wrap;}.flex>div{flex:1;min-width:74px;}
-button{cursor:pointer;border:none;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.86rem;}
-.btn-primary{background:var(--accent);color:#fff;}.btn-block{width:100%;margin-top:10px;}
+.card{background:var(--bg-card);border-radius:1rem;padding:1.2rem;margin-bottom:1rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.5);}
+h1{font-size:1.35rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;}
+h2{font-size:.98rem;margin-bottom:.7rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:.4rem;}
+h3{font-size:.78rem;margin:.55rem 0 .35rem;color:#7dd3fc;text-transform:uppercase;letter-spacing:.5px;}
+.grid-2{display:grid;grid-template-columns:380px 1fr;gap:1rem;}@media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+label{display:block;font-size:.66rem;color:var(--text-muted);margin-bottom:3px;font-weight:700;text-transform:uppercase;}
+input,select{width:100%;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-main);padding:7px;border-radius:6px;font-size:.86rem;}
+.flex{display:flex;gap:7px;flex-wrap:wrap;}.flex>div{flex:1;min-width:70px;}
+button{cursor:pointer;border:none;padding:9px 12px;border-radius:8px;font-weight:700;font-size:.84rem;}
+.btn-primary{background:var(--accent);color:#fff;}.btn-block{width:100%;margin-top:8px;}
 .btn-success{background:var(--success);color:#064e3b;}.btn-danger{background:var(--danger);color:#fff;}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
-.btn-sm{padding:4px 8px;font-size:.72rem;}button:disabled{opacity:.4;cursor:not-allowed;}
-.canvas-wrapper{background:#020617;border-radius:.8rem;padding:10px;overflow:auto;border:1px solid #1e3a5f;margin-bottom:.5rem;}
-body.light .canvas-wrapper{border-color:#94a3b8;}
-canvas{display:block;margin:auto;}#isoCanvas{cursor:grab;touch-action:none;}
-.status-light{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;margin-bottom:7px;font-weight:600;font-size:.88rem;}
-.status-light i{width:13px;height:13px;border-radius:50%;background:var(--success);flex-shrink:0;}
-.status-safe{background:rgba(16,185,129,.1);border:1px solid var(--success);color:var(--success);}
-.status-warn{background:rgba(245,158,11,.1);border:1px solid var(--warning);color:var(--warning);}
-.status-danger{background:rgba(239,68,68,.1);border:1px solid var(--danger);color:var(--danger);}
-.gauge{background:var(--bg-dark);border-radius:6px;height:9px;overflow:hidden;margin-top:5px;border:1px solid var(--border);}
-.gauge-fill{height:100%;transition:width .3s;}
-.stat-box{background:var(--bg-dark);padding:8px;border-radius:8px;text-align:center;border:1px solid var(--border);}
-.stat-val{font-size:1.1rem;font-weight:800;color:var(--accent);font-family:Consolas,monospace;}
-.stat-label{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;}
-.item-card{background:var(--bg-dark);border:1px solid var(--border);padding:9px;border-radius:8px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;font-size:.84rem;}
+.btn-sm{padding:4px 8px;font-size:.72rem;}
+.preset{background:var(--bg-dark);border:1px solid var(--border);color:var(--text-main);border-radius:8px;padding:6px 4px;font-size:.72rem;width:100%;}
+.preset:hover{border-color:var(--accent);}
+.canvas-wrapper{background:#020617;border-radius:.8rem;padding:8px;overflow:auto;border:1px solid #1e3a5f;margin-bottom:.5rem;}
+canvas{display:block;margin:auto;}#topCanvas,#rearCanvas{cursor:pointer;}
+.item-card{background:var(--bg-dark);border:1px solid var(--border);padding:7px;border-radius:8px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;}
+.item-card.sel{border-color:var(--danger);background:rgba(239,68,68,.08);}
 .item-card.unplaced{border-color:var(--danger);border-style:dashed;}
-.unit-chip{background:var(--accent);color:#fff;font-size:.62rem;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:5px;}
+.step-head{border:1px solid var(--accent);background:rgba(59,130,246,.08);}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--accent);color:var(--text-main);padding:10px 20px;border-radius:20px;font-size:.88rem;opacity:0;transition:.3s;z-index:1500;}
 .toast.show{opacity:1;bottom:40px;}
-.legend-dot{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle;}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;overflow:auto;}
-.modal .box{max-width:540px;margin:5vh auto;}
-#scanVideo{width:100%;max-width:360px;border-radius:8px;background:#000;display:none;}
-.verdict-big{font-size:1rem;font-weight:800;font-family:Consolas,monospace;}
-.axle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;}@media(max-width:600px){.axle-grid{grid-template-columns:repeat(2,1fr);}}
-.axle-cell{background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;padding:5px;text-align:center;font-family:Consolas,monospace;font-size:.68rem;}
-.axle-cell b{display:block;font-size:.8rem;}
-.unit-tab,.eng-tab,.ops-tab{border:2px solid var(--border);background:var(--bg-dark);color:var(--text-muted);border-radius:9px;padding:6px 11px;font-family:Consolas,monospace;font-size:.8rem;}
-.unit-tab.on,.eng-tab.on,.ops-tab.on{border-color:var(--accent);color:var(--text-main);background:rgba(59,130,246,.12);}
-.unit-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.fleet-row{display:flex;align-items:center;gap:10px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:6px 9px;margin-bottom:5px;font-size:.76rem;font-family:Consolas,monospace;cursor:pointer;flex-wrap:wrap;}
-.saved-item{display:flex;align-items:center;gap:8px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:7px 9px;margin-bottom:6px;font-size:.82rem;}
-.step-head{border:1px solid var(--accent);background:rgba(59,130,246,.08);}
-.eng-body,.ops-body{background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;padding:13px;min-height:100px;font-size:.85rem;}
-.eng-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed rgba(148,163,184,.2);gap:10px;flex-wrap:wrap;}
-.eng-row .k{color:var(--text-muted);}.eng-row .v{font-family:Consolas,monospace;font-weight:700;}
-.badge{font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:10px;font-family:Consolas,monospace;}
-.b-ok{background:rgba(16,185,129,.15);color:#10b981;border:1px solid #10b981;}
-.b-warn{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid #f59e0b;}
-.b-bad{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid #ef4444;}
-.risk-row{display:flex;gap:8px;align-items:flex-start;padding:7px;border-radius:8px;margin-bottom:5px;font-size:.8rem;}
-.risk-score{font-family:Consolas,monospace;font-weight:800;min-width:34px;text-align:center;border-radius:6px;padding:3px;}
-.ck-row{display:flex;gap:9px;align-items:center;padding:7px 9px;border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:.82rem;background:var(--bg-dark);cursor:pointer;}
-.ck-row input{width:16px;height:16px;accent-color:var(--success);cursor:pointer;}
-.ck-row.done{border-color:var(--success);background:rgba(16,185,129,.07);}
-.ck-ref{margin-left:auto;font-size:.66rem;color:var(--text-muted);font-family:Consolas,monospace;}
-#trainCanvas{width:100%;background:#020617;border-radius:8px;border:1px solid var(--border);}
-.pred-opt{display:flex;gap:10px;align-items:center;padding:8px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:.84rem;background:var(--bg-dark);cursor:pointer;}
-.pred-opt.picked{border-color:var(--accent);background:rgba(59,130,246,.1);}
-.pred-opt.right{border-color:var(--success);background:rgba(16,185,129,.12);}
-.pred-opt.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);}
-.emg-card{border-left:4px solid var(--danger);background:rgba(239,68,68,.06);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:.82rem;}
-.emg-card b{color:var(--danger);}
-.emg-tel{font-family:Consolas,monospace;font-size:1.05rem;font-weight:800;color:#ef4444;background:rgba(239,68,68,.1);border:1px dashed #ef4444;border-radius:8px;padding:8px 12px;margin:4px 0;text-align:center;}
-.q-opt{display:block;padding:7px 10px;border:1px solid var(--border);border-radius:7px;margin-bottom:4px;font-size:.82rem;background:var(--bg-dark);cursor:pointer;}
-.q-opt.right{border-color:var(--success);background:rgba(16,185,129,.12);}
-.q-opt.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);}
-.hz-row{display:flex;gap:8px;align-items:center;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:6px 9px;margin-bottom:5px;font-size:.78rem;font-family:Consolas,monospace;flex-wrap:wrap;}
-#certDoc{background:#fff;color:#0f172a;border-radius:8px;padding:24px;font-size:.84rem;}
-#certDoc table{width:100%;border-collapse:collapse;margin:8px 0;}
-#certDoc th,#certDoc td{border:1px solid #94a3b8;padding:4px 7px;font-size:.75rem;text-align:left;}
-#certDoc th{background:#e2e8f0;font-size:.7rem;text-transform:uppercase;}
-#certDoc .sig{display:flex;gap:18px;margin-top:30px;flex-wrap:wrap;}
-#certDoc .sig div{flex:1;min-width:130px;border-top:1.5px solid #0f172a;padding-top:5px;font-size:.7rem;text-align:center;}
-#certDoc .hd{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0f172a;padding-bottom:8px;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.legend-dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle;}
+.seqchip{min-width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-family:Consolas,monospace;}
+.unit-tab{border:2px solid var(--border);background:var(--bg-dark);color:var(--text-muted);border-radius:9px;padding:5px 11px;font-family:Consolas,monospace;font-size:.8rem;}
+.unit-tab.on{border-color:var(--accent);color:var(--text-main);background:rgba(59,130,246,.12);}
+.unit-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.axle-chip{background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font-family:Consolas,monospace;font-size:.68rem;text-align:center;}
+.axle-chip b{display:block;font-size:.82rem;}
+.ck-row{display:flex;gap:8px;align-items:center;padding:6px 8px;border:1px solid var(--border);border-radius:7px;margin-bottom:4px;font-size:.78rem;background:var(--bg-dark);cursor:pointer;}
+.ck-row.done{border-color:var(--success);}
+.photo-slot{width:104px;height:80px;border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--text-muted);cursor:pointer;position:relative;overflow:hidden;background:var(--bg-dark);text-align:center;line-height:1.25;}
+.photo-slot img{width:100%;height:100%;object-fit:cover;}
+.photo-slot .x{position:absolute;top:2px;right:3px;background:var(--danger);color:#fff;border-radius:50%;width:16px;height:16px;line-height:16px;text-align:center;font-size:.62rem;z-index:2;}
+.hz-row{display:flex;gap:6px;align-items:center;background:var(--bg-dark);border:1px solid var(--border);border-radius:7px;padding:4px 8px;margin-bottom:4px;font-size:.72rem;font-family:Consolas,monospace;}
+.risk-row{display:flex;gap:7px;padding:6px;border-radius:7px;margin-bottom:4px;font-size:.76rem;border-left:4px solid var(--danger);background:rgba(148,163,184,.05);}
+#opCard{background:#fff;color:#0f172a;border-radius:12px;padding:15px;}
+#opCard .big{font-size:1.35rem;font-weight:900;line-height:1.25;}
+#opCard .mid{font-size:1rem;font-weight:700;margin-top:3px;}
+#opCard .sm{font-size:.76rem;color:#475569;margin-top:2px;}
+#certDoc{background:#fff;color:#0f172a;border-radius:8px;padding:22px;font-size:.82rem;}
+#certDoc table{width:100%;border-collapse:collapse;margin:6px 0;}
+#certDoc th,#certDoc td{border:1px solid #94a3b8;padding:4px 7px;font-size:.73rem;text-align:left;}
+#certDoc th{background:#e2e8f0;font-size:.68rem;text-transform:uppercase;}
+#certDoc .sig{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;}
+#certDoc .sig div{flex:1;min-width:120px;border-top:1.5px solid #0f172a;padding-top:4px;font-size:.68rem;text-align:center;}
 #certDoc .stamp{border:3px solid #10b981;color:#10b981;font-weight:900;padding:5px 13px;border-radius:8px;transform:rotate(-6deg);font-family:Consolas,monospace;}
 #certDoc .stamp.bad{border-color:#ef4444;color:#ef4444;}
-@media print{body.printing .container,body.printing .toast,body.printing #botWidget{display:none!important;}
- body.printing .modal{display:block!important;position:static;background:#fff;overflow:visible;}
- body.printing .modal .box{max-width:100%;margin:0;box-shadow:none;}body.printing .no-print{display:none!important;}
- body{background:#fff!important;padding:0!important;}}
-/* ===== BOT AUDITOR ===== */
-#botFab{position:fixed;bottom:22px;right:22px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-size:1.6rem;box-shadow:0 6px 24px rgba(59,130,246,.5);z-index:2100;display:flex;align-items:center;justify-content:center;}
-#botFab .dot{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff;display:none;}
-#botPanel{position:fixed;bottom:92px;right:22px;width:min(400px,calc(100vw - 30px));height:min(600px,calc(100vh - 130px));background:var(--bg-card);border:1px solid var(--accent);border-radius:1rem;box-shadow:0 12px 48px rgba(0,0,0,.6);z-index:2100;display:none;flex-direction:column;overflow:hidden;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;overflow:auto;}
+.modal .box{max-width:860px;margin:5vh auto;}
+@media print{body>*{display:none!important;}#certModal{display:block!important;position:static;background:#fff;overflow:visible;}
+ #certModal .box{max-width:100%;margin:0;box-shadow:none;}.no-print{display:none!important;}body{background:#fff!important;padding:0!important;}}
+/* BOT */
+#botFab{position:fixed;bottom:20px;right:20px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-size:1.5rem;box-shadow:0 6px 24px rgba(59,130,246,.5);z-index:2100;display:flex;align-items:center;justify-content:center;}
+#botPanel{position:fixed;bottom:88px;right:20px;width:min(390px,calc(100vw - 28px));height:min(580px,calc(100vh - 120px));background:var(--bg-card);border:1px solid var(--accent);border-radius:1rem;box-shadow:0 12px 48px rgba(0,0,0,.6);z-index:2100;display:none;flex-direction:column;overflow:hidden;}
 #botPanel.open{display:flex;}
-#botHead{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;font-weight:800;}
-#botHead small{display:block;font-weight:400;font-size:.68rem;opacity:.85;}
-#botHead .st{margin-left:auto;font-size:.6rem;background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px;font-family:Consolas,monospace;}
-#botChat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg-dark);}
-.bub{max-width:88%;padding:9px 12px;border-radius:12px;font-size:.84rem;line-height:1.45;white-space:pre-wrap;}
-.bub.bot{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);align-self:flex-start;border-top-left-radius:3px;}
-.bub.user{background:rgba(139,92,246,.2);border:1px solid rgba(139,92,246,.5);align-self:flex-end;border-top-right-radius:3px;}
+#botHead{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;padding:11px 13px;font-weight:800;font-size:.9rem;}
+#botHead small{display:block;font-weight:400;font-size:.66rem;opacity:.85;}
+#botChat{flex:1;overflow-y:auto;padding:11px;display:flex;flex-direction:column;gap:7px;background:var(--bg-dark);}
+.bub{max-width:90%;padding:8px 11px;border-radius:11px;font-size:.8rem;line-height:1.45;white-space:pre-wrap;}
+.bub.bot{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.4);align-self:flex-start;}
+.bub.user{background:rgba(139,92,246,.2);border:1px solid rgba(139,92,246,.5);align-self:flex-end;}
 .bub.finding{background:rgba(239,68,68,.12);border:1px solid var(--danger);color:var(--danger);font-weight:600;}
 .bub.okmsg{background:rgba(16,185,129,.12);border:1px solid var(--success);color:var(--success);}
-.bub b{color:var(--accent);}
-.bub.bot b{color:#7dd3fc;}
-#botQuick{padding:8px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);background:var(--bg-card);}
-.qk{background:var(--bg-dark);border:1px solid var(--accent);color:var(--text-main);border-radius:16px;padding:6px 12px;font-size:.78rem;font-weight:700;}
-#botInputRow{display:flex;gap:6px;padding:8px;border-top:1px solid var(--border);background:var(--bg-card);}
-#botInput{flex:1;}
-#botSend{width:44px;background:var(--accent);color:#fff;border-radius:8px;}
-.typing{font-size:.75rem;color:var(--text-muted);font-style:italic;align-self:flex-start;padding:2px 6px;}
+.bub b{color:#7dd3fc;}
+#botQuick{padding:7px;display:flex;gap:5px;flex-wrap:wrap;border-top:1px solid var(--border);}
+.qk{background:var(--bg-dark);border:1px solid var(--accent);color:var(--text-main);border-radius:14px;padding:5px 11px;font-size:.74rem;}
+#botInputRow{display:flex;gap:6px;padding:7px;border-top:1px solid var(--border);}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="card" style="text-align:center;border-color:var(--accent);">
- <h1>👁️ ARGOS <span style="font-size:.72rem;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:2px 10px;border-radius:4px;">Guardián de Carga Segura</span>
- <button id="themeBtn" class="btn-outline" onclick="app.toggleTheme()">☀️ Modo Patio</button></h1>
- <p style="color:var(--text-muted);font-size:.85rem;">El guardián de cien ojos que nunca duerme · Bridge B · FMCSA §393 · OSHA · HAZMAT · Fatiga · Sloshing · Auditoría IA</p>
- <div class="flex" style="justify-content:center;margin-top:8px;">
-  <div style="flex:0;"><button class="btn-outline" onclick="app.shareQR()">📤 QR</button></div>
-  <div style="flex:0;"><button class="btn-outline" onclick="app.importModal(true)">📥 Importar</button></div>
-  <div style="flex:0;"><button class="btn-danger" onclick="app.openEmergencyCard()">🆘 Ficha Emergencia</button></div>
-  <div style="flex:0;"><button class="btn-primary" onclick="BOT.startAudit(true)">🤖 Auditoría con ARGOS IA</button></div>
+ <div class="card" style="text-align:center;">
+  <h1>👁️ ARGOS <span style="font-size:.7rem;background:var(--accent);color:#fff;padding:2px 10px;border-radius:4px;">v2.0 CARGA PRECISA</span>
+  <button class="btn-outline btn-sm" onclick="app.sharePlan()">📤 Copiar plan</button>
+  <button class="btn-outline btn-sm" onclick="app.loadPlan()">📥 Pegar plan</button>
+  <button class="btn-danger btn-sm" onclick="app.openEmergency()">🆘 Ficha Emergencia</button></h1>
+  <p style="color:var(--text-muted);font-size:.84rem;">El sistema acomoda · el RX muestra · el montacarguista sabe EXACTAMENTE dónde va cada pieza</p>
  </div>
-</div>
 
-<div class="grid-2">
-<div>
- <div class="card">
-  <h2>⚙️ Vehículo</h2>
-  <div class="flex">
-   <div style="flex:2;">
-    <label>Tipo</label>
+ <div class="grid-2">
+  <div>
+   <div class="card">
+    <h2>⚙️ Vehículo</h2>
     <select id="trailerType" onchange="app.updateTrailer()">
      <option value="dryvan53">Dry Van 53'</option><option value="reefer53">Reefer 53'</option>
      <option value="dryvan48">Dry Van 48'</option><option value="flatbed53">Flatbed 53'</option>
      <option value="flatbed48">Flatbed 48'</option><option value="stepdeck48">Step Deck 48'</option>
      <option value="lowboy">Lowboy / RGN</option><option value="container40">Contenedor 40'</option>
-     <option value="container20">Contenedor 20'</option><option value="box26">Box Truck 26'</option>
-     <option value="dump">Volteo</option><option value="tanker43">Tanque 43' (deflectores)</option>
+     <option value="box26">Box Truck 26'</option><option value="dump">Volteo</option>
+     <option value="tanker43">Tanque 43' (baffles)</option>
     </select>
+    <div class="flex" style="margin-top:7px;">
+     <div><label>Largo"</label><input id="tL" disabled></div><div><label>Ancho"</label><input id="tW" disabled></div>
+     <div><label>Alto"</label><input id="tH" disabled></div><div><label>Cap lbs</label><input id="tWt" disabled></div>
+    </div>
    </div>
-   <div><label>Largo</label><input id="tL" disabled></div>
-   <div><label>Ancho</label><input id="tW" disabled></div>
-   <div><label>Alto</label><input id="tH" disabled></div>
-   <div><label>Cap.</label><input id="tWt" disabled></div>
-  </div>
- </div>
- <div class="card">
-  <h2>🦺 Montacargas (OSHA)</h2>
-  <div class="flex">
-   <div><label>Cap. (lbs)</label><input type="number" id="fkCap" value="5000" onchange="app.setFork()"></div>
-   <div><label>Centro Carga</label><input type="number" id="fkLC" value="24" onchange="app.setFork()"></div>
-  </div>
-  <div id="forkWorst" style="margin-top:6px;font-size:.8rem;color:var(--text-muted);">Sin evaluar.</div>
- </div>
- <div class="card">
-  <h2>📦 Carga</h2>
-  <div class="flex">
-   <div style="flex:2;">
-    <label>Empaque</label>
-    <select id="cargoType" onchange="app.setPreset()">
-     <option value="pallet">Pallet (48x40)</option><option value="tote">IBC Tote</option>
-     <option value="coil">Rollo de Acero</option><option value="machinery">Maquinaria</option>
-     <option value="drum">Barril 55 Gal</option><option value="crate">Caja de Madera</option>
-     <option value="tank">🌊 Tanque Líquido</option>
-    </select>
+   <div class="card">
+    <h2>📦 Carga</h2>
+    <div class="flex">
+     <div><button class="preset" onclick="app.preset('pallet',48,40,48,1500)">📦 Pallet<br>1500</button></div>
+     <div><button class="preset" onclick="app.preset('tote',48,48,50,2500)">🛢️ Tote<br>2500</button></div>
+     <div><button class="preset" onclick="app.preset('coil',60,60,40,5000)">🌀 Rollo<br>5000</button></div>
+     <div><button class="preset" onclick="app.preset('machinery',72,96,60,8000)">⚙️ Maq.<br>8000</button></div>
+    </div>
+    <div class="flex" style="margin-top:6px;">
+     <div><button class="preset" onclick="app.preset('drum',23,23,35,450)">🛢️ Barril</button></div>
+     <div><button class="preset" onclick="app.preset('crate',60,48,60,3000)">📦 Caja</button></div>
+     <div><button class="preset" onclick="app.preset('tank',52,48,52,4200)">🌊 Tanque</button></div>
+    </div>
+    <div class="flex" style="margin-top:8px;">
+     <div><label>Largo</label><input type="number" id="cL" value="48"></div>
+     <div><label>Ancho</label><input type="number" id="cW" value="40"></div>
+     <div><label>Alto</label><input type="number" id="cH" value="48"></div>
+    </div>
+    <div class="flex" style="margin-top:6px;">
+     <div><label>Peso lbs</label><input type="number" id="cWt" value="1500"></div>
+     <div><label>Cant.</label><input type="number" id="cQty" value="1" min="1"></div>
+    </div>
+    <div id="wrapFill" style="display:none;margin-top:6px;">
+     <label>Llenado (oleaje): <b id="cFillVal">50%</b></label>
+     <input type="range" id="cFill" min="20" max="100" value="50" oninput="document.getElementById('cFillVal').textContent=this.value+'%'">
+    </div>
+    <button class="btn-primary btn-block" onclick="app.addItems()">➕ Agregar</button>
    </div>
-   <div><label>Largo</label><input type="number" id="cL" value="48"></div>
-   <div><label>Ancho</label><input type="number" id="cW" value="40"></div>
-   <div><label>Alto</label><input type="number" id="cH" value="48"></div>
-   <div><label>Peso</label><input type="number" id="cWt" value="1500"></div>
-   <div><label>Cant.</label><input type="number" id="cQty" value="1" min="1"></div>
+   <div class="card">
+    <h2>🌦️ Condiciones (afectan el cálculo)</h2>
+    <div class="flex">
+     <div style="flex:2;"><label>Piso</label><select id="wWeather" onchange="app.recalc()"><option value="dry">☀️ Seco</option><option value="rain">🌧️ Lluvia (μ×0.65)</option><option value="ice">🧊 Hielo (μ×0.40)</option></select></div>
+     <div><label>Viento mph</label><input type="number" id="wWind" value="0" onchange="app.recalc()"></div>
+    </div>
+    <div class="flex" style="margin-top:6px;">
+     <div><label>Cond. hoy h</label><input type="number" id="hD" value="0" onchange="app.recalc()"></div>
+     <div><label>Servicio h</label><input type="number" id="hO" value="0" onchange="app.recalc()"></div>
+     <div><label>Semana h</label><input type="number" id="hW" value="0" onchange="app.recalc()"></div>
+    </div>
+    <div id="hosMsg" style="font-size:.72rem;margin-top:4px;"></div>
+    <div class="flex" style="margin-top:8px;">
+     <div style="flex:3;"><label>HAZMAT a bordo</label><select id="hzSel"></select></div>
+     <div style="flex:1;align-self:flex-end;"><button class="btn-danger btn-sm" style="width:100%;" onclick="app.addHz()">➕</button></div>
+    </div>
+    <div id="hzList" style="margin-top:5px;"></div>
+   </div>
+   <div class="card">
+    <h2>📋 Manifiesto</h2>
+    <div style="max-height:200px;overflow-y:auto;" id="itemsList"><div style="text-align:center;color:var(--text-muted);">Sin carga.</div></div>
+    <button class="btn-danger btn-block" onclick="app.clearAll()">🗑️ Vaciar</button>
+   </div>
+   <div class="card">
+    <h2>📷 Evidencia (4 fotos para el certificado)</h2>
+    <div class="flex" id="photoGrid"></div>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+   </div>
+   <div class="card">
+    <h2>✅ Checklist + Certificado</h2>
+    <div id="ckList" style="max-height:230px;overflow-y:auto;"></div>
+    <button class="btn-primary btn-block" id="certBtn" onclick="app.openCert()">📜 EMITIR CERTIFICADO</button>
+    <div id="certMsg" style="font-size:.7rem;color:var(--text-muted);text-align:center;margin-top:4px;"></div>
+   </div>
   </div>
-  <div id="wrapFill" style="display:none;margin-top:6px;">
-   <label>Nivel de llenado (controla oleaje)</label>
-   <input type="range" id="cFill" min="20" max="100" value="50" oninput="document.getElementById('cFillVal').textContent=this.value+'%'">
-   <div id="cFillVal" style="text-align:center;font-size:.74rem;color:var(--accent);font-family:Consolas,monospace;font-weight:800;">50%</div>
-  </div>
-  <button class="btn-primary btn-block" onclick="app.addItems()">➕ Agregar al Manifiesto</button>
- </div>
- <div class="card">
-  <h2>📋 Manifiesto</h2>
-  <div style="max-height:180px;overflow-y:auto;" id="itemsList"><div style="text-align:center;color:var(--text-muted);">Sin carga.</div></div>
-  <button class="btn-danger btn-block" onclick="app.clearAll()">🗑️ Vaciar</button>
- </div>
- <div class="card">
-  <h2>💾 Planes</h2>
-  <div class="flex">
-   <div style="flex:3;"><label>Nombre</label><input id="planName"></div>
-   <div style="flex:1;align-self:flex-end;"><button class="btn-primary" style="width:100%;" onclick="app.savePlan()">💾</button></div>
-  </div>
-  <div id="savedList" style="margin-top:8px;"></div>
- </div>
-</div>
 
-<div>
- <div class="card">
-  <h2>⚖️ Veredicto Doble + Operación — <span id="verdictUnitName">U1</span></h2>
-  <div id="verdictScale" class="status-light status-safe"><i></i><span class="verdict-big">① BÁSCULA: SIN ANÁLISIS</span></div>
-  <div id="verdictSec" class="status-light status-safe"><i></i><span class="verdict-big">② AMARRE: SIN ANÁLISIS</span></div>
-  <div id="verdictOps" class="status-light status-safe"><i></i><span class="verdict-big">③ OPERACIÓN: VER SAFETY OPS</span></div>
-  <div id="distAdvice" style="font-size:.78rem;color:var(--text-muted);margin:4px 0;"></div>
-  <div class="axle-grid" id="axleGrid"></div>
-  <div id="fleetTable" style="margin-top:8px;"></div>
-  <div class="grid-2" style="margin-top:8px;">
-   <div class="stat-box"><div class="stat-val" id="statUnits">1</div><div class="stat-label">Unidades</div></div>
-   <div class="stat-box"><div class="stat-val" id="statRisk">—</div><div class="stat-label">Riesgo Máx</div></div>
-   <div class="stat-box"><div class="stat-val" id="statCog">—</div><div class="stat-label">COG Lat</div></div>
-   <div class="stat-box"><div class="stat-val" id="statRoll">—</div><div class="stat-label">Volcadura</div></div>
-  </div>
-  <div style="margin-top:10px;">
-   <h3>Ejes — Unidad Activa</h3>
-   <div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:.74rem;"><span>Direccional</span><span id="axleSteerTxt">0 / 12,000</span></div><div class="gauge"><div id="gaugeSteer" class="gauge-fill" style="width:0%;background:var(--success);"></div></div></div>
-   <div style="margin-bottom:6px;" id="rowDrive"><div style="display:flex;justify-content:space-between;font-size:.74rem;"><span>Tracción</span><span id="axleDriveTxt">0 / 34,000</span></div><div class="gauge"><div id="gaugeDrive" class="gauge-fill" style="width:0%;background:var(--success);"></div></div></div>
-   <div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:.74rem;"><span id="labelTrailer">Tandem</span><span id="axleTrailerTxt">0 / 34,000</span></div><div class="gauge"><div id="gaugeTrailer" class="gauge-fill" style="width:0%;background:var(--success);"></div></div></div>
-   <div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:.74rem;"><span>GVW</span><span id="axleGrossTxt">0 / 80,000</span></div><div class="gauge"><div id="gaugeGross" class="gauge-fill" style="width:0%;background:var(--success);"></div></div></div>
+  <div>
+   <div class="card">
+    <h2>🩻 Plano RX de Montaje — <span id="unitLbl">U1</span></h2>
+    <div class="unit-tabs" id="unitTabs"></div>
+    <div class="flex" style="margin-bottom:7px;">
+     <div style="flex:2;"><button class="btn-success" style="width:100%;" onclick="app.optimize()">⚖️ CALCULAR ACOMODO + PLAN RX</button></div>
+     <div style="flex:0;"><button class="btn-outline" onclick="app.printSheet()">🖨️</button></div>
+     <div style="flex:0;"><button class="btn-outline" onclick="app.exportPNG()">🖼️</button></div>
+     <div style="flex:0;"><button class="btn-outline" onclick="app.stepSel(-1)">◀</button></div>
+     <div style="flex:0;"><button class="btn-outline" onclick="app.stepSel(1)">▶</button></div>
+    </div>
+    <div id="axleStrip" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
+    <div id="riskStrip"></div>
+    <h3>① Superior — ORDEN DE MONTAJE (del fondo hacia las puertas) · toca una pieza</h3>
+    <div class="canvas-wrapper"><canvas id="topCanvas" width="1300" height="330"></canvas></div>
+    <h3>② VISTA DESDE LAS PUERTAS — el montacarguista ve su blanco y cuántos PIES meter</h3>
+    <div class="canvas-wrapper"><canvas id="rearCanvas" width="1300" height="420"></canvas></div>
+    <h3>③ Lateral — profundidad y niveles de apilado</h3>
+    <div class="canvas-wrapper"><canvas id="sideCanvas" width="1300" height="360"></canvas></div>
+    <h3>④ 3D</h3>
+    <div class="canvas-wrapper"><canvas id="isoCanvas" width="1300" height="400"></canvas></div>
+   </div>
+
+   <div class="card">
+    <h2>🪪 TARJETA DE OPERADOR</h2>
+    <div id="opCard"><div style="color:#64748b;">Calcula y toca una pieza (o usa ◀ ▶).</div></div>
+   </div>
+   <div class="card">
+    <h2>🛠️ Órdenes de montaje por unidad</h2>
+    <div id="stepsList"><div style="text-align:center;color:var(--text-muted);">Calcula el acomodo.</div></div>
+   </div>
   </div>
  </div>
-
- <div class="card">
-  <h2>🔬 Ingeniería</h2>
-  <div class="unit-tabs" id="engTabs"></div>
-  <div class="eng-body" id="engBody">Calcula el plan.</div>
- </div>
-
- <div class="card" style="border-color:var(--danger);">
-  <h2 style="color:var(--danger);">🛡️ SAFETY OPS</h2>
-  <div class="unit-tabs" id="opsTabs"></div>
-  <div class="ops-body" id="opsBody"></div>
- </div>
-</div>
 </div>
 
-<div class="card">
- <h2>🩻 Plano RX — <span id="canvasUnitName">U1</span></h2>
- <div class="unit-tabs" id="unitTabs"></div>
- <div style="display:flex;gap:8px;margin-bottom:8px;justify-content:center;flex-wrap:wrap;">
-  <button class="btn-success" onclick="app.optimize()">⚖️ CALCULAR TODO + PLAN RX</button>
-  <button class="btn-outline" onclick="app.exportPNG()">🖼️ Exportar Flota</button>
-  <button class="btn-primary" onclick="app.openCert()">📜 Certificado</button>
- </div>
- <h3>Superior</h3><div class="canvas-wrapper"><canvas id="topCanvas" width="1300" height="330"></canvas></div>
- <h3>Lateral RX</h3><div class="canvas-wrapper"><canvas id="sideCanvas" width="1300" height="480"></canvas></div>
- <h3>3D</h3>
- <div style="display:flex;gap:8px;justify-content:center;margin-bottom:6px;flex-wrap:wrap;">
-  <button class="btn-outline" onclick="app.rotate(-15)">◀</button>
-  <button class="btn-outline" id="spinBtn" onclick="app.toggleSpin()">⏵ Giro</button>
-  <button class="btn-outline" onclick="app.rotate(15)">▶</button>
-  <button class="btn-outline" onclick="app.resetIso()">⌂</button>
- </div>
- <div class="canvas-wrapper"><canvas id="isoCanvas" width="1300" height="480"></canvas></div>
-</div>
-
-<div class="card">
- <h2>🎓 Simulador — Predice y Aprende</h2>
- <div class="flex">
-  <div style="flex:3;"><label>Escenario</label><select id="trSc" onchange="TRAIN.select()"></select></div>
-  <div style="flex:1;"><label>Puntaje</label><div class="stat-val" id="trScore" style="text-align:left;">0 pts</div></div>
- </div>
- <canvas id="trainCanvas" width="1150" height="380"></canvas>
- <div id="trPred" style="margin-top:8px;"></div>
- <div class="flex" style="margin-top:6px;">
-  <div style="flex:0;"><button class="btn-success" onclick="TRAIN.run()">▶ EJECUTAR</button></div>
-  <div style="flex:0;"><button class="btn-outline" onclick="TRAIN.select()">↺</button></div>
- </div>
- <div id="trResult" style="margin-top:8px;font-size:.85rem;"></div>
-</div>
-
-<div class="card">
- <h2>🛠️ Órdenes por Unidad</h2>
- <div id="stepsList"><div style="text-align:center;color:var(--text-muted);">Calcula el plan.</div></div>
-</div>
-</div>
-
-<!-- MODALES -->
-<div class="modal" id="qrModal"><div class="card box" style="text-align:center;">
- <h2 style="justify-content:center;">📱 QR</h2>
- <div id="qrBox" style="background:#fff;padding:14px;border-radius:10px;width:max-content;margin:auto;"></div>
- <p id="qrNote" style="font-size:.8rem;color:var(--text-muted);margin-top:8px;"></p>
- <div class="flex"><div><button class="btn-outline" style="width:100%;" onclick="app.copyShareCode()">📋 Copiar</button></div>
- <div><button class="btn-primary" style="width:100%;" onclick="document.getElementById('qrModal').style.display='none'">✖</button></div></div>
-</div></div>
-
-<div class="modal" id="impModal"><div class="card box">
- <h2 style="justify-content:center;">📥 Importar</h2>
- <textarea id="impText" rows="5" placeholder="ARGOS1... u OMEGA2..."></textarea>
- <div class="flex" style="margin-top:8px;">
-  <div><button class="btn-primary" style="width:100%;" onclick="app.doImportText()">Cargar</button></div>
-  <div id="scanBtnWrap"><button class="btn-success" style="width:100%;" onclick="app.toggleScan()">📷 Escanear QR</button></div>
- </div>
- <video id="scanVideo" autoplay playsinline style="margin-top:10px;"></video>
- <div style="margin-top:8px;"><button class="btn-outline" style="width:100%;" onclick="app.closeImport()">✖</button></div>
-</div></div>
-
-<div class="modal" id="certModal"><div class="card box" style="max-width:860px;">
+<div class="modal" id="certModal"><div class="card box">
  <div id="certDoc"></div>
  <div class="flex no-print" style="margin-top:10px;">
-  <div><button class="btn-primary" style="width:100%;" onclick="app.printCert()">🖨️ Imprimir / PDF</button></div>
+  <div><button class="btn-primary" style="width:100%;" onclick="window.print()">🖨️ Imprimir / PDF</button></div>
   <div><button class="btn-outline" style="width:100%;" onclick="document.getElementById('certModal').style.display='none'">✖</button></div>
  </div>
 </div></div>
 
-<!-- BOT AUDITOR -->
-<button id="botFab" onclick="BOT.toggle()">🤖<span class="dot" id="botDot"></span></button>
+<button id="botFab" onclick="BOT.toggle()">🤖</button>
 <div id="botPanel">
- <div id="botHead">🤖 ARGOS IA<small>Auditor de Calidad de Carga</small><span class="st" id="botState">EN ESPERA</span></div>
+ <div id="botHead">🤖 ARGOS IA<small>Auditor de Calidad de Carga</small></div>
  <div id="botChat"></div>
  <div id="botQuick"></div>
- <div id="botInputRow"><input id="botInput" placeholder="Responde o pregunta..." onkeydown="if(event.key==='Enter')BOT.send()"><button id="botSend" onclick="BOT.send()">➤</button></div>
+ <div id="botInputRow"><input id="botInput" placeholder="Responde o pregunta..." onkeydown="if(event.key==='Enter')BOT.send()"><button class="btn-primary" style="width:46px;" onclick="BOT.send()">➤</button></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   ARGOS — Guardián de Carga Segura · v1.0
-   Argos Panoptes: el guardián de cien ojos que nunca duerme
-   ============================================================ */
-const LIMITS={steer:12000,drive:34000,trailer:34000,gross:80000};
+/* ============================================================ ARGOS v2.0 */
 const TRAILERS={
  dryvan53:{name:"Dry Van 53'",L:636,W:102,H:110,cap:45000,kind:'enclosed',semi:true,kp:36,tx:420,txMin:372,txMax:468,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
- reefer53:{name:"Reefer 53'",L:616,W:98,H:105,cap:43500,kind:'enclosed',semi:true,reefer:true,bulkhead:true,kp:36,tx:400,txMin:356,txMax:444,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
+ reefer53:{name:"Reefer 53'",L:616,W:98,H:105,cap:43500,kind:'enclosed',semi:true,bulkhead:true,kp:36,tx:400,txMin:356,txMax:444,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
  dryvan48:{name:"Dry Van 48'",L:576,W:102,H:110,cap:44000,kind:'enclosed',semi:true,kp:36,tx:380,txMin:336,txMax:424,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
  flatbed53:{name:"Flatbed 53'",L:636,W:102,H:102,cap:48000,kind:'flatbed',semi:true,kp:36,tx:420,txMin:372,txMax:468,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:58,wheelR:20},
  flatbed48:{name:"Flatbed 48'",L:576,W:102,H:102,cap:48000,kind:'flatbed',semi:true,kp:36,tx:380,txMin:336,txMax:424,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:58,wheelR:20},
  stepdeck48:{name:"Step Deck 48'",L:576,W:102,H:120,cap:46000,kind:'stepdeck',semi:true,kp:36,tx:380,txMin:336,txMax:424,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:58,lowerFrom:190,lowerDeck:40,wheelR:20},
  lowboy:{name:"Lowboy / RGN",L:540,W:120,H:150,cap:55000,kind:'lowboy',semi:true,kp:36,tx:340,txMin:300,txMax:384,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:48,lowerFrom:120,lowerDeck:24,wheelR:18},
  container40:{name:"Contenedor 40'",L:474,W:90,H:106,cap:44000,kind:'container',semi:true,kp:36,tx:318,txMin:280,txMax:356,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
- container20:{name:"Contenedor 20'",L:232,W:92,H:92,cap:48000,kind:'container',semi:true,kp:36,tx:182,txMin:150,txMax:220,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20},
  box26:{name:"Box Truck 26'",L:312,W:102,H:100,cap:10000,kind:'enclosed',semi:false,straight:true,tx:250,frontAxle:100,tareS:6500,tareT:5500,gvw:25999,rearMax:20000,deckH:40,cabLen:150,cabH:108,wheelR:19},
- dump:{name:"Volteo RX",L:240,W:96,H:60,cap:30000,kind:'dump',semi:false,straight:true,tx:185,frontAxle:88,tareS:9000,tareT:17000,gvw:64000,rearMax:34000,deckH:48,cabLen:130,cabH:104,wheelR:22},
- tanker43:{name:"Tanque 43' (baffles)",L:516,W:102,H:96,cap:52000,kind:'tanker',semi:true,baffles:true,kp:36,tx:400,txMin:356,txMax:444,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20}
-};
+ dump:{name:"Volteo",L:240,W:96,H:60,cap:30000,kind:'dump',semi:false,straight:true,tx:185,frontAxle:88,tareS:9000,tareT:17000,gvw:64000,rearMax:34000,deckH:48,cabLen:130,cabH:104,wheelR:22},
+ tanker43:{name:"Tanque 43'",L:516,W:102,H:96,cap:52000,kind:'tanker',semi:true,baffles:true,kp:36,tx:400,txMin:356,txMax:444,wb:230,k2dMin:12,k2dMax:38,tareS:10000,tareD:11800,tareT:9200,deckH:56,wheelR:20}};
 const COLORS={pallet:'#38bdf8',tote:'#22d3ee',coil:'#fbbf24',machinery:'#c084fc',drum:'#4ade80',crate:'#fb7185',tank:'#60a5fa'};
-const CARGO_LABELS={pallet:'Pallet',tote:'IBC Tote',coil:'Rollo',machinery:'Maquinaria',drum:'Barril',crate:'Caja',tank:'Tanque'};
-const FRIC={pallet:0.40,crate:0.45,tote:0.25,coil:0.25,machinery:0.40,drum:0.30,tank:0.30};
-const WLL={strap2:1000,chainG70:4700};
-const HAZMAT=[
- {un:'UN1203',n:'Gasolina',c:'3',erg:128},{un:'UN1993',n:'Diésel',c:'3',erg:128},
- {un:'UN1263',n:'Pintura',c:'3',erg:128},{un:'UN1978',n:'Propano',c:'2.1',erg:115},
- {un:'UN1005',n:'Amoníaco',c:'2.3',erg:125},{un:'UN1017',n:'Cloro',c:'2.3',erg:124},
- {un:'UN2796',n:'Ác. Sulfúrico',c:'8',erg:157},{un:'UN1824',n:'Sosa Cáustica',c:'8',erg:154},
- {un:'UN1479',n:'Nitrato (Oxid)',c:'5.1',erg:140},{un:'UN2811',n:'Tóxico Org.',c:'6.1',erg:153}
-];
-const HZ_FORBID=[['5.1','3'],['5.1','2.1'],['2.3','3']];
-const HZ_SEP=[['3','8'],['6.1','3']];
-const ERG_ACT={128:'Aislar 50 m · eliminar ignición · si arde evacuar 800 m',
- 115:'Cerrar válvulas · BLEVE: evacuar 1,600 m · enfriar tanques',
- 125:'GAS TÓXICO: huir con el viento a favor · aislar 800 m · NO entrar sin SCBA',
- 124:'Cloro letal: igual que 125 · subir a terreno alto',
- 157:'NO tocar · no lavar al drenaje · el agua reacciona',
- 154:'Evitar contacto · neutralizar con agua abundante',
- 140:'Inundar con agua · separar combustibles · intensifica fuego',
- 153:'Evitar vapores · aislar 25 m · respiración obligatoria'};
-const EMERGENCY=[
- {t:'🚨 CARGA MOVIDA EN RUTA',s:['PARA en lugar seguro, balizas 30/60/100 m','NO abras puertas de golpe','Inspecciona entreabriendo primero','Si movió: re-amarrar con el doble o descargar','Registra el evento']},
- {t:'💥 VOLCADURA',s:['Motor apagado, freno, chocks','NO desmontar carga: colapso secundario','Evacuar si hay fugas/cables','Llamar emergencias + despachador','NO continuar sin liberación']},
- {t:'☢️ DERRAME QUÍMICO',s:['NO acercarse, NO encender nada','Subirse al viento y cuesta arriba','Aislar según Guía ERG de la ficha','LLAMAR 911 + CHEMTREC/SETIQ','Identificar UN sin exponerse']},
- {t:'🔥 INCENDIO DE CARGA',s:['Extintor solo si incipiente y con salida','Gas ardiendo: NO apagar, evacuar 800 m (BLEVE)','Avisar a bomberos el QUÍMICO a bordo','Cortar combustible']},
- {t:'😴 FATIGA',s:['Señales: microsueños, perder carril','PARA: siesta real 15-30 min','Cafeína + siesta funciona','>11h/14h: ILEGAL seguir','Mejor tarde que nunca']}
-];
-const CHECKLIST=[
- {id:'axles',t:'Tandems/quinta en posición recetada',ref:'Bridge B'},{id:'anchors',t:'Amarres según plan',ref:'§393.117'},
- {id:'tension',t:'Tensión sin holgura',ref:'§393.130'},{id:'mats',t:'Rubber mats si μ bajo',ref:'§393.100(d)'},
- {id:'blocking',t:'Bloqueo frontal si requerido',ref:'§393.102'},{id:'stack',t:'Pilas ≤3:1, pesado abajo',ref:'Práctica'},
- {id:'doors',t:'Puertas/barras aseguradas',ref:'§393.106'},{id:'floor',t:'Piso limpio y seco',ref:'Práctica'},
- {id:'fork',t:'Montacargas capacidad verificada',ref:'OSHA'},{id:'lift',t:'Carga baja al maniobrar',ref:'OSHA'},
- {id:'liquid',t:'Cisternas ≥90%/≤20% o baffles',ref:'§393.117'},{id:'placards',t:'Placas HAZMAT 4 lados',ref:'§172'},
- {id:'segregation',t:'Segregación HAZMAT verificada',ref:'§177.848'},{id:'tires',t:'Llantas/frenos OK',ref:'§396'},
- {id:'lights',t:'Luces/reflejantes OK',ref:'§393.11'},{id:'docs',t:'Ficha emergencia + manifiesto en cabina',ref:'§392'}
-];
-const EXAM_POOL=[
- {q:'¿Demanda mínima hacia adelante (frenado)?',o:['0.2g','0.5g','0.8g'],a:2},
- {q:'WLL agregado mínimo = ¿cuánto del peso?',o:['10%','50%','100%'],a:1},
- {q:'Llenado MÁS PELIGROSO de cisterna?',o:['40–60%','90–100%','0–10%'],a:0},
- {q:'Bridge Formula B regula…',o:['peso y espaciado de ejes','altura y ancho','velocidad y frenos'],a:0},
- {q:'Límite del eje direccional',o:['10,000','12,000','20,000 lbs'],a:1},
- {q:'GVW federal máximo',o:['70,000','80,000','100,000 lbs'],a:1},
- {q:'Esbeltez máxima de pila',o:['2:1','3:1','5:1'],a:1},
- {q:'Índice de volcadura seguro',o:['≤1.0–1.2','≤2.0','≤3.0'],a:0},
- {q:'Horas máx de CONDUCCIÓN',o:['8 h','11 h','14 h'],a:1},
- {q:'Ventana máxima de servicio',o:['12 h','14 h','16 h'],a:1},
- {q:'Acumulado semanal (7 días)',o:['40 h','60 h','80 h'],a:1},
- {q:'Ante derrame químico lo PRIMERO…',o:['lavar con agua','aislarse y llamar con ERG','subir a la carga'],a:1},
- {q:'CHEMTREC (EE.UU.)',o:['1-800-424-9300','solo 911','1-800-COLECCI'],a:0},
- {q:'SETIQ (México)',o:['800-00-214-00','55-1234','078'],a:0},
- {q:'Oxidante (5.1) con combustible (3)…',o:['permitido cerca','PROHIBIDO juntos','solo en contenedor'],a:1},
- {q:'Placas obligatorias a partir de…',o:['1,001 lbs o cualquier gas','10,000 lbs','nunca'],a:0},
- {q:'Piso mojado reduce fricción…',o:['no cambia','~35-60%','la duplica'],a:1},
- {q:'Bloqueo frontal se requiere cuando…',o:['0.8g supera fricción+amarre','siempre','nunca'],a:0},
- {q:'Viento fuerte + COG alto…',o:['acelerar','reducir velocidad o esperar','subir carga'],a:1},
- {q:'Lo pesado se coloca…',o:['arriba','abajo y sobre ejes','da igual'],a:1}
-];
-
-const state={trailer:{...TRAILERS.dryvan53},items:[],theme:'dark',unitsUsed:0,activeUnit:0,
- unitZones:[],unitAnalyses:[],forklift:{cap:5000,lc:24},checklist:{},engTab:0,opsTab:0,
- weather:'dry',wind:0,hos:{drive:0,onDuty:0,week:0},hazmat:[],log:JSON.parse(localStorage.getItem('argos_log')||'[]')};
-const TH=()=>THEMES[state.theme];
-const FONT='Consolas, "Courier New", monospace';
-const THEMES={
- dark:{bgIn:'#08152a',bgOut:'#000206',glow:'rgba(59,130,246,.8)',wallFill:'rgba(37,99,235,.12)',wallEdge:'rgba(125,211,252,.85)',soft:'rgba(125,211,252,.6)',text:'#7dd3fc',muted:'#94a3b8',grid:'rgba(56,130,246,.25)',ruler:'rgba(148,163,184,.65)',ground:'rgba(148,163,184,.45)',wheel:'rgba(219,234,254,.95)',onBox:'#fff',shadow:'rgba(0,0,0,.4)'},
- light:{bgIn:'#ffffff',bgOut:'#d7e3f8',glow:'rgba(30,64,175,.4)',wallFill:'rgba(37,99,235,.10)',wallEdge:'rgba(30,64,175,.85)',soft:'rgba(30,64,175,.55)',text:'#1e40af',muted:'#475569',grid:'rgba(30,64,175,.28)',ruler:'rgba(71,85,105,.7)',ground:'rgba(71,85,105,.5)',wheel:'rgba(30,58,138,.9)',onBox:'#0f172a',shadow:'rgba(15,23,42,.18)'}
-};
-const topCanvas=document.getElementById('topCanvas'),sideCanvas=document.getElementById('sideCanvas'),isoCanvas=document.getElementById('isoCanvas');
-const tctx=topCanvas.getContext('2d'),sctx=sideCanvas.getContext('2d'),ictx=isoCanvas.getContext('2d');
-const iso={angle:Math.PI/4,spin:false,raf:null};
-let scanStream=null,scanTimer=null;
-
-/* HELPERS */
-function hexA(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
+const LABELS={pallet:'Pallet',tote:'IBC Tote',coil:'Rollo Acero',machinery:'Maquinaria',drum:'Barril',crate:'Caja',tank:'Tanque Líq.'};
+const FRIC={pallet:.40,crate:.45,tote:.25,coil:.25,machinery:.40,drum:.30,tank:.30};
+const HAZMAT=[{un:'UN1203',n:'Gasolina',c:'3',erg:128},{un:'UN1993',n:'Diésel',c:'3',erg:128},{un:'UN1263',n:'Pintura',c:'3',erg:128},{un:'UN1978',n:'Propano',c:'2.1',erg:115},{un:'UN1005',n:'Amoníaco',c:'2.3',erg:125},{un:'UN1017',n:'Cloro',c:'2.3',erg:124},{un:'UN2796',n:'Ác. Sulfúrico',c:'8',erg:157},{un:'UN1824',n:'Sosa Cáustica',c:'8',erg:154},{un:'UN1479',n:'Nitrato Oxid.',c:'5.1',erg:140},{un:'UN2811',n:'Tóxico Org.',c:'6.1',erg:153}];
+const HZ_FORBID=[['5.1','3'],['5.1','2.1'],['2.3','3']];const HZ_SEP=[['3','8'],['6.1','3']];
+const ERG_ACT={128:'Aislar 50 m · eliminar ignición · si arde evacuar 800 m',115:'Cerrar válvulas · BLEVE evacuar 1,600 m · enfriar tanques',125:'GAS TÓXICO: viento a favor · aislar 800 m · NO entrar sin SCBA',124:'Cloro letal · igual que 125 · terreno alto',157:'NO tocar · no lavar al drenaje · agua reacciona',154:'Evitar contacto · neutralizar con agua',140:'Inundar con agua · separar combustibles',153:'Evitar vapores · aislar 25 m · respiración obligatoria'};
+const CHECKLIST=[['Tandems/quinta en posición recetada','Ejes'],['Amarres según receta','§393'],['Tensión sin holgura','§393.130'],['Rubber mats si μ bajo','μ'],['Bloqueo frontal si requerido','§393.102'],['Pilas ≤3:1, pesado abajo','Pila'],['Puertas/barras OK','§393.106'],['Piso limpio/seco','—'],['Montacargas capacidad OK','OSHA'],['Cisternas ≥90%/≤20% o baffles','§393.117'],['Placas HAZMAT 4 lados','§172'],['Segregación HAZMAT OK','§177.848'],['Ficha emergencia en cabina','§392'],['Fotos de evidencia tomadas','ARGOS']];
+const state={trailer:{...TRAILERS.dryvan53},items:[],units:0,activeUnit:0,U:[],sel:0,
+ weather:'dry',wind:0,hazmat:[],checklist:{},photos:[null,null,null,null],_pi:0};
+const FONT='Consolas,"Courier New",monospace';
+const topC=document.getElementById('topCanvas'),rearC=document.getElementById('rearCanvas'),sideC=document.getElementById('sideCanvas'),isoC=document.getElementById('isoCanvas');
+const tctx=topC.getContext('2d'),rctx=rearC.getContext('2d'),sctx=sideC.getContext('2d'),ictx=isoC.getContext('2d');
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const uItems=u=>state.items.filter(i=>i.unit===u);
+const uPlaced=u=>uItems(u).filter(i=>i.placed);
+const bySeq=(u,n)=>uPlaced(u).find(i=>i.seq===n);
+const AU=()=>state.U[state.activeUnit]||null;
+function hexA(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
 function roundRect(c,x,y,w,h,r){if(w<2*r)r=w/2;if(h<2*r)r=h/2;c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-function glowRect(c,x,y,w,h,r,fa=0.12){const T=TH();if(w<=0||h<=0)return;c.save();c.shadowColor=T.glow;c.shadowBlur=16;c.fillStyle=hexA('#2563eb',fa);roundRect(c,x,y,w,h,r);c.fill();c.restore();c.strokeStyle=T.wallEdge;c.lineWidth=2;roundRect(c,x,y,w,h,r);c.stroke();}
-function wheelSide(c,cx,cy,r){const T=TH();c.save();c.shadowColor=T.glow;c.shadowBlur=8;c.strokeStyle=T.wheel;c.lineWidth=2.5;c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();c.beginPath();c.arc(cx,cy,r*.55,0,7);c.stroke();c.restore();}
-function wheelTop(c,cx,cy,rx,ry){const T=TH();c.save();c.shadowColor=T.glow;c.shadowBlur=8;c.strokeStyle=T.wheel;c.lineWidth=2.2;c.beginPath();c.ellipse(cx,cy,rx,ry,0,0,7);c.stroke();c.beginPath();c.ellipse(cx,cy,Math.max(1,rx*.45),Math.max(1,ry*.45),0,0,7);c.stroke();c.restore();}
-function xrayBG(c,w,h){const T=TH();const g=c.createRadialGradient(w/2,h/2,40,w/2,h/2,w*.75);g.addColorStop(0,T.bgIn);g.addColorStop(1,T.bgOut);c.fillStyle=g;c.fillRect(0,0,w,h);}
-function overlayFX(c,w,h){c.save();c.fillStyle=state.theme==='light'?'rgba(30,64,175,.03)':'rgba(125,211,252,.02)';for(let y=0;y<h;y+=4)c.fillRect(0,y,w,1);const g=c.createRadialGradient(w/2,h/2,h*.35,w/2,h/2,w*.72);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,state.theme==='light'?'rgba(30,41,59,.18)':'rgba(0,0,8,.4)');c.fillStyle=g;c.fillRect(0,0,w,h);c.restore();}
-function dimH(c,x1,x2,y,l){const T=TH();c.save();c.strokeStyle=T.ruler;c.fillStyle=T.ruler;c.lineWidth=1;c.beginPath();c.moveTo(x1,y);c.lineTo(x2,y);c.moveTo(x1,y-4);c.lineTo(x1,y+4);c.moveTo(x2,y-4);c.lineTo(x2,y+4);c.stroke();c.font='10px '+FONT;c.textAlign='center';c.fillText(l,(x1+x2)/2,y-5);c.restore();}
+function glowRect(c,x,y,w,h,r,fa=.12){if(w<=0||h<=0)return;c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=14;c.fillStyle=hexA('#2563eb',fa);roundRect(c,x,y,w,h,r);c.fill();c.restore();c.strokeStyle='rgba(125,211,252,.85)';c.lineWidth=2;roundRect(c,x,y,w,h,r);c.stroke();}
+function wheelTop(c,cx,cy,rx,ry){c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=7;c.strokeStyle='rgba(219,234,254,.95)';c.lineWidth=2.2;c.beginPath();c.ellipse(cx,cy,rx,ry,0,0,7);c.stroke();c.beginPath();c.ellipse(cx,cy,Math.max(1,rx*.45),Math.max(1,ry*.45),0,0,7);c.stroke();c.restore();}
+function wheelSide(c,cx,cy,r){c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=7;c.strokeStyle='rgba(219,234,254,.95)';c.lineWidth=2.4;c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();c.beginPath();c.arc(cx,cy,r*.55,0,7);c.stroke();c.restore();}
+function xrayBG(c,w,h){const g=c.createRadialGradient(w/2,h/2,40,w/2,h/2,w*.75);g.addColorStop(0,'#08152a');g.addColorStop(1,'#000206');c.fillStyle=g;c.fillRect(0,0,w,h);}
 function rectsOverlap(a,b){return a.x<b.x+b.l&&a.x+a.l>b.x&&a.y<b.y+b.w&&a.y+a.w>b.y;}
 function deckZ(t,it){return(t.lowerFrom!==undefined&&it.x>=t.lowerFrom-.5)?(t.lowerDeck||t.deckH):t.deckH;}
 function axlesAt(t,tx){if(!t.semi)return[t.tx];if(t.kind==='lowboy')return[tx-36,tx,tx+36];return[tx-27,tx+27];}
-const unitItems=u=>state.items.filter(i=>i.unit===u);
-const activeAnalysis=()=>state.unitAnalyses[state.activeUnit]||null;
-function solvedT(){const a=activeAnalysis();return(a&&a.dist&&a.dist.pass)?a.dist.tx:state.trailer.tx;}
-const randId=()=>Math.random().toString(36).substr(2,9);
-const fmt=n=>Math.round(n).toLocaleString('en-US');
-function badge(ok,w){return ok?'<span class="badge b-ok">✔ OK</span>':w?'<span class="badge b-warn">⚠</span>':'<span class="badge b-bad">✖</span>';}
-function riskLevel(R){return R>=15?{c:'var(--danger)',l:'CRÍTICO'}:R>=8?{c:'var(--warning)',l:'ALTO'}:R>=4?{c:'#38bdf8',l:'MEDIO'}:{c:'var(--success)',l:'BAJO'};}
-function alarm(){try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='square';o.frequency.value=880;g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.35);o.start();o.stop(a.currentTime+.35);}catch(e){}}
-function weatherMu(){return{dry:1,rain:.65,ice:.4}[state.weather]||1;}
-function weatherWind(){const w=+state.wind||0;return w>45?1.25:w>30?1.12:1;}
-function hosStatus(){const h=state.hos;
- if(h.drive>11||h.onDuty>14||h.week>70)return{ok:false,lvl:'PROHIBIDO OPERAR',c:'var(--danger)'};
- if(h.drive>9.5||h.onDuty>13||h.week>60)return{ok:true,lvl:'⚠ LÍMITE CERCANO — planear paro',c:'var(--warning)'};
- return{ok:true,lvl:'Dentro de horas (11/14/60-70)',c:'var(--success)'};}
-function hazmatAnalysis(){
- const list=state.hazmat;
- if(!list.length)return{any:false};
- const byClass={};list.forEach(h=>{byClass[h.c]=(byClass[h.c]||0)+1;});
- const forbid=[],separate=[];
- list.forEach((a,i)=>list.forEach((b,j)=>{if(i>=j)return;
+function sideOf(it){return(it.y+it.w/2)<state.trailer.W/2?'IZQUIERDO (CONDUCTOR)':'DERECHO (PASAJERO)';}
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='es-ES';speechSynthesis.speak(u);}catch(e){}}
+function toast(m){const t=document.getElementById('toast');t.innerHTML=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function wMu(){return{dry:1,rain:.65,ice:.4}[state.weather]||1;}
+function wWind(){const w=+state.wind||0;return w>45?1.25:w>30?1.12:1;}
+function hosOK(){const d=+document.getElementById('hD').value||0,o=+document.getElementById('hO').value||0,w=+document.getElementById('hW').value||0;return!(d>11||o>14||w>70);}
+function hzAnalysis(){if(!state.hazmat.length)return{any:false};
+ const by={};state.hazmat.forEach(h=>by[h.c]=(by[h.c]||0)+1);
+ const f=[],s=[];state.hazmat.forEach((a,i)=>state.hazmat.forEach((b,j)=>{if(i>=j)return;
   const p=[a.c,b.c].sort().join('|');
-  if(HZ_FORBID.some(f=>[f[0],f[1]].sort().join('|')===p))forbid.push(a.n+' + '+b.n);
-  else if(HZ_SEP.some(f=>[f[0],f[1]].sort().join('|')===p))separate.push(a.n+' + '+b.n);}));
- const anyGas=byClass['2']!==undefined;
- const placards=Object.keys(byClass).filter(c=>c!=='2');
- return{any:true,list,byClass,forbid,separate,placardReq:anyGas||placards.length>0};}
-function sloshMultOf(fill,baf){let m=1+1.8*Math.pow(Math.sin(Math.PI*Math.min(.99,Math.max(.02,fill))),1.4);if(baf)m=1+(m-1)*.55;return m;}
-function bridgeMax(L,N){return 500*(L*N/(N-1)+12*N+36);}
-function bridgeCheck(t,d){
- const L5=(d.tx+(t.wb-d.k2d))/12,g5={N:5,L:L5,max:Math.min(LIMITS.gross,bridgeMax(L5,5)),val:d.gross};
- const L2=(t.wb-d.k2d)/12,g2={N:2,L:L2,max:Math.min(46000,bridgeMax(L2,2)),val:d.steer+d.drive};
- const L3=(t.kind==='lowboy'?72:54)/12,g3={N:t.kind==='lowboy'?3:2,L:L3,max:bridgeMax(L3,t.kind==='lowboy'?3:2),val:d.trailer};
- g5.ok=g5.val<=g5.max;g2.ok=g2.val<=g2.max;g3.ok=g3.val<=g3.max;return{g5,g2,g3};}
-function solveDistribution(t,W,xc){
- if(W<=0)return null;
+  if(HZ_FORBID.some(x=>[x[0],x[1]].sort().join('|')===p))f.push(a.n+'+'+b.n);
+  else if(HZ_SEP.some(x=>[x[0],x[1]].sort().join('|')===p))s.push(a.n+'+'+b.n);}));
+ return{any:true,forbid:f,sep:s,placardReq:by['2']!==undefined||Object.keys(by).length>0,by};}
+function sloshMult(fill,baf){let m=1+1.8*Math.pow(Math.sin(Math.PI*Math.min(.99,Math.max(.02,fill))),1.4);if(baf)m=1+(m-1)*.55;return m;}
+
+/* ===== MOTOR: zona + maxrects + apilado + orden + análisis ===== */
+function weightZone(W,t){if(W<=0)return{target:t.L*.42,zone:null};
+ let lo,hi;
+ if(t.semi){const sp=t.tx-t.kp;
+  const hi_k=Math.min((12000-t.tareS)*t.wb/26,(34000-t.tareD)*t.wb/(t.wb-26),W);
+  const lo_k=Math.max(0,W-(34000-t.tareT));
+  if(lo_k>hi_k)return{target:t.tx-.38*sp,zone:null};
+  const xc=k=>t.tx-k*sp/W;lo=xc(hi_k);hi=xc(Math.min(lo_k,W));}
+ else{const sp=t.tx-t.frontAxle,xc=f=>t.tx-f*sp/W;
+  lo=xc(12000-t.tareS);hi=xc(Math.max(0,W-(t.rearMax-t.tareT)));}
+ if(lo>hi){const q=lo;lo=hi;hi=q;}
+ lo=Math.max(0,lo);hi=Math.min(t.L,hi);
+ return{target:Math.min(Math.max((lo+hi)/2,t.L*.26),t.L*.64),zone:[lo,hi]};}
+function solveAxles(W,xc,t){if(W<=0)return null;
  if(t.semi){let best=null;
   for(let k2d=t.k2dMin;k2d<=t.k2dMax;k2d+=2)for(let tx=t.txMin;tx<=t.txMax;tx+=2){
    const wKp=W*(tx-xc)/(tx-t.kp);if(wKp<=0)continue;
    const st=t.tareS+wKp*k2d/t.wb,dv=t.tareD+wKp*(t.wb-k2d)/t.wb,tr=t.tareT+W-wKp,gr=t.tareS+t.tareD+t.tareT+W;
-   const pass=st<=LIMITS.steer&&dv<=LIMITS.drive&&tr<=LIMITS.trailer&&gr<=LIMITS.gross&&gr<=bridgeMax((tx+(t.wb-k2d))/12,5)&&(st+dv)<=Math.min(46000,bridgeMax((t.wb-k2d)/12,2));
+   const L5=(tx+(t.wb-k2d))/12,b5=500*(L5*5/4+96),L2=(t.wb-k2d)/12,b2=Math.min(46000,500*(L2*2+60));
+   const pass=st<=12000&&dv<=34000&&tr<=34000&&gr<=80000&&gr<=b5&&(st+dv)<=b2;
    const cost=Math.abs(k2d-26)*1.4+Math.abs(tx-(t.txMin+t.txMax)/2)/2;
    if(pass&&(!best||cost<best.cost))best={k2d,tx,steer:st,drive:dv,trailer:tr,gross:gr,pass,cost};}
-  if(!best){let m=1e12;
-   for(let k2d=t.k2dMin;k2d<=t.k2dMax;k2d+=2)for(let tx=t.txMin;tx<=t.txMax;tx+=2){
-    const wKp=W*(tx-xc)/(tx-t.kp);if(wKp<=0)continue;
-    const st=t.tareS+wKp*k2d/t.wb,dv=t.tareD+wKp*(t.wb-k2d)/t.wb,tr=t.tareT+W-wKp,gr=t.tareS+t.tareD+t.tareT+W;
-    const v=Math.max(0,st-12000)+Math.max(0,dv-34000)+Math.max(0,tr-34000)+Math.max(0,gr-80000);
-    if(v<m){m=v;best={k2d,tx,steer:st,drive:dv,trailer:tr,gross:gr,pass:false,cost:0};}}}
-  best.holes=Math.round((best.tx-t.tx)/4);return best;}
- const fa=t.frontAxle,ra=t.tx,wF=W*(ra-xc)/(ra-fa),wR=W-wF;
- return{k2d:0,tx:ra,steer:t.tareS+wF,drive:0,trailer:t.tareT+wR,gross:t.tareS+t.tareT+W,holes:0,pass:(t.tareS+wF)<=LIMITS.steer&&(t.tareT+wR)<=t.rearMax&&(t.tareS+t.tareT+W)<=t.gvw};}
-function evaluateSecurement(u){
- const t=state.trailer,placed=unitItems(u).filter(i=>i.placed);
- const W=placed.reduce((s,i)=>s+i.weight,0);
- if(!W)return null;
- const muBase=placed.reduce((s,i)=>s+i.weight*(FRIC[i.type]||0.40),0)/W;
- const mu=muBase*weatherMu(),fric=mu*W;
- const liq=placed.filter(i=>i.type==='tank'&&(i.fill||1)<0.999);
- const liqW=liq.reduce((s,i)=>s+i.weight,0);
- const baf=!!t.baffles;
- let slosh=1;
- if(liqW>0)slosh=liq.reduce((s,i)=>s+i.weight*sloshMultOf(i.fill,baf),0)/liqW;
- if(state.weather!=='dry')slosh*=1.1;
- const demandF=.8*(W-liqW)+.8*slosh*liqW,demandB=.5*(W-liqW)+.5*liqW,demandL=.5*(W-liqW)+.5*slosh*liqW;
- const x1=Math.min(...placed.map(i=>i.x)),x2=Math.max(...placed.map(i=>i.x+i.l));
- const occupied=x2-x1,minAnchors=occupied>=10?2+Math.ceil((occupied-10)/10):2;
- let chains=0,straps=0;
- if(W>10000){chains=Math.max(2,Math.ceil((.5*W)/WLL.chainG70));if(chains<minAnchors)straps=minAnchors-chains;else straps=2;}
- else straps=Math.max(minAnchors,Math.ceil((.5*W)/WLL.strap2));
- if(liqW>0)chains+=Math.ceil(liqW/20000);
- if(state.weather==='ice')chains+=1;
- const wllAgg=chains*WLL.chainG70+straps*WLL.strap2,hasBulk=!!t.bulkhead;
- const needsFront=demandF>fric+(hasBulk?W:0)+.25*wllAgg;
- const mats=mu<0.30;
- const ok=(chains+straps)>=minAnchors&&wllAgg>=.5*W&&(!needsFront||hasBulk)&&(fric+wllAgg)>=demandL&&(fric+.5*wllAgg)>=demandB;
- return{W,mu,muBase,fric,demandF,demandB,demandL,minAnchors,chains,straps,wllAgg,hasBulk,needsFront,mats,occupied,liqW,slosh,baf,
-  anchorsOK:(chains+straps)>=minAnchors,wllOK:wllAgg>=.5*W,blockingOK:!needsFront||hasBulk,lateralOK:(fric+wllAgg)>=demandL,rearOK:(fric+.5*wllAgg)>=demandB,ok};}
-function evaluateStackCogFork(u){
- const t=state.trailer,placed=unitItems(u).filter(i=>i.placed);
- if(!placed.length)return null;
- let worstRatio=0,worstPair=null,blocked=false;
- placed.forEach(it=>{if(it.z>0&&it.support){const s=it.support,b=Math.min(s.l,s.w),h=s.z+s.h+it.h,r=h/b;
-  if(r>worstRatio){worstRatio=r;worstPair={on:s,it,ratio:h};}if(r>3)blocked=true;}});
- const W=placed.reduce((s,i)=>s+i.weight,0);
- const hCog=W>0?placed.reduce((s,i)=>{let hh=deckZ(t,i)+i.z+i.h/2;
-  if(i.type==='tank'&&(i.fill||1)<.999)hh+=i.h*(1-(i.fill||1))*.12;return s+i.weight*hh;},0)/W:0;
- const rollIdx=(hCog/(t.W/2))*weatherWind();
- const fk=state.forklift;let worstFork=null,forkFail=false;
- placed.forEach(it=>{const lc=Math.min(48,it.l/2),cap=fk.cap*Math.min(1,fk.lc/lc);
-  if(it.weight>cap){forkFail=true;if(!worstFork||it.weight>worstFork.weight)worstFork={it,cap,realLC:lc};}
-  if(!worstFork&&it.weight>fk.cap*.9)worstFork={it,cap,realLC:lc,warn:true};});
- return{worstRatio,worstPair,stackOK:!blocked&&worstRatio<=3,stackWarn:worstRatio>2,hCog,rollIdx,
-  rollOK:rollIdx<=1.2,rollWarn:rollIdx<=1.5&&rollIdx>1.2,forkFail,worstFork,fk};}
-function evaluateOpsRisks(){
- const risks=[],h=state.hos,wm=weatherMu();
- if(h.drive>11||h.onDuty>14||h.week>70)risks.push({t:'😤 FATIGA: horas HOS excedidas — OPERACIÓN ILEGAL',P:5,S:5,M:'PARAR. Descanso 10h. Ninguna carga vale una vida.'});
- else if(h.drive>9.5||h.onDuty>13||h.week>60)risks.push({t:'Fatiga en límite cercano',P:3,S:4,M:'Planear paro inmediato'});
- if(state.weather==='rain')risks.push({t:'🌧️ Piso mojado: fricción −35%',P:4,S:4,M:'Duplicar distancia de frenado · rubber mats · amarre ya recalculado'});
- if(state.weather==='ice')risks.push({t:'🧊 HIELO: fricción −60% — extremo',P:5,S:5,M:'POSTERGAR salida · cadenas en llantas · amarre extra aplicado'});
- const w=+state.wind||0;
- if(w>30)risks.push({t:'🌬️ Viento '+w+' mph (volcadura ×'+weatherWind().toFixed(2)+')',P:4,S:4,M:'Velocidad reducida · esperar si >45 mph'});
- const hz=hazmatAnalysis();
- if(hz.any&&hz.forbid.length)risks.push({t:'☢️ HAZMAT INCOMPATIBLE: '+hz.forbid.join(' · '),P:5,S:5,M:'SEPARAR en unidades distintas AHORA'});
- if(hz.any&&hz.separate.length)risks.push({t:'HAZMAT requiere separación: '+hz.separate.join(' · '),P:4,S:4,M:'Bulkhead/3m o unidades distintas'});
- if(hz.any&&hz.placardReq)risks.push({t:'☢️ Placas HAZMAT requeridas + ficha en cabina',P:2,S:3,M:'Colocar placas clase '+Object.keys(hz.byClass).join(',')});
- return risks.map(r=>({...r,R:r.P*r.S})).sort((a,b)=>b.R-a.R);}
-function evaluateRisks(u,A){
- const t=state.trailer;if(!A)return[];
- const d=A.dist,sec=A.eng.sec,sc=A.eng.stack,risks=[];
- if(!d.pass){let o='';
-  if(d.steer>LIMITS.steer)o+=' DIR +'+fmt(d.steer-LIMITS.steer);
-  if(t.semi&&d.drive>LIMITS.drive)o+=' TRAC +'+fmt(d.drive-LIMITS.drive);
-  if(d.trailer>LIMITS.trailer)o+=' TDEM +'+fmt(d.trailer-LIMITS.trailer);
-  if(d.gross>LIMITS.gross)o+=' GVW +'+fmt(d.gross-LIMITS.gross);
-  risks.push({t:'Sobrepeso por eje',P:5,S:4,M:'Redistribuir o dividir'+o});}
- if(A.eng.bridge&&!A.eng.bridge.g5.ok)risks.push({t:'Falla Bridge Formula B',P:5,S:3,M:'Tandems al máximo o reducir'});
- if(sec&&sec.needsFront&&!sec.hasBulk)risks.push({t:'Carga proyectada a cabina (FATAL)',P:4,S:5,M:'INSTALAR bloqueo frontal. NO SALIR sin esto.'});
- if(sec&&!sec.ok)risks.push({t:'Amarre insuficiente',P:4,S:4,M:'Instalar: '+sec.chains+' cadenas + '+sec.straps+' correas'+(sec.mats?' + mats':'')});
- if(sc&&!sc.rollOK)risks.push({t:'Volcadura lateral ('+sc.rollIdx.toFixed(2)+')',P:3,S:5,M:'Bajar carga · velocidad reducida'});
- if(A.latPct&&Math.abs(A.latPct)>6)risks.push({t:'Desbalance lateral '+A.latPct.toFixed(0)+'%',P:4,S:4,M:'Redistribuir izq/der'});
- if(sc&&sc.worstPair&&sc.worstRatio>2)risks.push({t:'Pila inestable ('+sc.worstRatio.toFixed(1)+':1)',P:3,S:4,M:'Bajar altura'});
- if(sc&&sc.forkFail)risks.push({t:'Sobrecarga de montacargas',P:3,S:5,M:'Equipo mayor o levar por pares'});
- if(sec&&sec.mats)risks.push({t:'Fricción baja μ='+sec.mu.toFixed(2),P:3,S:4,M:'Rubber mats'});
- if(sec&&sec.liqW>0&&sec.slosh>1.6)risks.push({t:'🌊 Oleaje ×'+sec.slosh.toFixed(1),P:4,S:4,M:'≥90%/≤20% · deflectores'});
- return risks;}
-function calcAnalysis(u){
- const t=state.trailer,placed=unitItems(u).filter(i=>i.placed);
- const totalW=placed.reduce((s,i)=>s+i.weight,0);
- let mom=0,lm=0;placed.forEach(i=>{mom+=i.weight*(i.x+i.l/2);lm+=i.weight*((i.y+i.w/2)-t.W/2);});
- const cogX=totalW>0?mom/totalW:0;
- const dist=solveDistribution(t,totalW,cogX);
- const eng={sec:evaluateSecurement(u),stack:evaluateStackCogFork(u),bridge:dist?bridgeCheck(t,dist):null};
- let risks=dist?evaluateRisks(u,{dist,eng,latPct:totalW>0?lm/(totalW*t.W/2)*100:0}):[];
- risks=risks.concat(evaluateOpsRisks()).map(r=>({...r,R:r.P*r.S})).sort((a,b)=>b.R-a.R);
- eng.risks=risks;
- return{totalW,cogX,dist,latPct:totalW>0?lm/(totalW*t.W/2)*100:0,eng};}
-function cogAnalysis(W,t){
- if(W<=0)return{target:t.L*.42,zone:null};
- let lo,hi;
- if(t.semi){const span=t.tx-t.kp;
-  const kpHi=Math.min((LIMITS.steer-t.tareS)*t.wb/26,(LIMITS.drive-t.tareD)*t.wb/(t.wb-26),W);
-  const kpLo=Math.max(0,W-(LIMITS.trailer-t.tareT));
-  if(kpLo>kpHi)return{target:t.tx-.38*span,zone:null};
-  const xc=k=>t.tx-k*span/W;lo=xc(kpHi);hi=xc(Math.min(kpLo,W));}
- else{const span=t.tx-t.frontAxle,xc=f=>t.tx-f*span/W;
-  lo=xc(LIMITS.steer-t.tareS);hi=xc(Math.max(0,W-(t.rearMax-t.tareT)));}
- if(lo>hi){const tmp=lo;lo=hi;hi=tmp;}
- lo=Math.max(0,lo);hi=Math.min(t.L,hi);
- return{target:Math.min(Math.max((lo+hi)/2,t.L*.26),t.L*.64),zone:[lo,hi]};}
-function placeGroup(group,target,ui){
- const t=state.trailer;let spaces=[{x:0,y:0,w:t.L,h:t.W}],order=1;
- const sorted=[...group].sort((a,b)=>(b.weight-a.weight)||((b.l*b.w)-(a.l*a.w)));
+  if(!best)return null;best.holes=Math.round((best.tx-t.tx)/4);return best;}
+ const fa=t.frontAxle,ra=t.tx,wF=W*(ra-xc)/(ra-fa);
+ const st=t.tareS+wF,tr=t.tareT+W-wF,gr=t.tareS+t.tareT+W;
+ return{k2d:0,tx:ra,steer:st,drive:0,trailer:tr,gross:gr,holes:0,pass:st<=12000&&tr<=t.rearMax&&gr<=t.gvw};}
+function secureCalc(W,t){if(W<=0)return{chains:0,straps:0,block:false,mu:.4,ok:true,W:0,wll:0};
+ const kinds=uItems(state.activeUnit).filter(i=>i.placed);
+ let items=uPlaced(state.units?state.units-1>=0?state.activeUnit:0:0);
+ /* usar piezas de la unidad activa para mu */
+ const list=AU().items||[];
+ const muB=list.length?list.reduce((s,i)=>s+i.weight*(FRIC[i.type]||.4),0)/list.length:.4;
+ const mu=muB*wMu(),fric=mu*W;
+ const liq=list.filter(i=>i.type==='tank'&&(i.fill||1)<.999);
+ const liqW=liq.reduce((s,i)=>s+i.weight,0),baf=!!t.baffles;
+ let slo=1;if(liqW>0)slo=liq.reduce((s,i)=>s+i.weight*sloshMult(i.fill||.5,baf),0)/liqW;
+ if(state.weather!=='dry')slo*=1.1;
+ const dF=.8*(W-liqW)+.8*slo*liqW,dL=.5*(W-liqW)+.5*slo*liqW;
+ let ch=0,st2=0;
+ if(W>10000){ch=Math.max(2,Math.ceil((W*.5)/4700));st2=2;}
+ else st2=Math.max(2,Math.ceil((W*.5)/1000));
+ if(liqW>0)ch+=Math.ceil(liqW/20000);if(state.weather==='ice')ch+=1;
+ const wll=ch*4700+st2*1000,hasBulk=!!t.bulkhead;
+ const block=(dF>fric+(hasBulk?W:0)+.25*wll)&&!hasBulk;
+ const ok=wll>=W*.5&&(fric+wll)>=dL&&!block;
+ return{chains:ch,straps:st2,block,mu:muB,muEff:mu,wll,liqW,slo,ok};}
+function placeGroup(group,target,ui,t){
+ let spaces=[{x:0,y:0,w:t.L,h:t.W}];
  const split=(arr,i,item)=>{const s=arr[i];arr.splice(i,1);
   if(s.w>item.l)arr.push({x:s.x+item.l,y:s.y,w:s.w-item.l,h:item.w});
   if(s.h>item.w)arr.push({x:s.x,y:s.y+item.w,w:s.w,h:s.h-item.w});};
- sorted.forEach(item=>{
+ [...group].sort((a,b)=>(b.weight-a.weight)||((b.l*b.w)-(a.l*a.w))).forEach(item=>{
   let best=null;
   for(let i=0;i<spaces.length;i++){const s=spaces[i],cd=[];
    if(item.l<=s.w&&item.w<=s.h)cd.push({rot:false,cx:s.x+item.l/2,cy:s.y+item.w/2});
    if(item.l!==item.w&&item.w<=s.w&&item.l<=s.h)cd.push({rot:true,cx:s.x+item.w/2,cy:s.y+item.l/2});
    cd.forEach(c=>{const sc=2.4*Math.abs(c.cx-target)+1.2*Math.abs(c.cy-t.W/2)+i*.01;
     if(!best||sc<best.score)best={...c,i,score:sc};});}
-  if(best){if(best.rot){const tp=item.l;item.l=item.w;item.w=tp;}
+  if(best){if(best.rot){const q=item.l;item.l=item.w;item.w=q;}
    item.x=spaces[best.i].x;item.y=spaces[best.i].y;item.z=0;item.placed=true;item.unit=ui;
-   split(spaces,best.i,item);item.order=order++;}
+   split(spaces,best.i,item);}
   else{let sb=null;
    group.forEach(p=>{if(!p.placed||p===item)return;
     const top=p.z+p.h;if(top+item.h>t.H||p.weight<item.weight)return;
@@ -605,946 +350,569 @@ function placeGroup(group,target,ui){
     if(group.some(o=>o.placed&&o!==p&&o.z>=top-1&&rectsOverlap(o,rc)))return;
     if(!sb||top<sb.top)sb={p,rot:!fN,top};});
    if(sb){item.x=sb.p.x;item.y=sb.p.y;item.z=sb.top;item.placed=true;item.support=sb.p;item.unit=ui;
-    if(sb.rot){const tp=item.l;item.l=item.w;item.w=tp;}item.order=order++;}}});}
+    if(sb.rot){const q=item.l;item.l=item.w;item.w=q;}}}});}
 
-/* ================= VISTAS RX ================= */
+function optimizeAll(silent){
+ const t=state.trailer;
+ state.items.forEach(it=>{it.placed=false;it.unit=-1;it.x=0;it.y=0;it.z=0;it.seq=0;it.support=null;});
+ const sorted=[...state.items].sort((a,b)=>(b.weight-a.weight)||((b.l*b.w)-(a.l*a.w)));
+ let groups=[[]],cw=0,ca=0;
+ sorted.forEach(it=>{if(cw+it.weight>t.cap||ca+it.l*it.w>t.L*t.W*.97){groups.push([]);cw=0;ca=0;}
+  groups[groups.length-1].push(it);cw+=it.weight;ca+=it.l*it.w;});
+ state.U=[];
+ groups.forEach((g,gi)=>{
+  const W=g.reduce((s,i)=>s+i.weight,0);
+  const zc=weightZone(Math.min(W,t.cap),t);
+  placeGroup(g,zc.target,gi,t);
+  uPlaced(gi).sort((a,b)=>(b.x-a.x)||(a.z-b.z)||(a.y-b.y)).forEach((it,i)=>it.seq=i+1);
+  AU_temp={items:g.filter(i=>i.placed)};
+  const saved=state.activeUnit;state.activeUnit=gi;state.U[gi]={zone:zc.zone,items:g.filter(i=>i.placed)};
+  let mom=0;uPlaced(gi).forEach(i=>mom+=i.weight*(i.x+i.l/2));
+  const cogX=W>0?mom/W:0;
+  const ax=solveAxles(W,cogX,t);
+  const sec=secureCalc(W,t);
+  state.U[gi]={...state.U[gi],W,cogX,ax,sec,zone:zc.zone,
+   missing:g.filter(i=>!i.placed).length};
+  state.activeUnit=saved;});
+ state.units=groups.length;state.activeUnit=0;
+ state.sel=1;
+ app.renderAll();
+ const allOk=state.U.every(u=>u.ax&&u.ax.pass&&u.sec.ok);
+ if(!silent){toast(allOk?'✔ LISTO — '+state.units+' unidad(es) · empieza por pieza #1':'✖ HAY RECHAZOS — franja roja abajo');
+  speak(allOk?'Acomodo calculado. Empieza por la pieza uno':'Atención. Hay rechazos. Revisar ejes y amarre');}
+ return allOk;}
+let AU_temp=null;
+
+/* ===== ① SUPERIOR ===== */
 function drawTop(){
- const t=state.trailer,T=TH(),cw=topCanvas.width,ch=topCanvas.height;
- tctx.clearRect(0,0,cw,ch);xrayBG(tctx,cw,ch);
- const tl=t.semi?260:0,m=40,sc=Math.min((cw-m*2-tl)/t.L,(ch-m*2-30)/t.W);
- const nx=m+tl*sc,oy=(ch-t.W*sc)/2-6,X=p=>nx+p*sc,Y=p=>oy+p*sc,stx=solvedT();
- if(t.semi){glowRect(tctx,X(-252),Y(8),96*sc,(t.W-16)*sc,4,.10);glowRect(tctx,X(-156),Y(2),126*sc,(t.W-4)*sc,6,.10);
-  wheelTop(tctx,X(-220),Y(t.W/2-20),5*sc,10*sc);wheelTop(tctx,X(-220),Y(t.W/2+20),5*sc,10*sc);
-  [[-17,10],[-17,t.W-10],[37,10],[37,t.W-10]].forEach(w=>wheelTop(tctx,X(w[0]),Y(w[1]),5*sc,10*sc));}
- if(t.straight){glowRect(tctx,X(0),Y(8),t.cabLen*sc,(t.W-16)*sc,6,.10);wheelTop(tctx,X(t.frontAxle),Y(t.W/2),5*sc,10*sc);}
- glowRect(tctx,X(0),Y(0),t.L*sc,t.W*sc,t.kind==='tanker'?t.W*sc/2:5,.10);
- tctx.strokeStyle=T.grid;tctx.lineWidth=1;
- for(let x=24;x<t.L-24;x+=48){tctx.beginPath();tctx.moveTo(X(x),Y(0));tctx.lineTo(X(x),Y(t.W));tctx.stroke();}
- const z=state.unitZones[state.activeUnit];
- if(z){const g=tctx.createLinearGradient(X(z[0]),0,X(z[1]),0);
-  g.addColorStop(0,'rgba(16,185,129,.02)');g.addColorStop(.5,'rgba(16,185,129,.16)');g.addColorStop(1,'rgba(16,185,129,.02)');
-  tctx.fillStyle=g;tctx.fillRect(X(z[0]),Y(0),(z[1]-z[0])*sc,t.W*sc);
-  tctx.strokeStyle='rgba(16,185,129,.8)';tctx.lineWidth=2;tctx.setLineDash([10,6]);
-  z.forEach(zz=>{tctx.beginPath();tctx.moveTo(X(zz),Y(0));tctx.lineTo(X(zz),Y(t.W));tctx.stroke();});tctx.setLineDash([]);
-  tctx.fillStyle='#10b981';tctx.font='bold 11px '+FONT;tctx.textAlign='center';
-  tctx.fillText('▲ ZONA ÓPTIMA DE PESO ▲',X((z[0]+z[1])/2),Y(t.W/2));}
- axlesAt(t,stx).forEach(wx=>{wheelTop(tctx,X(wx),Y(10),5*sc,10*sc);wheelTop(tctx,X(wx),Y(t.W-10),5*sc,10*sc);});
- if(t.semi){const kx=X(t.kp),ky=Y(t.W/2);
-  tctx.save();tctx.shadowColor='#fff';tctx.shadowBlur=8;tctx.fillStyle='#e2e8f0';
-  tctx.beginPath();tctx.moveTo(kx-6,ky);tctx.lineTo(kx,ky-6);tctx.lineTo(kx+6,ky);tctx.lineTo(kx,ky+6);tctx.closePath();tctx.fill();tctx.restore();
-  tctx.fillStyle=T.text;tctx.font='bold 11px '+FONT;tctx.textAlign='center';tctx.fillText('KINGPIN',kx,ky-11);}
- tctx.fillStyle=T.text;tctx.font='bold 13px '+FONT;
- tctx.textAlign='left';tctx.fillText('◄ TRACTOR',X(tl?-252:0),oy-14);
- tctx.textAlign='right';tctx.fillText('PUERTAS ►',X(t.L),oy-14);
- const ry=oy+t.W*sc+18;tctx.strokeStyle=T.ruler;tctx.lineWidth=1;
- for(let v=0;v<=t.L;v+=24){const lg=v%96===0;tctx.beginPath();tctx.moveTo(X(v),ry);tctx.lineTo(X(v),ry+(lg?8:4));tctx.stroke();
-  if(lg&&v>0){tctx.fillStyle=T.muted;tctx.font='10px '+FONT;tctx.textAlign='center';tctx.fillText((v/12)+"'",X(v),ry+20);}}
- unitItems(state.activeUnit).forEach(it=>{if(!it.placed)return;
-  const x=X(it.x),y=Y(it.y),w=it.l*sc,h=it.w*sc,col=COLORS[it.type]||'#64748b';
-  tctx.save();tctx.shadowColor=col;tctx.shadowBlur=14;tctx.fillStyle=hexA(col,state.theme==='light'?.45:.35);
-  if(it.type==='tank'){tctx.beginPath();tctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,7);tctx.fill();}else{roundRect(tctx,x,y,w,h,3);tctx.fill();}
-  tctx.restore();tctx.strokeStyle=col;tctx.lineWidth=2;
-  if(it.type==='tank'){tctx.beginPath();tctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,7);tctx.stroke();}else{roundRect(tctx,x,y,w,h,3);tctx.stroke();}
-  if(w>18&&h>14){tctx.fillStyle=T.onBox;tctx.font='bold 13px '+FONT;tctx.textAlign='center';tctx.textBaseline='middle';
-   tctx.fillText('#'+it.order,x+w/2,y+h/2);tctx.textBaseline='alphabetic';}});
- const A=activeAnalysis();
- if(A&&A.cogX>0){const cx=X(A.cogX);
-  tctx.save();tctx.strokeStyle='#ef4444';tctx.lineWidth=2;tctx.setLineDash([8,6]);tctx.shadowColor='#ef4444';tctx.shadowBlur=10;
-  tctx.beginPath();tctx.moveTo(cx,oy);tctx.lineTo(cx,oy+t.W*sc);tctx.stroke();tctx.restore();}
- overlayFX(tctx,cw,ch);}
-function drawSide(){
- const t=state.trailer,T=TH(),cw=sideCanvas.width,ch=sideCanvas.height;
- sctx.clearRect(0,0,cw,ch);xrayBG(sctx,cw,ch);
- const tl=t.semi?300:0,m=60,maxH=Math.max(t.deckH+t.H,190)+14;
- const sc=Math.min((cw-m*2-tl)/t.L,(ch-m*2-60)/maxH);
- const nx=m+tl*sc,gy=ch-52,X=p=>nx+p*sc,HY=h=>gy-h*sc,stx=solvedT();
- sctx.strokeStyle=T.ground;sctx.lineWidth=2;sctx.setLineDash([10,8]);
- sctx.beginPath();sctx.moveTo(20,gy);sctx.lineTo(cw-20,gy);sctx.stroke();sctx.setLineDash([]);
- if(t.semi){glowRect(sctx,X(-252),HY(78),56*sc,54*sc,3,.10);glowRect(sctx,X(-196),HY(130),100*sc,106*sc,4,.10);
-  wheelSide(sctx,X(-220),HY(t.wheelR),t.wheelR*sc);
-  [-17,37].forEach(wx=>{wheelSide(sctx,X(wx),HY(t.wheelR),t.wheelR*sc);wheelSide(sctx,X(wx-11),HY(t.wheelR),t.wheelR*.72*sc);});}
- if(t.straight){glowRect(sctx,X(0),HY(t.cabH),t.cabLen*sc,(t.cabH-16)*sc,4,.10);wheelSide(sctx,X(t.frontAxle),HY(t.wheelR),t.wheelR*sc);}
- if(t.kind==='tanker'){glowRect(sctx,X(20),HY(t.deckH+t.H-14),t.L-40,t.H-18,(t.H-18)*sc/2,.12);
-  sctx.strokeStyle=T.wallEdge;sctx.lineWidth=1.5;
-  for(let x=60;x<t.L-40;x+=54){sctx.beginPath();sctx.moveTo(X(x),HY(t.deckH+18));sctx.lineTo(X(x),HY(t.deckH+t.H-22));sctx.stroke();}}
- else if(t.kind==='enclosed'||t.kind==='container'||t.kind==='dump'){
-  glowRect(sctx,X(0),HY(t.deckH+t.H),t.L*sc,t.H*sc,t.kind==='container'?2:5,.10);
-  if(t.reefer)glowRect(sctx,X(-14),HY(t.deckH+t.H-8),22*sc,(t.H-20)*sc,3,.16);
-  sctx.strokeStyle=T.grid;sctx.lineWidth=1;
-  const st=t.kind==='container'?11:24;
-  for(let x=10;x<t.L-10;x+=st){sctx.beginPath();sctx.moveTo(X(x),HY(t.deckH+4));sctx.lineTo(X(x),HY(t.deckH+t.H-4));sctx.stroke();}}
- else if(t.kind==='flatbed')glowRect(sctx,X(0),HY(t.deckH+5),t.L*sc,7*sc,3,.16);
- else{glowRect(sctx,X(0),HY(t.deckH+5),t.lowerFrom*sc,7*sc,2,.14);
-  glowRect(sctx,X(t.lowerFrom),HY(t.lowerDeck+5),(t.L-t.lowerFrom)*sc,7*sc,2,.14);
-  sctx.strokeStyle=T.wallEdge;sctx.lineWidth=2;
-  sctx.beginPath();sctx.moveTo(X(t.lowerFrom),HY(t.deckH));sctx.lineTo(X(t.lowerFrom),HY(t.lowerDeck));sctx.stroke();}
- axlesAt(t,stx).forEach(wx=>{wheelSide(sctx,X(wx),HY(t.wheelR),t.wheelR*sc);wheelSide(sctx,X(wx-11),HY(t.wheelR),t.wheelR*.72*sc);});
- unitItems(state.activeUnit).forEach(it=>{if(!it.placed)return;
+ const t=state.trailer,c=tctx,u=AU();
+ c.clearRect(0,0,topC.width,topC.height);xrayBG(c,topC.width,topC.height);
+ const tl=t.semi?240:0,m=46;
+ const sc=Math.min((topC.width-m*2-tl)/t.L,(topC.height-m*2-46)/t.W);
+ const nx=m+tl*sc,oy=(topC.height-t.W*sc)/2-4;
+ const X=p=>nx+p*sc,Y=p=>oy+p*sc;
+ const stx=u&&u.ax&&u.ax.pass?u.ax.tx:t.tx;
+ if(t.semi){glowRect(c,X(-232),Y(6),86*sc,(t.W-12)*sc,5,.10);
+  wheelTop(c,X(-200),Y(t.W/2-20),5*sc,10*sc);wheelTop(c,X(-200),Y(t.W/2+20),5*sc,10*sc);
+  [[-15],[33]].forEach(w=>{wheelTop(c,X(w[0]),Y(10),5*sc,10*sc);wheelTop(c,X(w[0]),Y(t.W-10),5*sc,10*sc);});}
+ if(t.straight){glowRect(c,X(0),Y(8),t.cabLen*sc,(t.W-16)*sc,6,.10);wheelTop(c,X(t.frontAxle),Y(t.W/2),5*sc,10*sc);}
+ glowRect(c,X(0),Y(0),t.L*sc,t.W*sc,5,.10);
+ c.strokeStyle='rgba(56,130,246,.22)';c.lineWidth=1;c.setLineDash([6,6]);
+ [.25,.5,.75].forEach(f=>{c.beginPath();c.moveTo(X(0),Y(t.W*f));c.lineTo(X(t.L),Y(t.W*f));c.stroke();});c.setLineDash([]);
+ if(u&&u.zone){const[z1,z2]=u.zone;
+  const g=c.createLinearGradient(X(z1),0,X(z2),0);
+  g.addColorStop(0,'rgba(16,185,129,.03)');g.addColorStop(.5,'rgba(16,185,129,.15)');g.addColorStop(1,'rgba(16,185,129,.03)');
+  c.fillStyle=g;c.fillRect(X(z1),Y(0),(z2-z1)*sc,t.W*sc);}
+ axlesAt(t,stx).forEach(wx=>{wheelTop(c,X(wx),Y(10),5*sc,10*sc);wheelTop(c,X(wx),Y(t.W-10),5*sc,10*sc);});
+ c.save();c.fillStyle='#7dd3fc';c.font='bold 12px '+FONT;c.textAlign='center';
+ c.translate(nx-15,oy+t.W*sc/2);c.rotate(-Math.PI/2);c.fillText('◀ IZQ · CONDUCTOR',0,0);c.restore();
+ c.save();c.fillStyle='#7dd3fc';c.font='bold 12px '+FONT;c.textAlign='center';
+ c.translate(nx+t.L*sc+15,oy+t.W*sc/2);c.rotate(Math.PI/2);c.fillText('DER · PASAJERO ▶',0,0);c.restore();
+ c.fillStyle='#7dd3fc';c.font='bold 14px '+FONT;c.textAlign='left';c.fillText('◄◄ NARIZ (FONDO)',X(0),oy-14);
+ c.textAlign='right';c.fillText('PUERTAS (ENTRADA) ►►',X(t.L),oy-14);
+ const ry=oy+t.W*sc+12;
+ c.strokeStyle='rgba(148,163,184,.7)';c.lineWidth=1;
+ for(let f=0;f<=t.L/12;f++){const lg=f%2===0;
+  c.beginPath();c.moveTo(X(f*12),ry);c.lineTo(X(f*12),ry+(lg?9:5));c.stroke();
+  if(lg){c.fillStyle='#cbd5e1';c.font='bold 12px '+FONT;c.textAlign='center';c.fillText(f+"'",X(f*12),ry+22);}}
+ uPlaced(state.activeUnit).forEach(it=>{
+  const x=X(it.x),y=Y(it.y),w=it.l*sc,h=it.w*sc,col=COLORS[it.type]||'#64748b',sel=it.seq===state.sel;
+  c.save();c.shadowColor=col;c.shadowBlur=sel?22:12;c.fillStyle=hexA(col,sel?.72:.38);
+  roundRect(c,x,y,w,h,3);c.fill();c.restore();
+  c.strokeStyle=sel?'#ef4444':col;c.lineWidth=sel?3.5:2;roundRect(c,x,y,w,h,3);c.stroke();
+  c.save();c.strokeStyle=sel?'#ef4444':'rgba(148,163,184,.5)';c.lineWidth=sel?2:1;c.setLineDash([5,5]);
+  c.beginPath();c.moveTo(x+w/2,y+h);c.lineTo(x+w/2,ry);c.stroke();c.setLineDash([]);c.restore();
+  if(w>16&&h>14){const r=Math.min(15,Math.min(w,h)/2-1);
+   c.fillStyle=sel?'#ef4444':'#0f172a';c.strokeStyle='#fff';c.lineWidth=2;
+   c.beginPath();c.arc(x+w/2,y+h/2,r,0,7);c.fill();c.stroke();
+   c.fillStyle='#fff';c.font='bold '+Math.round(r*1.25)+'px '+FONT;c.textAlign='center';c.textBaseline='middle';
+   c.fillText(it.seq,x+w/2,y+h/2+1);c.textBaseline='alphabetic';}});
+ if(u&&u.cogX>0){const cx=X(u.cogX);
+  c.save();c.strokeStyle='#ef4444';c.lineWidth=2;c.setLineDash([8,6]);
+  c.beginPath();c.moveTo(cx,oy);c.lineTo(cx,oy+t.W*sc);c.stroke();c.restore();
+  c.fillStyle='#ef4444';c.font='bold 11px '+FONT;c.textAlign='center';c.fillText('COG',cx,oy+t.W*sc-6);}}
+
+/* ===== ② PUERTAS ===== */
+function drawRear(){
+ const t=state.trailer,c=rctx,u=AU();
+ c.clearRect(0,0,rearC.width,rearC.height);xrayBG(c,rearC.width,rearC.height);
+ const m=92,maxH=t.deckH+t.H+30;
+ const sc=Math.min((rearC.width-m*2)/t.W,(rearC.height-m*1.6)/maxH);
+ const cx0=(rearC.width-t.W*sc)/2,gy=rearC.height-70;
+ glowRect(c,cx0,gy-(t.deckH+t.H)*sc,t.W*sc,t.H*sc,(t.kind==='enclosed'||t.kind==='container')?6:2,.10);
+ if(t.kind==='flatbed'||t.kind==='stepdeck'||t.kind==='lowboy'){c.fillStyle='rgba(125,211,252,.5)';c.fillRect(cx0,gy-(t.deckH+6)*sc,t.W*sc,6*sc);}
+ c.strokeStyle='rgba(125,211,252,.7)';c.lineWidth=2;
+ c.beginPath();c.moveTo(cx0-8,gy-t.deckH*sc);c.lineTo(cx0+t.W*sc+8,gy-t.deckH*sc);c.stroke();
+ wheelSide(c,cx0+14,gy-t.wheelR*sc,t.wheelR*sc);wheelSide(c,cx0+t.W*sc-14,gy-t.wheelR*sc,t.wheelR*sc);
+ c.strokeStyle='rgba(148,163,184,.5)';c.lineWidth=2;c.setLineDash([10,8]);
+ c.beginPath();c.moveTo(30,gy);c.lineTo(rearC.width-30,gy);c.stroke();c.setLineDash([]);
+ c.fillStyle='#7dd3fc';c.font='bold 13px '+FONT;c.textAlign='left';
+ c.fillText('IZQ',cx0-52,gy-t.deckH*sc/2);c.fillText('(CONDUCTOR)',cx0-80,gy-t.deckH*sc/2+16);
+ c.textAlign='right';c.fillText('DER',cx0+t.W*sc+52,gy-t.deckH*sc/2);
+ c.fillText('(PASAJERO)',cx0+t.W*sc+80,gy-t.deckH*sc/2+16);
+ uPlaced(state.activeUnit).forEach(it=>{
   const dz=deckZ(t,it),col=COLORS[it.type]||'#64748b';
-  const x=X(it.x),y=HY(dz+it.z+it.h),w=it.l*sc,h=it.h*sc;
-  sctx.save();sctx.shadowColor=col;sctx.shadowBlur=14;sctx.fillStyle=hexA(col,state.theme==='light'?.4:.3);
-  if(it.type==='tank'){roundRect(sctx,x,y,w,h,h/2);sctx.fill();}else{roundRect(sctx,x,y,w,h,3);sctx.fill();}
-  sctx.restore();sctx.strokeStyle=col;sctx.lineWidth=2;
-  if(it.type==='tank'){roundRect(sctx,x,y,w,h,h/2);sctx.stroke();
-   const f=it.fill||1,ly=y+h*(1-f);
-   sctx.strokeStyle='#22d3ee';sctx.setLineDash([6,4]);sctx.beginPath();sctx.moveTo(x+4,ly);sctx.lineTo(x+w-4,ly);sctx.stroke();sctx.setLineDash([]);}
-  else roundRect(sctx,x,y,w,h,3),sctx.stroke();
-  if(w>18&&h>12){sctx.fillStyle=T.onBox;sctx.font='bold 12px '+FONT;sctx.textAlign='center';sctx.textBaseline='middle';
-   sctx.fillText('#'+it.order,x+w/2,y+h/2);sctx.textBaseline='alphabetic';}});
- const A=activeAnalysis();
- if(A&&A.cogX>0&&A.eng.stack){const cx=X(A.cogX),cy=HY(A.eng.stack.hCog);
-  sctx.save();sctx.strokeStyle='#ef4444';sctx.lineWidth=2;sctx.setLineDash([8,6]);sctx.shadowColor='#ef4444';sctx.shadowBlur=10;
-  sctx.beginPath();sctx.moveTo(cx,HY(maxH));sctx.lineTo(cx,gy);sctx.stroke();sctx.restore();
-  sctx.fillStyle='#ef4444';sctx.beginPath();sctx.arc(cx,cy,5,0,7);sctx.fill();
-  sctx.font='bold 10px '+FONT;sctx.textAlign='center';sctx.fillText('COG',cx,cy-9);}
- const rx=X(t.L)+30;sctx.strokeStyle=T.ruler;sctx.lineWidth=1;
- for(let v=0;v<=maxH-10;v+=24){const lg=v%48===0;sctx.beginPath();sctx.moveTo(rx,HY(v));sctx.lineTo(rx+(lg?8:4),HY(v));sctx.stroke();
-  if(lg&&v>0){sctx.fillStyle=T.muted;sctx.font='10px '+FONT;sctx.textAlign='left';sctx.fillText((v/12)+"'",rx+12,HY(v)+4);}}
- sctx.fillStyle=T.text;sctx.font='bold 12px '+FONT;sctx.textAlign='left';sctx.fillText('◤ PISO',24,gy+16);
- sctx.textAlign='right';sctx.fillText(t.name+' — U'+(state.activeUnit+1),cw-24,24);
- if(A){const d=A.dist,sec=A.eng.sec,bw=340,bh=120,x0=18,y0=ch-bh-10;
-  sctx.save();sctx.fillStyle=state.theme==='light'?'rgba(255,255,255,.9)':'rgba(2,6,23,.8)';
-  sctx.strokeStyle=T.wallEdge;sctx.lineWidth=1.2;roundRect(sctx,x0,y0,bw,bh,8);sctx.fill();sctx.stroke();
-  sctx.font='bold 12px '+FONT;sctx.fillStyle=T.text;sctx.textAlign='left';
-  sctx.fillText('ARGOS RX · U'+(state.activeUnit+1),x0+12,y0+20);
-  sctx.font='10px '+FONT;sctx.fillStyle=T.muted;sctx.fillText(t.name+' · '+new Date().toLocaleDateString(),x0+12,y0+36);
-  const row=(l,v,mx,y)=>{sctx.fillStyle=v<=mx?'#22c55e':'#ef4444';sctx.font='11px '+FONT;
-   sctx.fillText(`${l} ${fmt(v).padStart(7)} / ${fmt(mx)}`,x0+12,y);};
-  row('DIR',d.steer,12000,y0+54);if(t.semi)row('TRAC',d.drive,34000,y0+70);
-  row(t.semi?'TDEM':'REAR',d.trailer,t.semi?34000:t.rearMax,y0+(t.semi?86:70));
-  row('GVW',d.gross,t.semi?80000:t.gvw,y0+(t.semi?102:86));
-  if(t.semi){sctx.fillStyle=T.text;sctx.fillText(`TD ${(d.tx/12).toFixed(1)}' · 5ª ${d.k2d}"`,x0+170,y0+54);}
-  sctx.fillStyle=sec&&sec.ok?'#22c55e':'#ef4444';sctx.font='bold 10px '+FONT;
-  sctx.fillText(sec?('AMARRE: '+(sec.ok?'OK':'REVISAR')):'',x0+170,y0+70);
-  if(state.weather!=='dry'){sctx.fillStyle='#f59e0b';sctx.fillText('🌧️ CLIMA μ×'+weatherMu().toFixed(2),x0+170,y0+86);}
-  sctx.restore();
-  sctx.save();sctx.translate(cw-135,66);sctx.rotate(-.10);
-  const both=d.pass&&(sec?sec.ok:true)&&!A.eng.risks.some(r=>r.R>=15);
-  const col=both?'#22c55e':'#ef4444';
-  sctx.strokeStyle=col;sctx.lineWidth=3;sctx.globalAlpha=.95;
-  roundRect(sctx,-105,-30,210,60,10);sctx.stroke();
-  sctx.fillStyle=col;sctx.font='bold 15px '+FONT;sctx.textAlign='center';sctx.textBaseline='middle';
-  sctx.shadowColor=col;sctx.shadowBlur=14;sctx.fillText(both?'✔ LIBERADA':'✖ NO LIBERAR',0,-8);
-  sctx.shadowBlur=0;sctx.font='bold 9px '+FONT;
-  sctx.fillText(d.pass?'PESO OK':'PESO FAIL',0,8);
-  sctx.fillText(sec&&sec.ok?'AMARRE OK':'AMARRE/RIESGO FAIL',0,20);sctx.restore();}
- overlayFX(sctx,cw,ch);}
+  const x=cx0+it.y*sc,w=it.w*sc,yT=gy-(dz+it.z+it.h)*sc,h=it.h*sc,sel=it.seq===state.sel;
+  c.save();c.shadowColor=col;c.shadowBlur=sel?22:10;c.fillStyle=hexA(col,sel?.8:.32);
+  roundRect(c,x,yT,w,h,3);c.fill();c.restore();
+  c.strokeStyle=sel?'#ef4444':col;c.lineWidth=sel?3.5:2;roundRect(c,x,yT,w,h,3);c.stroke();
+  const push=(t.L-(it.x+it.l))/12;
+  c.fillStyle=sel?'#ef4444':'#cbd5e1';c.font='bold '+(sel?15:12)+'px '+FONT;c.textAlign='center';
+  c.fillText('METE '+(push>=10?Math.round(push):Math.round(push*10)/10)+"'",x+w/2,yT-7);
+  if(w>22&&h>16){const r=Math.min(14,Math.min(w,h)/2.6);
+   c.fillStyle=sel?'#ef4444':'#0f172a';c.strokeStyle='#fff';c.lineWidth=2;
+   c.beginPath();c.arc(x+w/2,yT+h/2,r,0,7);c.fill();c.stroke();
+   c.fillStyle='#fff';c.font='bold '+Math.round(r*1.2)+'px '+FONT;c.textBaseline='middle';
+   c.fillText(it.seq,x+w/2,yT+h/2+1);c.textBaseline='alphabetic';}});
+ c.save();c.strokeStyle='#10b981';c.fillStyle='#10b981';c.lineWidth=4;
+ const ay=gy+20;
+ c.beginPath();c.moveTo(rearC.width-160,ay);c.lineTo(rearC.width-60,ay);c.stroke();
+ c.beginPath();c.moveTo(rearC.width-60,ay);c.lineTo(rearC.width-82,ay-11);c.lineTo(rearC.width-82,ay+11);c.closePath();c.fill();
+ c.font='bold 13px '+FONT;c.textAlign='center';c.fillText('ADENTRO →',rearC.width-108,ay+24);c.restore();
+ c.fillStyle='#7dd3fc';c.font='bold 14px '+FONT;c.textAlign='left';
+ c.fillText('◉ ESTÁS PARADO AQUÍ (PUERTAS)',26,gy-8);}
+
+/* ===== ③ LATERAL ===== */
+function drawSide(){
+ const t=state.trailer,c=sctx,u=AU();
+ c.clearRect(0,0,sideC.width,sideC.height);xrayBG(c,sideC.width,sideC.height);
+ const tl=t.semi?250:0,m=52,maxH=t.deckH+t.H+20;
+ const sc=Math.min((sideC.width-m*2-tl)/t.L,(sideC.height-m*2-36)/maxH);
+ const nx=m+tl*sc,gy=sideC.height-44;
+ const X=p=>nx+p*sc,HY=h=>gy-h*sc;
+ c.strokeStyle='rgba(148,163,184,.5)';c.lineWidth=2;c.setLineDash([10,8]);
+ c.beginPath();c.moveTo(22,gy);c.lineTo(sideC.width-22,gy);c.stroke();c.setLineDash([]);
+ if(t.semi){glowRect(c,X(-244),HY(80),52*sc,52*sc,3,.10);glowRect(c,X(-192),HY(128),92*sc,104*sc,4,.10);
+  wheelSide(c,X(-200),HY(t.wheelR),t.wheelR*sc);}
+ if(t.straight){glowRect(c,X(0),HY(t.cabH),t.cabLen*sc,(t.cabH-16)*sc,4,.10);wheelSide(c,X(t.frontAxle),HY(t.wheelR),t.wheelR*sc);}
+ if(t.kind==='enclosed'||t.kind==='container'||t.kind==='tanker'||t.kind==='dump')glowRect(c,X(0),HY(t.deckH+t.H),t.L*sc,t.H*sc,5,.10);
+ else if(t.kind==='flatbed'){c.fillStyle='rgba(125,211,252,.5)';c.fillRect(X(0),HY(t.deckH+6),t.L*sc,6*sc);}
+ else{glowRect(c,X(0),HY(t.deckH+6),t.lowerFrom*sc,6*sc,2,.14);glowRect(c,X(t.lowerFrom),HY((t.lowerDeck||40)+6),(t.L-t.lowerFrom)*sc,6*sc,2,.14);}
+ axlesAt(t,u&&u.ax&&u.ax.pass?u.ax.tx:t.tx).forEach(wx=>{wheelSide(c,X(wx),HY(t.wheelR),t.wheelR*sc);wheelSide(c,X(wx-11),HY(t.wheelR),t.wheelR*.7*sc);});
+ uPlaced(state.activeUnit).forEach(it=>{
+  const dz=deckZ(t,it),col=COLORS[it.type]||'#64748b';
+  const x=X(it.x),y=HY(dz+it.z+it.h),w=it.l*sc,h=it.h*sc,sel=it.seq===state.sel;
+  c.save();c.shadowColor=col;c.shadowBlur=sel?22:12;c.fillStyle=hexA(col,sel?.75:.32);
+  roundRect(c,x,y,w,h,3);c.fill();c.restore();
+  c.strokeStyle=sel?'#ef4444':col;c.lineWidth=sel?3.5:2;roundRect(c,x,y,w,h,3);c.stroke();
+  if(w>18&&h>12){const r=Math.min(13,Math.min(w,h)/2.6);
+   c.fillStyle=sel?'#ef4444':'#0f172a';c.strokeStyle='#fff';c.lineWidth=2;
+   c.beginPath();c.arc(x+w/2,y+h/2,r,0,7);c.fill();c.stroke();
+   c.fillStyle='#fff';c.font='bold '+Math.round(r*1.15)+'px '+FONT;c.textAlign='center';c.textBaseline='middle';
+   c.fillText(it.seq,x+w/2,y+h/2+1);c.textBaseline='alphabetic';}});
+ c.strokeStyle='rgba(148,163,184,.7)';c.lineWidth=1;
+ for(let f=0;f<=t.L/12;f+=2){c.beginPath();c.moveTo(X(f*12),gy);c.lineTo(X(f*12),gy+7);c.stroke();
+  c.fillStyle='#cbd5e1';c.font='bold 11px '+FONT;c.textAlign='center';c.fillText(f+"'",X(f*12),gy+20);}
+ if(u&&u.cogX>0){const cx=X(u.cogX);
+  c.save();c.strokeStyle='#ef4444';c.lineWidth=2;c.setLineDash([8,6]);
+  c.beginPath();c.moveTo(cx,HY(maxH));c.lineTo(cx,gy);c.stroke();c.restore();}
+ c.fillStyle='#7dd3fc';c.font='bold 13px '+FONT;c.textAlign='left';c.fillText('◄ NARIZ',X(0),24);
+ c.textAlign='right';c.fillText('PUERTAS ►',X(t.L),24);}
+
+/* ===== ④ 3D ===== */
 function drawIso(){
- const t=state.trailer,T=TH(),c=ictx,cw=isoCanvas.width,chh=isoCanvas.height;
- const g=c.createRadialGradient(cw/2,chh/2,30,cw/2,chh/2,cw*.7);g.addColorStop(0,T.bgIn);g.addColorStop(1,T.bgOut);
- c.fillStyle=g;c.fillRect(0,0,cw,chh);
- const a=iso.angle,cs=Math.cos(a),sn=Math.sin(a);
- const tl=t.semi?260:0,x0=-tl,topH=t.deckH+t.H,span=t.L+tl;
- const sc=Math.min((cw-100)/(span+t.W*1.4),(chh-110)/(span*.62+t.W*.5+topH*.66),3);
+ const t=state.trailer,c=ictx,u=AU(),cw=isoC.width,ch=isoC.height;
+ const g=c.createRadialGradient(cw/2,ch/2,30,cw/2,ch/2,cw*.7);g.addColorStop(0,'#08152a');g.addColorStop(1,'#000206');
+ c.fillStyle=g;c.fillRect(0,0,cw,ch);
+ const a=Math.PI/4+.15,cs=Math.cos(a),sn=Math.sin(a),topH=t.deckH+t.H;
+ const sc=Math.min((cw-120)/(t.L+t.W*1.4),(ch-100)/(t.L*.62+t.W*.5+topH*.66),3);
  const raw=(x,y,z)=>[(x*cs-y*sn)*sc,((x*sn+y*cs)*.55)*sc-z*sc*.66];
- const rc=raw((x0+t.L)/2,t.W/2,topH*.45);
- const P=(x,y,z)=>{const r=raw(x,y,z);return[cw/2+r[0]-rc[0],chh/2+r[1]-rc[1]];};
+ const rc=raw(t.L/2,t.W/2,topH*.45);
+ const P=(x,y,z)=>{const r=raw(x,y,z);return[cw/2+r[0]-rc[0],ch/2+r[1]-rc[1]];};
  const face=(p,f,s,lw=1.5)=>{c.beginPath();c.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)c.lineTo(p[i][0],p[i][1]);c.closePath();if(f){c.fillStyle=f;c.fill();}if(s){c.strokeStyle=s;c.lineWidth=lw;c.stroke();}};
- face([P(x0,0,0),P(t.L,0,0),P(t.L,t.W,0),P(x0,t.W,0)],T.shadow,null);
- const iw=(wx,wy)=>{const p=P(wx,wy,t.wheelR*.55);c.save();c.fillStyle='rgba(2,6,23,.85)';
-  c.beginPath();c.ellipse(p[0],p[1],t.wheelR*sc*.9,t.wheelR*sc*.62,0,0,7);c.fill();
-  c.strokeStyle=T.wheel;c.lineWidth=2;c.shadowColor=T.glow;c.shadowBlur=8;
-  c.beginPath();c.ellipse(p[0],p[1],t.wheelR*sc*.9,t.wheelR*sc*.62,0,0,7);c.stroke();c.restore();};
- (t.semi?[-220,-17,37]:[t.frontAxle]).forEach(wx=>{iw(wx,10);iw(wx,t.W-10);});
- axlesAt(t,solvedT()).forEach(wx=>{iw(wx,10);iw(wx,t.W-10);});
- const enc=t.kind==='enclosed'||t.kind==='container'||t.kind==='dump'||t.kind==='tanker';
+ face([P(0,0,0),P(t.L,0,0),P(t.L,t.W,0),P(0,t.W,0)],'rgba(0,0,0,.4)',null);
+ const enc=t.kind==='enclosed'||t.kind==='container'||t.kind==='tanker'||t.kind==='dump';
  const ghost=(bx,bz,bl,bh)=>{const A=P(bx,0,bz+bh),B=P(bx+bl,0,bz+bh),C2=P(bx+bl,t.W,bz+bh),D=P(bx,t.W,bz+bh),E=P(bx,0,bz),F=P(bx+bl,0,bz),G=P(bx+bl,t.W,bz),H2=P(bx,t.W,bz);
-  c.save();c.shadowColor=T.glow;c.shadowBlur=10;
-  if(sn>0)face([B,C2,G,F],T.wallFill,null);else face([A,D,H2,E],T.wallFill,null);
-  if(cs>0)face([D,C2,G,H2],T.wallFill,null);else face([A,B,F,E],T.wallFill,null);c.restore();
-  face([A,B,C2,D],T.wallFill,T.wallEdge,1.5);};
+  c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=10;
+  if(sn>0)face([B,C2,G,F],'rgba(37,99,235,.12)',null);else face([A,D,H2,E],'rgba(37,99,235,.12)',null);
+  if(cs>0)face([D,C2,G,H2],'rgba(37,99,235,.12)',null);else face([A,B,F,E],'rgba(37,99,235,.12)',null);c.restore();
+  face([A,B,C2,D],'rgba(37,99,235,.12)','rgba(125,211,252,.85)',1.5);};
  if(enc)ghost(0,6,t.L,t.deckH+t.H-6);
  else if(t.kind==='flatbed')ghost(0,t.deckH-6,t.L,12);
- else{ghost(0,t.deckH-6,t.lowerFrom,12);ghost(t.lowerFrom,t.lowerDeck-6,t.L-t.lowerFrom,12);}
- unitItems(state.activeUnit).filter(i=>i.placed).sort((p,q)=>(p.x*sn+p.y*cs)-(q.x*sn+q.y*cs)).forEach(it=>{
+ else{ghost(0,t.deckH-6,t.lowerFrom,12);ghost(t.lowerFrom,(t.lowerDeck||40)-6,t.L-t.lowerFrom,12);}
+ uPlaced(state.activeUnit).sort((p,q)=>(p.x*sn+p.y*cs)-(q.x*sn+q.y*cs)).forEach(it=>{
   const dz=deckZ(t,it),col=COLORS[it.type]||'#64748b';
-  const x=it.x,y=it.y,z=dz+it.z,l=it.l,w=it.w,h=it.h;
+  const x=it.x,y=it.y,z=dz+it.z,l=it.l,w=it.w,h=it.h,sel=it.seq===state.sel;
   const A=P(x,y,z+h),B=P(x+l,y,z+h),C2=P(x+l,y+w,z+h),D=P(x,y+w,z+h),E=P(x,y,z),F=P(x+l,y,z),G=P(x+l,y+w,z),H2=P(x,y+w,z);
-  const sf=hexA(col,state.theme==='light'?.4:.32),tf=hexA(col,state.theme==='light'?.55:.5);
-  c.save();c.shadowColor=col;c.shadowBlur=12;
+  const sf=hexA(col,sel?.7:.32),tf=hexA(col,sel?.85:.5);
+  c.save();c.shadowColor=col;c.shadowBlur=sel?18:12;
   if(sn>0)face([B,C2,G,F],sf,null);else face([A,D,H2,E],sf,null);
   if(cs>0)face([D,C2,G,H2],sf,null);else face([A,B,F,E],sf,null);c.restore();
-  face([A,B,C2,D],tf,col,1.6);
+  face([A,B,C2,D],tf,sel?'#ef4444':col,sel?2.5:1.6);
   const ctr=P(x+l/2,y+w/2,z+h/2);
-  c.fillStyle=T.onBox;c.font='bold 12px '+FONT;c.textAlign='center';c.textBaseline='middle';
-  c.fillText('#'+it.order,ctr[0],ctr[1]);c.textBaseline='alphabetic';});
- overlayFX(c,cw,chh);}
-function drawAll(){drawTop();drawSide();drawIso();}
-function spinLoop(){if(!iso.spin)return;iso.angle+=.01;drawIso();iso.raf=requestAnimationFrame(spinLoop);}
-let dragging=false,lastX=0;
-isoCanvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;isoCanvas.setPointerCapture(e.pointerId);});
-isoCanvas.addEventListener('pointermove',e=>{if(!dragging)return;iso.angle+=(e.clientX-lastX)*.008;lastX=e.clientX;drawIso();});
-['pointerup','pointercancel'].forEach(ev=>isoCanvas.addEventListener(ev,()=>dragging=false));
+  c.fillStyle='#fff';c.font='bold 12px '+FONT;c.textAlign='center';c.textBaseline='middle';
+  c.fillText('#'+it.seq,ctr[0],ctr[1]);c.textBaseline='alphabetic';});
+ c.fillStyle='#7dd3fc';c.font='bold 12px '+FONT;c.textAlign='left';c.fillText('◄ NARIZ',20,ch-14);
+ c.textAlign='right';c.fillText('PUERTAS ►',cw-20,ch-14);}
 
-/* ================= SERIALIZACIÓN ================= */
-function serializePlan(){
- const tk=document.getElementById('trailerType').value;
- const n=Math.max(1,state.unitsUsed),units=[];
- for(let u=0;u<n;u++)units.push(unitItems(u).map(it=>[it.type,it.l,it.w,it.h,it.weight,it.placed?1:0,it.x,it.y,it.z,it.order,(it.support?it.support.order:0),(it.fill!==undefined?it.fill:1)].join(',')).join(';'));
- return 'ARGOS1|'+tk+'|'+units.join('@@');}
-function loadPlanString(str,silent){
- try{const p=str.trim().split('|');
-  if(!['ARGOS1','OMEGA2','OMEGA1'].includes(p[0])||!TRAILERS[p[1]])throw 0;
-  document.getElementById('trailerType').value=p[1];
-  app.updateTrailer();
-  const groups=p[2].split('@@').map(g=>g.split(';').filter(Boolean));
-  state.items=[];state.unitsUsed=groups.length;state.activeUnit=0;
-  groups.forEach((gr,gi)=>gr.forEach(seg=>{const v=seg.split(',');
-   state.items.push({id:randId(),type:v[0],l:+v[1],w:+v[2],h:+v[3],weight:+v[4],placed:v[5]==='1',x:+v[6],y:+v[7],z:+v[8],order:+v[9],sOrder:+v[10],unit:gi,fill:v.length>11?+v[11]:1,support:null});}));
-  state.items.forEach(it=>{it.support=it.sOrder?(state.items.find(q=>q.unit===it.unit&&q.order===it.sOrder)||null):null;});
-  for(let u=0;u<state.unitsUsed;u++){
-   const pl=unitItems(u).filter(i=>i.placed);
-   state.unitZones[u]=cogAnalysis(pl.reduce((s,i)=>s+i.weight,0),state.trailer).zone;
-   state.unitAnalyses[u]=pl.length?calcAnalysis(u):null;}
-  app.renderItems();app.renderSteps();app.updateStats();app.renderUnitTabs();app.renderEng();app.renderOps();drawAll();
-  if(!silent)app.showToast('Plan importado ✓');return true;
- }catch(e){if(!silent)app.showToast('⚠ Código no válido');return false;}}
+/* ===== TARJETA + MINI-MAPA + PASOS ===== */
+function renderCard(){
+ const it=bySeq(state.activeUnit,state.sel),el=document.getElementById('opCard');
+ if(!it){el.innerHTML='<div style="color:#64748b;">Calcula y toca una pieza (o usa ◀ ▶).</div>';return;}
+ const t=state.trailer,push=(t.L-(it.x+it.l))/12;
+ const lvl=it.z>0?'NIVEL '+Math.round(it.z)+'"–'+Math.round(it.z+it.h)+'" (APILADO'+(it.support?' sobre #'+it.support.seq:'')+')':'PISO (0–'+Math.round(it.h)+'")';
+ el.innerHTML=`
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+   <span class="seqchip" style="background:#dc2626;font-size:1.4rem;min-width:48px;height:48px;">${it.seq}</span>
+   <div><div class="big">${LABELS[it.type]} · ${fmt(it.weight)} lbs</div>
+   <div class="sm">${Math.round(it.l)}×${Math.round(it.w)}×${Math.round(it.h)} pulgadas${state.units>1?' · Unidad '+(it.unit+1):''}</div></div></div>
+  <div class="big" style="margin-top:8px;">👉 METE <span style="color:#dc2626;">${push>=10?Math.round(push):Math.round(push*10)/10} PIES</span> DESDE LAS PUERTAS</div>
+  <div class="mid">(queda a ${Math.round(it.x/12*10)/10} pies de la NARIZ)</div>
+  <div class="big" style="margin-top:5px;">👈 LADO ${sideOf(it)}</div>
+  <div class="mid" style="color:#059669;">▸ ${lvl}</div>
+  <canvas id="miniCanvas" width="560" height="190" style="background:#020617;border-radius:8px;margin-top:9px;"></canvas>
+  <div class="sm">Verifica en las 3 vistas RX · tu pieza está en ROJO</div>`;
+ const mc=document.getElementById('miniCanvas').getContext('2d');
+ mc.clearRect(0,0,560,190);mc.fillStyle='#020617';mc.fillRect(0,0,560,190);
+ const m=24,sc=Math.min((560-m*2)/t.L,(190-m*2)/t.W),nx=m,oy=(190-t.W*sc)/2;
+ mc.strokeStyle='rgba(125,211,252,.8)';mc.lineWidth=2;roundRect(mc,nx,oy,t.L*sc,t.W*sc,4);mc.stroke();
+ uPlaced(it.unit).forEach(q=>{const sel=q.seq===it.seq;
+  mc.fillStyle=sel?'rgba(239,68,68,.8)':'rgba(100,116,139,.35)';
+  roundRect(mc,nx+q.x*sc,oy+q.y*sc,q.l*sc,q.w*sc,2);mc.fill();
+  if(sel){mc.strokeStyle='#ef4444';mc.lineWidth=2.5;roundRect(mc,nx+q.x*sc,oy+q.y*sc,q.l*sc,q.w*sc,2);mc.stroke();}});
+ const px=nx+(it.x+it.l/2)*sc,py=oy+(it.y+it.w/2)*sc;
+ mc.strokeStyle='#ef4444';mc.fillStyle='#ef4444';mc.lineWidth=3;
+ mc.beginPath();mc.moveTo(nx+t.L*sc-4,py);mc.lineTo(px+16,py);mc.stroke();
+ mc.beginPath();mc.moveTo(px+16,py);mc.lineTo(px+28,py-6);mc.lineTo(px+28,py+6);mc.closePath();mc.fill();
+ mc.fillStyle='#fca5a5';mc.font='bold 12px '+FONT;mc.textAlign='right';
+ mc.fillText('ENTRA AQUÍ',nx+t.L*sc-6,py-10);}
+function renderSteps(){
+ const el=document.getElementById('stepsList');
+ if(!state.units){el.innerHTML='<div style="text-align:center;color:var(--text-muted);">Calcula el acomodo.</div>';return;}
+ let html='';
+ for(let u=0;u<state.units;u++){
+  const U=state.U[u],ok=U.ax&&U.ax.pass&&U.sec.ok;
+  html+=`<div class="item-card step-head"><div style="flex:1;"><strong style="color:${ok?'var(--success)':'var(--danger)'};">🚛 UNIDAD ${u+1}${ok?' — ✔':' — ✖'}</strong>
+   · ${uPlaced(u).length} pz · ${fmt(U.W)} lbs${state.trailer.semi&&U.ax&&U.ax.pass?` · TD <b>${(U.ax.tx/12).toFixed(1)}ft</b> · 5ª <b>${U.ax.k2d}"</b>`:''}${U.sec?` · 🔗 ${U.sec.chains}ch+${U.sec.straps}crr${U.sec.block?' ⚠BLOQUEO':''}${U.sec.liqW?' 🌊×'+U.sec.slo.toFixed(1):''}`:''}</div></div>`;
+  uPlaced(u).sort((a,b)=>a.seq-b.seq).forEach(it=>{
+   html+=`<div class="item-card ${u===state.activeUnit&&it.seq===state.sel?'sel':''}" onclick="app.pick(${u},${it.seq})">
+    <span class="seqchip" style="background:${COLORS[it.type]}">${it.seq}</span>
+    <div style="flex:1;padding:0 7px;"><strong>${LABELS[it.type]}</strong> ${fmt(it.weight)} lbs
+     <br><span style="color:var(--text-muted);font-size:.75rem;">METE <b style="color:var(--text-main)">${Math.round((state.trailer.L-(it.x+it.l))/12*10)/10} ft de puertas</b> · lado ${sideOf(it).split(' ')[0]} · ${it.z>0?'Nivel '+Math.round(it.z)+'"':'Piso'}</span></div></div>`;});
+  const miss=U.missing||0;
+  if(miss)html+=`<div class="item-card unplaced"><div style="flex:1;">⚠ ${miss} pieza(s) de esta unidad no cupieron</div></div>`;}
+ el.innerHTML=html;}
+function renderAxles(){
+ const el=document.getElementById('axleStrip'),u=AU(),t=state.trailer;
+ if(!u||!u.ax){el.innerHTML='';document.getElementById('riskStrip').innerHTML='';return;}
+ const chip=(l,v,mx,extra)=>`<div class="axle-chip" style="border-color:${v>mx?'var(--danger)':'var(--success)'}">${l}<b style="color:${v>mx?'var(--danger)':'var(--success)'}">${fmt(v)}</b>${fmt(mx)}${extra||''}</div>`;
+ let h=chip('DIRECCIONAL',u.ax.steer,12000);
+ if(t.semi)h+=chip('TRACCIÓN',u.ax.drive,34000);
+ h+=chip(t.semi?'TANDEM':'TRASERO',u.ax.trailer,t.semi?34000:t.rearMax)+chip('GVW',u.ax.gross,t.semi?80000:t.gvw);
+ h+=`<div class="axle-chip" style="border-color:var(--accent);">AJUSTE<b style="color:#7dd3fc;">${t.semi?(u.ax.tx/12).toFixed(1)+"' · 5ª "+u.ax.k2d+'"':'centrar'}</b>ejes</div>`;
+ h+=`<div class="axle-chip" style="border-color:${u.sec.ok?'var(--success)':'var(--danger)'};">AMARRE<b>${u.sec.chains}ch+${u.sec.straps}crr</b>${u.sec.block?'⚠BLOQUEO':''}${u.sec.liqW?'🌊×'+u.sec.slo.toFixed(1):''}</div>`;
+ h+=`<div class="axle-chip" style="border-color:${u.ax.pass&&u.sec.ok?'var(--success)':'var(--danger)'};">U${state.activeUnit+1}<b>${u.ax.pass&&u.sec.ok?'✔ APRUEBA':'✖ NO LIBERAR'}</b>veredicto</div>`;
+ el.innerHTML=h;
+ /* riesgos */
+ let risks=[];
+ if(!u.ax.pass)risks.push('Sobrepeso por eje: mover tandems a '+(u.ax.tx/12).toFixed(1)+"' o dividir");
+ if(u.sec.block)risks.push('BLOQUEO FRONTAL obligatorio (frenado 0.8g)');
+ if(!u.sec.ok&&u.muEff<.3)risks.push('μ bajo ('+u.muEff.toFixed(2)+') → rubber mats + amarre extra');
+ if(u.sec.liqW&&u.sec.slo>1.6)risks.push('Oleaje ×'+u.sec.slo.toFixed(1)+' → llenar ≥90%/≤20% o deflectores');
+ if(!hosOK())risks.push('🚨 FATIGA: horas excedidas — NO OPERAR, certificado bloqueado');
+ const hz=hzAnalysis();
+ if(hz.any&&hz.forbid.length)risks.push('☢️ INCOMPATIBLES: '+hz.forbid.join(' · ')+' — separar unidades');
+ if(state.weather==='rain')risks.push('🌧️ Lluvia: fricción −35% ya aplicada al amarre');
+ if(state.weather==='ice')risks.push('🧊 Hielo: fricción −60% — considerar postergar');
+ document.getElementById('riskStrip').innerHTML=risks.map(r=>`<div class="risk-row" style="border-color:var(--danger);">🚨 <span>${r}</span></div>`).join('');}
 
-/* ================= APP ================= */
+/* ===== APP ===== */
 const app={
- toggleTheme(){document.body.classList.toggle('light');state.theme=document.body.classList.contains('light')?'light':'dark';
-  document.getElementById('themeBtn').innerText=state.theme==='light'?'🌙 Noche':'☀️ Patio';drawAll();},
- setUnit(u){state.activeUnit=u;app.updateStats();app.renderUnitTabs();app.renderEng();drawAll();},
- rotate(d){iso.angle+=d*Math.PI/180;drawIso();},resetIso(){iso.angle=Math.PI/4;drawIso();},
- toggleSpin(){iso.spin=!iso.spin;document.getElementById('spinBtn').innerText=iso.spin?'⏸':'⏵';
-  if(iso.spin)spinLoop();else cancelAnimationFrame(iso.raf);},
- setFork(){state.forklift={cap:+document.getElementById('fkCap').value||5000,lc:+document.getElementById('fkLC').value||24};
-  if(state.unitsUsed){for(let u=0;u<state.unitsUsed;u++)state.unitAnalyses[u]=calcAnalysis(u);app.updateStats();app.renderEng();drawAll();}},
- updateTrailer(){const t=TRAILERS[document.getElementById('trailerType').value];state.trailer={...t};
-  document.getElementById('tL').value=t.L;document.getElementById('tW').value=t.W;
-  document.getElementById('tH').value=t.H;document.getElementById('tWt').value=t.cap;
-  state.items.forEach(it=>{it.placed=false;it.z=0;it.order=0;it.support=null;it.unit=-1;});
-  state.unitsUsed=0;state.activeUnit=0;state.unitZones=[];state.unitAnalyses=[];
-  app.renderItems();app.renderSteps();app.updateStats();app.renderUnitTabs();app.renderEng();drawAll();},
- setPreset(){const ty=document.getElementById('cargoType').value;
-  document.getElementById('wrapFill').style.display=ty==='tank'?'block':'none';
-  const p={pallet:[48,40,48,1500],tote:[48,48,50,2500],coil:[60,60,40,5000],machinery:[72,96,60,8000],drum:[23,23,35,450],crate:[60,48,60,3000],tank:[52,48,52,4200]}[ty];
-  document.getElementById('cL').value=p[0];document.getElementById('cW').value=p[1];
-  document.getElementById('cH').value=p[2];document.getElementById('cWt').value=p[3];},
- addItems(){const ty=document.getElementById('cargoType').value,q=+document.getElementById('cQty').value||1;
-  const fill=ty==='tank'?(+document.getElementById('cFill').value)/100:1;
-  for(let i=0;i<q;i++)state.items.push({id:randId(),type:ty,l:+document.getElementById('cL').value,w:+document.getElementById('cW').value,h:+document.getElementById('cH').value,weight:+document.getElementById('cWt').value,fill,placed:false,x:0,y:0,z:0,order:0,support:null,unit:-1});
-  app.renderItems();app.autoSave();app.showToast(q+' pieza(s)');},
- clearAll(){state.items=[];state.unitsUsed=0;state.activeUnit=0;state.unitZones=[];state.unitAnalyses=[];
-  app.renderItems();app.renderSteps();app.updateStats();app.renderUnitTabs();app.renderEng();drawAll();app.autoSave();},
+ updateTrailer(){state.trailer={...TRAILERS[document.getElementById('trailerType').value]};
+  document.getElementById('tL').value=state.trailer.L;document.getElementById('tW').value=state.trailer.W;
+  document.getElementById('tH').value=state.trailer.H;document.getElementById('tWt').value=state.trailer.cap;
+  state.items.forEach(i=>{i.placed=false;i.seq=0;i.unit=-1;});state.units=0;state.U=[];state.sel=0;
+  app.renderAll();app.save();},
+ preset(k,l,w,h,wt){document.getElementById('cL').value=l;document.getElementById('cW').value=w;
+  document.getElementById('cH').value=h;document.getElementById('cWt').value=wt;
+  document.getElementById('wrapFill').style.display=k==='tank'?'block':'none';},
+ addItems(){const k=document.getElementById('wrapFill').style.display==='block'?'tank':'pallet';
+  const q=+document.getElementById('cQty').value||1;
+  const fill=k==='tank'||document.getElementById('wrapFill').style.display==='block'?(+document.getElementById('cFill').value)/100:1;
+  for(let i=0;i<q;i++)state.items.push({id:Math.random().toString(36).substr(2,9),
+   type:document.getElementById('wrapFill').style.display==='block'?'tank':'pallet',
+   l:+document.getElementById('cL').value,w:+document.getElementById('cW').value,h:+document.getElementById('cH').value,
+   weight:+document.getElementById('cWt').value,fill,placed:false,x:0,y:0,z:0,seq:0,support:null,unit:-1});
+  /* tipo correcto: inferir por dimensiones */
+  const last=state.items[state.items.length-1];
+  if(last.l===48&&last.w===40)last.type='pallet';
+  app.renderItems();app.save();toast(q+' agregadas → CALCULAR');},
+ clearAll(){state.items=[];state.units=0;state.U=[];state.sel=0;app.renderAll();app.save();},
+ recalc(){state.weather=document.getElementById('wWeather').value;state.wind=+document.getElementById('wWind').value||0;
+  app.renderConditions();
+  if(state.units)optimizeAll(true);
+  app.renderAll();app.save();},
+ renderConditions(){const d=+document.getElementById('hD').value,o=+document.getElementById('hO').value,w=+document.getElementById('hW').value;
+  document.getElementById('hosMsg').innerHTML=(d>11||o>14||w>70)?'<span style="color:var(--danger);">🚨 EXCEDIDO (11/14/70) — NO OPERAR</span>':(d>9.5||o>13||w>60)?'<span style="color:var(--warning);">⚠ Límite cercano</span>':'<span style="color:var(--success);">✔ Dentro de horas</span>';},
+ addHz(){const h=HAZMAT[+document.getElementById('hzSel').value];state.hazmat.push({...h});app.renderHz();app.recalc();},
+ renderHz(){document.getElementById('hzList').innerHTML=state.hazmat.map((h,i)=>
+  `<div class="hz-row"><b style="color:var(--danger);">${h.un}</b> ${h.n} Cl${h.c} ERG-${h.erg}
+   <button class="btn-outline btn-sm" style="margin-left:auto;" onclick="state.hazmat.splice(${i},1);app.renderHz();app.recalc()">✖</button></div>`).join('')
+  +(state.hazmat.length?`<div style="font-size:.66rem;color:var(--text-muted);margin-top:3px;">ERG: ${[...new Set(state.hazmat.map(h=>h.erg))].join('/')} en ficha de cabina</div>`:'');},
  renderItems(){const l=document.getElementById('itemsList');
   if(!state.items.length){l.innerHTML='<div style="text-align:center;color:var(--text-muted);">Sin carga.</div>';return;}
-  l.innerHTML=state.items.map(it=>`<div class="item-card ${!it.placed?'unplaced':''}"><div>
-   <span class="legend-dot" style="background:${COLORS[it.type]}"></span><strong>${it.placed?'#'+it.order+' ':''}${CARGO_LABELS[it.type]}</strong>${it.placed?`<span class="unit-chip">U${it.unit+1}</span>`:''} ${Math.round(it.l)}×${Math.round(it.w)}×${Math.round(it.h)}
-   <br><span style="color:var(--text-muted);font-size:.74rem;">${fmt(it.weight)} lbs${it.type==='tank'?' · 🌊 '+Math.round((it.fill||1)*100)+'%':''}</span></div>
+  l.innerHTML=state.items.map(it=>`<div class="item-card ${!it.placed?'unplaced':''}">
+   <div><span class="legend-dot" style="background:${COLORS[it.type]}"></span>
+   <strong>${it.placed?'#'+it.seq+' ':''}${LABELS[it.type]}</strong>${it.placed&&state.units>1?' U'+(it.unit+1):''} ${Math.round(it.l)}×${Math.round(it.w)}×${Math.round(it.h)}
+   <br><span style="color:var(--text-muted);font-size:.73rem;">${fmt(it.weight)} lbs${it.type==='tank'?' · '+Math.round((it.fill||1)*100)+'%':''}</span></div>
    <span style="color:${it.placed?'var(--success)':'var(--danger)'};font-weight:800">${it.placed?'✓':'⚠'}</span></div>`).join('');},
- optimize(silentToast){
-  if(!state.items.length){app.showToast('⚠ Sin carga');return false;}
-  const t=state.trailer;
-  state.items.forEach(it=>{it.placed=false;it.unit=-1;it.x=0;it.y=0;it.z=0;it.order=0;it.support=null;});
-  state.unitZones=[];state.unitAnalyses=[];
-  const sorted=[...state.items].sort((a,b)=>(b.weight-a.weight)||((b.l*b.w)-(a.l*a.w)));
-  let groups=[[]],cw2=0,ca2=0;
-  sorted.forEach(it=>{if(cw2+it.weight>t.cap||ca2+it.l*it.w>t.L*t.W*.97){groups.push([]);cw2=0;ca2=0;}
-   groups[groups.length-1].push(it);cw2+=it.weight;ca2+=it.l*it.w;});
-  let g=0;
-  while(g++<10){const gi=groups.length-1,grp=groups[gi];
-   const W=grp.reduce((s,i)=>s+i.weight,0);
-   const c=cogAnalysis(Math.min(W,t.cap),t);state.unitZones[gi]=c.zone;
-   placeGroup(grp,c.target,gi);
-   const left=state.items.filter(i=>!i.placed);
-   if(!left.length)break;groups.push(left.slice());left.forEach(i=>i.placed=false);}
-  state.unitsUsed=groups.length;state.activeUnit=0;
-  for(let u=0;u<state.unitsUsed;u++)state.unitAnalyses[u]=calcAnalysis(u);
-  app.renderItems();app.renderSteps();app.updateStats();app.renderUnitTabs();app.renderEng();app.renderOps();drawAll();app.autoSave();
-  const ok=state.unitAnalyses.every(a=>a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true));
-  const critical=state.unitAnalyses.some(a=>a&&a.eng.risks.some(r=>r.R>=15));
-  state.log.unshift({date:new Date().toLocaleString(),units:state.unitsUsed,
-   weight:fmt(state.items.filter(i=>i.placed).reduce((s,i)=>s+i.weight,0)),
-   verdict:ok?'LIBERADA':'NO LIBERADA',maxRisk:Math.max(0,...state.unitAnalyses.map(a=>a.eng.risks[0]?a.eng.risks[0].R:0)),
-   weather:state.weather,hosOk:hosStatus().ok,hazmat:state.hazmat.length+' UN'});
-  state.log=state.log.slice(0,60);
-  try{localStorage.setItem('argos_log',JSON.stringify(state.log));}catch(e){}
-  if(!ok||critical)alarm();
-  if(!silentToast)app.showToast(ok&&!critical?'✔ FLOTA LIBERADA — '+state.unitsUsed+' ud':'🚨 NO LIBERAR — ver Riesgos');
-  return{ok,critical};},
- renderUnitTabs(){const el=document.getElementById('unitTabs');
-  if(!state.unitsUsed){el.innerHTML='<span style="color:var(--text-muted);font-size:.83rem;">Sin flota calculada.</span>';return;}
-  el.innerHTML=state.unitAnalyses.map((a,u)=>{const ok=a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true);
-   return `<button class="unit-tab ${u===state.activeUnit?'on':''}" onclick="app.setUnit(${u})">🚛 U${u+1} <span style="color:${ok?'var(--success)':'var(--danger)'}">${ok?'✔':'✖'}</span></button>`;}).join('');
-  document.getElementById('verdictUnitName').innerText='U'+(state.activeUnit+1)+'/'+state.unitsUsed;
-  document.getElementById('canvasUnitName').innerText='U'+(state.activeUnit+1)+'/'+state.unitsUsed;},
- renderSteps(){
-  const el=document.getElementById('stepsList');
-  if(!state.unitsUsed){el.innerHTML='<div style="text-align:center;color:var(--text-muted);">Calcula el plan.</div>';return;}
-  const hz=hazmatAnalysis();
-  let html='';
-  if(hz.any&&hz.placardReq)html+=`<div class="item-card" style="border-color:var(--danger);"><div style="flex:1;"><strong style="color:var(--danger);">☢️ PLACAS REQUERIDAS:</strong> Clase ${Object.keys(hz.byClass).join(', ')} · Ficha en cabina · ERG ${[...new Set(state.hazmat.map(h=>h.erg))].join('/')}</div></div>`;
-  for(let u=0;u<state.unitsUsed;u++){
-   const a=state.unitAnalyses[u],d=a?a.dist:null,sec=a?a.eng.sec:null;
-   const ok=d&&d.pass&&(sec?sec.ok:true);
-   html+=`<div class="item-card step-head"><div style="flex:1;"><strong style="color:${ok?'var(--success)':'var(--danger)'};">🚛 U${u+1}${ok?' — ✔ LIBERADA':' — ✖ NO LIBERAR'}</strong>
-    ${d?` · ${unitItems(u).filter(i=>i.placed).length} pz · ${fmt(a.totalW)} lbs${state.trailer.semi?` · TD <strong>${(d.tx/12).toFixed(1)} ft</strong> · 5ª <strong>${d.k2d}"</strong>`:''}${sec?` · 🔗 ${sec.chains}ch+${sec.straps}crr`:''}`:''}</div></div>`;
-   unitItems(u).filter(i=>i.placed).sort((x,y)=>x.order-y.order).forEach(it=>{
-    const t=state.trailer;
-    const side=(it.y+it.w/2)<t.W/2?'Izq (Conductor)':'Der (Pasajero)';
-    const base=it.support?'APILAR sobre #'+it.support.order:'DIRECTO AL PISO';
-    html+=`<div class="item-card"><span style="color:${COLORS[it.type]};font-weight:800;">${it.order}</span><div style="flex:1;padding:0 8px;">
-     <strong style="color:${COLORS[it.type]}">U${u+1}·#${it.order}</strong> ${CARGO_LABELS[it.type]} ${fmt(it.weight)} lbs → mete <strong>${Math.round(it.x)}" de la nariz</strong>, lado <strong>${side}</strong>, nivel <strong>${Math.round(it.z+it.h)}"</strong> — ${base}</div></div>`;});}
-  const miss=state.items.filter(i=>!i.placed);
-  if(miss.length)html+=`<div class="item-card unplaced"><div style="flex:1;">⚠ ${miss.length} pieza(s) sin caber</div></div>`;
-  el.innerHTML=html;},
- updateStats(){
-  const t=state.trailer,semi=t.semi,A=activeAnalysis();
-  document.getElementById('labelTrailer').innerText=semi?'Tandem':'Eje Trasero';
-  document.getElementById('rowDrive').style.display=semi?'':'none';
-  const setG=(g,txt,v,mx)=>{const p=Math.max(0,Math.min(100,v/mx*100));
-   document.getElementById(g).style.width=p+'%';
-   document.getElementById(g).style.background=p>100?'var(--danger)':p>85?'var(--warning)':'var(--success)';
-   document.getElementById(txt).innerText=fmt(v)+' / '+fmt(mx);};
-  const VS=document.getElementById('verdictScale'),VSe=document.getElementById('verdictSec'),VO=document.getElementById('verdictOps');
-  const ft=document.getElementById('fleetTable');
-  if(state.unitsUsed){
-   let rows=state.unitAnalyses.map((a,u)=>{const d=a?a.dist:null,ok=d&&d.pass&&(a.eng.sec?a.eng.sec.ok:true);
-    return `<div class="fleet-row" onclick="app.setUnit(${u})" style="${u===state.activeUnit?'border-color:var(--accent);':''}">
-     <strong style="color:${ok?'var(--success)':'var(--danger)'}">U${u+1} ${ok?'✔':'✖'}</strong>
-     <span>${fmt(a?a.totalW:0)} lbs</span><span style="margin-left:auto;color:${ok?'var(--success)':'var(--danger)'}">${ok?'LIBERADA':'NO LIBERAR'}</span></div>`;}).join('');
-   const all=state.unitAnalyses.every(a=>a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true));
-   ft.innerHTML=`<h3 style="margin-top:2px;">🚛 Flota (${state.unitsUsed})</h3>${rows}
-    <div style="text-align:center;font-family:Consolas,monospace;font-weight:800;color:${all?'var(--success)':'var(--danger)'}">${all?'✔ FLOTA LIBERADA':'✖ NO LIBERADA'}</div>`;}
-  else ft.innerHTML='';
-  document.getElementById('statUnits').innerText=Math.max(1,state.unitsUsed);
-  let maxR=0;state.unitAnalyses.forEach(a=>{if(a&&a.eng.risks.length)maxR=Math.max(maxR,a.eng.risks[0].R);});
-  const rl=riskLevel(maxR);
-  document.getElementById('statRisk').innerText=state.unitsUsed?(maxR?'R'+maxR:'BAJO'):'—';
-  document.getElementById('statRisk').style.color=state.unitsUsed?rl.c:'';
-  const hs=hosStatus();
-  VO.className='status-light '+(hs.ok?'status-safe':'status-danger');
-  VO.innerHTML=`<i></i><span class="verdict-big">③ OPERACIÓN: ${hs.lvl}</span>`;
-  if(!A){VS.className='status-light status-safe';VS.innerHTML='<i></i><span class="verdict-big">① BÁSCULA: SIN ANÁLISIS</span>';
-   VSe.className='status-light status-safe';VSe.innerHTML='<i></i><span class="verdict-big">② AMARRE: SIN ANÁLISIS</span>';
-   document.getElementById('axleGrid').innerHTML='';
-   ['gaugeSteer','gaugeDrive','gaugeTrailer','gaugeGross'].forEach(g=>document.getElementById(g).style.width='0%');
-   document.getElementById('statCog').innerText='—';document.getElementById('statRoll').innerText='—';return;}
-  const d=A.dist,sec=A.eng.sec,sc=A.eng.stack;
-  VS.className='status-light '+(d.pass?'status-safe':'status-danger');
-  VS.innerHTML=`<i></i><span class="verdict-big">① BÁSCULA: ${d.pass?'✔ APROBADA':'✖ RECHAZADA'}</span>`;
-  VSe.className='status-light '+(sec?(sec.ok?'status-safe':'status-danger'):'status-safe');
-  VSe.innerHTML=`<i></i><span class="verdict-big">② AMARRE: ${sec?(sec.ok?'✔ SEGURO':'✖ INSUFICIENTE'):''}${sec&&sec.liqW>0?' 🌊×'+sec.slosh.toFixed(1):''}</span>`;
-  let adv=semi?`TD <strong>${(d.tx/12).toFixed(1)} ft</strong> (${d.holes>=0?'+':''}${d.holes} ag) · 5ª <strong>${d.k2d}"</strong>. `:'';
-  if(state.weather!=='dry')adv+=`🌧️ μ×${weatherMu().toFixed(2)}. `;
-  if(sc)adv+=`Volcadura ${sc.rollIdx.toFixed(2)}`;
-  document.getElementById('distAdvice').innerHTML=adv;
-  document.getElementById('statCog').innerText=A.totalW>0?(A.cogX/12).toFixed(1)+"'":'—';
-  document.getElementById('statRoll').innerText=sc?sc.rollIdx.toFixed(2):'—';
-  document.getElementById('statRoll').style.color=sc?(sc.rollOK?'var(--success)':sc.rollWarn?'var(--warning)':'var(--danger)'):'';
-  document.getElementById('axleGrid').innerHTML=[['DIR',d.steer,12000],['TRAC',semi?d.drive:0,semi?34000:0],
-   [semi?'TDEM':'REAR',d.trailer,semi?34000:t.rearMax],['GVW',d.gross,semi?80000:t.gvw]]
-   .filter(c=>c[2]>0).map(c=>`<div class="axle-cell" style="border-color:${c[1]>c[2]?'var(--danger)':'var(--success)'}">${c[0]}<b style="color:${c[1]>c[2]?'var(--danger)':'var(--success)'}">${fmt(c[1])}</b>/${fmt(c[2])}</div>`).join('');
-  const fw=document.getElementById('forkWorst');
-  if(sc&&sc.worstFork){const w=sc.worstFork;
-   fw.innerHTML=w.warn?`⚠ #${w.it.order} usa >90% cap.`:`🚨 #${w.it.order}: ${fmt(w.it.weight)} > cap ${fmt(w.cap)}`;
-   fw.style.color=w.warn?'var(--warning)':'var(--danger)';}
-  else if(sc)fw.innerHTML='✔ Montacargas OK.';},
- renderEng(){
-  const tabs=['🔗 Amarre','⚖️ Bridge','🏗️ Pila','🎯 COG','🦺 Montac','🌊 Slosh','⚠️ Riesgos','✅ Checklist'];
-  document.getElementById('engTabs').innerHTML=tabs.map((tt,i)=>`<button class="eng-tab ${state.engTab===i?'on':''}" onclick="state.engTab=${i};app.renderEng()">${tt}</button>`).join('');
-  const el=document.getElementById('engBody'),A=activeAnalysis();
-  const rows=arr=>arr.map(r=>`<div class="eng-row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
-  if(state.engTab===7){
-   const done=CHECKLIST.filter(c=>state.checklist[c.id]).length,pct=Math.round(100*done/CHECKLIST.length);
-   const can=state.unitsUsed&&state.unitAnalyses.every(a=>a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true))&&done===CHECKLIST.length&&hosStatus().ok;
-   el.innerHTML=`<div class="eng-row"><span class="k">Verificación pre-salida</span><span class="v">${done}/${CHECKLIST.length}</span></div>
-    <div class="gauge" style="margin:5px 0 10px;"><div class="gauge-fill" style="width:${pct}%;background:${pct===100?'var(--success)':'var(--warning)'};"></div></div>
-    ${CHECKLIST.map(c=>`<label class="ck-row ${state.checklist[c.id]?'done':''}"><input type="checkbox" ${state.checklist[c.id]?'checked':''} onchange="app.check('${c.id}')"><span>${c.t}</span><span class="ck-ref">${c.ref}</span></label>`).join('')}
-    <button class="btn-primary btn-block" ${can?'':'disabled'} onclick="app.openCert()">📜 EMITIR CERTIFICADO</button>
-    ${!can?'<div style="text-align:center;font-size:.72rem;color:var(--text-muted);margin-top:5px;">Requiere: flota liberada + checklist 100% + fatiga OK</div>':''}`;return;}
-  if(!A||!A.dist){el.innerHTML='<div style="color:var(--text-muted);">Calcula el plan.</div>';return;}
-  const d=A.dist,sec=A.eng.sec,sc=A.eng.stack,br=A.eng.bridge;
-  if(state.engTab===0&&sec){
-   el.innerHTML=`<div class="eng-row"><span class="k">FMCSA §393 (clima aplicado)</span><span>${badge(sec.ok)}</span></div>
-    ${rows([['Peso W',fmt(sec.W)+' lbs'],['μ base → efectivo',sec.muBase.toFixed(2)+' → <b>'+sec.mu.toFixed(2)+'</b>'],
-     ['Fricción',fmt(sec.fric)+' lbs'],['Demanda 0.8g',fmt(sec.demandF)+' lbs'],['Demanda lateral',fmt(sec.demandL)+' lbs'],
-     ['Amarres mín.',sec.minAnchors],['✔ RECETA','<b style="color:var(--accent)">'+sec.chains+'× G70 + '+sec.straps+'× correa</b>'],
-     ['WLL/WLL req',fmt(sec.wllAgg)+' / '+fmt(sec.W*.5)+' '+badge(sec.wllOK)],
-     ['Bloqueo frontal',sec.needsFront?(sec.hasBulk?'Bulkhead ✔':'<b style="color:var(--danger)">OBLIGATORIO</b>'):'No req']])}`;}
-  else if(state.engTab===1&&br){
-   const gb=(l,g2)=>`<div class="eng-row"><span class="k">${l} — ${g2.N}e, L=${g2.L.toFixed(1)}ft</span><span class="v" style="color:${g2.ok?'var(--success)':'var(--danger)'}">${fmt(g2.val)}/${fmt(g2.max)} ${g2.ok?'✔':'✖'}</span></div>`;
-   el.innerHTML=`<div style="font-family:Consolas,monospace;text-align:center;color:var(--text-muted);margin-bottom:6px;">W=500(L·N/(N−1)+12N+36) §658</div>`+gb('Completo',br.g5)+gb('Tractor',br.g2)+gb('Tandem',br.g3);}
-  else if(state.engTab===2&&sc){
-   el.innerHTML=`<div class="eng-row"><span class="k">Esbeltez máx</span><span class="v">${sc.worstPair?sc.worstRatio.toFixed(2)+':1':'—'} ${badge(sc.stackOK,sc.stackWarn)}</span></div>
-    <div style="margin-top:6px;font-size:.76rem;color:var(--text-muted);">Pesado abajo, base ancha, ≤3:1.</div>`;}
-  else if(state.engTab===3&&sc){
-   const lv=sc.rollIdx<=1?['var(--success)','ESTABLE']:sc.rollIdx<=1.2?['var(--warning)','ATENCIÓN']:['var(--danger)','VOLCADURA'];
-   el.innerHTML=`<div class="eng-row"><span class="k">COG altura</span><span class="v">${Math.round(sc.hCog)}"</span></div>
-    <div class="eng-row"><span class="k">Índice (×viento ${weatherWind().toFixed(2)})</span><span class="v" style="color:${lv[0]}">${sc.rollIdx.toFixed(2)} ${lv[1]}</span></div>`;}
-  else if(state.engTab===4&&sc){
-   el.innerHTML=`<div class="eng-row"><span class="k">OSHA 1910.178</span><span>${badge(!sc.forkFail)}</span></div>
-    ${sc.worstFork?`<div class="eng-row"><span class="k">Crítica</span><span class="v">#${sc.worstFork.it.order}: ${fmt(sc.worstFork.it.weight)} @ LC${Math.round(sc.worstFork.realLC)}" → cap ${fmt(sc.worstFork.cap)}</span></div>`:''}
-    ${sc.forkFail?'<div style="margin-top:6px;color:var(--danger);">🚨 NO LEVANTAR.</div>':''}`;}
-  else if(state.engTab===5){
-   const liq=unitItems(state.activeUnit).filter(i=>i.placed&&i.type==='tank');
-   if(!sec||!sec.liqW){el.innerHTML='<div style="color:var(--text-muted);">Sin líquidos aquí.</div>';return;}
-   el.innerHTML=`<div class="eng-row"><span class="k">Líquido / oleaje</span><span class="v">${fmt(sec.liqW)} lbs ×${sec.slosh.toFixed(2)}</span></div>
-    ${liq.map(i=>`<div class="eng-row"><span class="k">#${i.order} ${Math.round((i.fill||1)*100)}%</span><span class="v">×${sloshMultOf(i.fill||1,sec.baf).toFixed(2)}</span></div>`).join('')}`;}
-  else if(state.engTab===6){
-   const rk=A.eng.risks;
-   if(!rk.length){el.innerHTML='<div style="color:var(--success);">✔ Sin riesgos.</div>';return;}
-   el.innerHTML=rk.map(r=>{const lv=riskLevel(r.R);
-    return `<div class="risk-row" style="border-left:4px solid ${lv.c};background:rgba(148,163,184,.06);">
-     <span class="risk-score" style="background:${lv.c}22;color:${lv.c};border:1px solid ${lv.c};">${r.R}</span>
-     <div style="flex:1;"><strong style="color:${lv.c};">${lv.l} · ${r.t}</strong><br><span style="font-size:.76rem;color:var(--text-muted);">${r.M}</span></div></div>`;}).join('');}
- },
- check(id){state.checklist[id]=!state.checklist[id];app.renderEng();},
- renderOps(){
-  const tabs=['🌧️ Clima','👨‍✈️ Fatiga','☢️ HAZMAT','🚨 Emergencia','🎓 Examen','📊 Registro'];
-  document.getElementById('opsTabs').innerHTML=tabs.map((tt,i)=>`<button class="ops-tab ${state.opsTab===i?'on':''}" onclick="state.opsTab=${i};app.renderOps()">${tt}</button>`).join('');
-  const el=document.getElementById('opsBody');
-  if(state.opsTab===0){
-   const hs=hosStatus();
-   el.innerHTML=`<div class="eng-row"><span class="k">Condición del piso</span>
-    <span class="v"><select style="width:180px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-main);padding:5px;" onchange="state.weather=this.value;app.onWeather()">
-     <option value="dry" ${state.weather==='dry'?'selected':''}>☀️ Seco (μ×1.0)</option>
-     <option value="rain" ${state.weather==='rain'?'selected':''}>🌧️ Lluvia (μ×0.65)</option>
-     <option value="ice" ${state.weather==='ice'?'selected':''}>🧊 Hielo (μ×0.40)</option></select></span></div>
-    <div class="eng-row"><span class="k">Viento (mph)</span>
-    <span class="v"><input type="number" style="width:90px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-main);padding:5px;" value="${state.wind}" onchange="state.wind=+this.value;app.onWeather()"> ${weatherWind()>1?'×'+weatherWind().toFixed(2):''}</span></div>
-    <div style="margin-top:8px;font-size:.78rem;color:${hs.c};">${hs.lvl}</div>
-    <div style="margin-top:6px;font-size:.76rem;color:var(--text-muted);">⚠ El motor YA recalculó todo con estas condiciones.</div>`;}
-  else if(state.opsTab===1){
-   const hs=hosStatus();
-   el.innerHTML=`<div class="flex">
-    <div><label>Conducción hoy</label><input type="number" id="hD" value="${state.hos.drive}" onchange="app.setHos()"></div>
-    <div><label>En servicio</label><input type="number" id="hO" value="${state.hos.onDuty}" onchange="app.setHos()"></div>
-    <div><label>Semana</label><input type="number" id="hW" value="${state.hos.week}" onchange="app.setHos()"></div></div>
-    <div class="status-light ${hs.ok?'status-safe':'status-danger'}" style="margin-top:10px;"><i></i>${hs.lvl}</div>
-    <div style="font-size:.76rem;color:var(--text-muted);margin-top:6px;">11h conducción · 14h ventana · 60-70h semana. Excedido = certificado BLOQUEADO.</div>`;}
-  else if(state.opsTab===2){
-   const hz=hazmatAnalysis();
-   el.innerHTML=`<div class="flex" style="margin-bottom:8px;">
-    <div style="flex:3;"><label>Químico</label><select id="hzSel">${HAZMAT.map((h,i)=>`<option value="${i}">${h.un} · ${h.n} · Cl${h.c}</option>`).join('')}</select></div>
-    <div style="flex:0;align-self:flex-end;"><button class="btn-danger" onclick="app.addHz()">➕ A bordo</button></div></div>
-    ${state.hazmat.length?state.hazmat.map((h,i)=>`<div class="hz-row"><strong style="color:var(--danger);">${h.un}</strong> ${h.n} · Cl${h.c} · ERG-${h.erg}
-     <button class="btn-outline btn-sm" style="margin-left:auto;" onclick="state.hazmat.splice(${i},1);app.renderOps();if(state.unitsUsed){for(let u=0;u<state.unitsUsed;u++)state.unitAnalyses[u]=calcAnalysis(u);app.updateStats();}">✖</button></div>`).join(''):'<div style="color:var(--text-muted);font-size:.8rem;">Sin HAZMAT declarado.</div>'}
-    ${hz.any&&hz.forbid.length?`<div class="status-light status-danger" style="margin-top:8px;"><i></i>☢️ PROHIBIDO JUNTOS: ${hz.forbid.join(' · ')}</div>`:''}
-    ${hz.any&&hz.placardReq?`<div class="status-light status-warn" style="margin-top:6px;"><i></i>Placas clase ${Object.keys(hz.byClass).join(',')}</div>`:''}
-    ${hz.any?`<h3>Guías ERG a bordo</h3>`+[...new Map(state.hazmat.map(h=>[h.erg,h]))].map(([,h])=>`<div class="eng-row"><span class="k">ERG-${h.erg} (${h.n})</span><span class="v" style="font-weight:400;font-family:inherit;text-align:right;">${ERG_ACT[h.erg]}</span></div>`).join(''):''}`;}
-  else if(state.opsTab===3){
-   el.innerHTML=`<div class="emg-tel">CHEMTREC (US): 1-800-424-9300<br>SETIQ (MX): 800-00-214-00 · Emergencias: 911</div>`
-    +EMERGENCY.map(e=>`<div class="emg-card"><b>${e.t}</b><ol style="margin:6px 0 0 18px;">${e.s.map(s=>`<li>${s}</li>`).join('')}</ol></div>`).join('')
-    +`<button class="btn-danger btn-block" onclick="app.openEmergencyCard()">🆘 IMPRIMIR FICHA CABINA</button>`;}
-  else if(state.opsTab===4){EXAM.render();}
-  else{
-   if(!state.log.length)el.innerHTML='<div style="color:var(--text-muted);">Sin registros aún.</div>';
-   else el.innerHTML=`<div style="max-height:260px;overflow:auto;">${state.log.map(l=>`<div class="eng-row"><span class="k">${l.date}</span>
-    <span class="v" style="color:${l.verdict==='LIBERADA'?'var(--success)':'var(--danger)'}">${l.units}ud · ${l.weight}lbs · ${l.verdict} · R${l.maxRisk} · ${l.weather}</span></div>`).join('')}</div>
-    <button class="btn-outline btn-block" onclick="app.exportLog()">📥 Exportar CSV</button>`;}
- },
- onWeather(){if(state.unitsUsed){for(let u=0;u<state.unitsUsed;u++)state.unitAnalyses[u]=calcAnalysis(u);}
-  app.updateStats();app.renderEng();app.renderOps();drawAll();
-  app.showToast(state.weather==='dry'?'☀️ Seco':'🌧️ Recalculado');if(state.weather!=='dry')alarm();},
- setHos(){state.hos={drive:+document.getElementById('hD').value||0,onDuty:+document.getElementById('hO').value||0,week:+document.getElementById('hW').value||0};
-  app.updateStats();app.renderOps();},
- addHz(){const h=HAZMAT[+document.getElementById('hzSel').value];
-  state.hazmat.push({...h});app.renderOps();
-  if(state.unitsUsed){for(let u=0;u<state.unitsUsed;u++)state.unitAnalyses[u]=calcAnalysis(u);app.updateStats();}},
- exportLog(){
-  const csv='Fecha,Unidades,Peso,Veredicto,RiesgoMax,Clima,FatigaOK,HAZMAT\n'+state.log.map(l=>`"${l.date}",${l.units},${l.weight},${l.verdict},${l.maxRisk},${l.weather},${l.hosOk},${l.hazmat}`).join('\n');
-  const a=document.createElement('a');a.download='argos-registro.csv';
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();app.showToast('📥 CSV');},
+ optimize(){if(!state.items.length){toast('⚠ Agrega carga primero');return;}optimizeAll(false);app.save();},
+ pick(u,n){state.activeUnit=u;state.sel=n;app.renderAll();},
+ stepSel(d){const P=uPlaced(state.activeUnit).sort((a,b)=>a.seq-b.seq);if(!P.length)return;
+  let i=P.findIndex(x=>x.seq===state.sel);if(i<0)i=0;i=(i+d+P.length)%P.length;
+  state.sel=P[i].seq;app.renderAll();},
+ setUnit(u){state.activeUnit=u;state.sel=1;app.renderAll();},
+ renderAll(){app.renderItems();
+  document.getElementById('unitTabs').innerHTML=state.units?state.U.map((x,u)=>{
+   const ok=x.ax&&x.ax.pass&&x.sec.ok;
+   return `<button class="unit-tab ${u===state.activeUnit?'on':''}" onclick="app.setUnit(${u})">🚛 U${u+1} <span style="color:${ok?'var(--success)':'var(--danger)'}">${ok?'✔':'✖'}</span></button>`;}).join(''):'';
+  document.getElementById('unitLbl').innerText=state.units?'U'+(state.activeUnit+1)+'/'+state.units:'U1';
+  renderAxles();renderSteps();renderCard();drawTop();drawRear();drawSide();drawIso();app.renderChecklist();},
+ /* checklist + certificado */
+ renderChecklist(){const done=CHECKLIST.filter(c=>state.checklist[c[0]]).length;
+  document.getElementById('ckList').innerHTML=CHECKLIST.map(c=>
+   `<label class="ck-row ${state.checklist[c[0]]?'done':''}"><input type="checkbox" ${state.checklist[c[0]]?'checked':''} onchange="state.checklist['${c[0]}']=!state.checklist['${c[0]}'];app.renderChecklist();app.certGate();"><span>${c[0]}</span><span style="margin-left:auto;color:var(--text-muted);font-size:.62rem;font-family:Consolas,monospace;">${c[1]}</span></label>`).join('');
+  app.certGate();},
+ certGate(){const done=CHECKLIST.filter(c=>state.checklist[c[0]]).length;
+  const fleetOk=state.units&&state.U.every(u=>u.ax.pass&&u.sec.ok);
+  const ok=fleetOk&&done===CHECKLIST.length&&hosOK();
+  const b=document.getElementById('certBtn');
+  b.disabled=!ok;b.className=ok?'btn-primary btn-block':'btn-outline btn-block';
+  document.getElementById('certMsg').innerText=ok?'✔ Todo listo — puedes emitir':
+   `Falta: ${!fleetOk?'flota liberada · ':''}${done<14?'checklist '+done+'/14 · ':''}${!hosOK()?'fatiga OK · ':''}fotos recomendadas`;},
  openCert(){
-  if(!state.unitsUsed){app.showToast('⚠ Calcula primero');return;}
-  const hs=hosStatus();
-  if(!hs.ok){app.showToast('🚨 Fatiga excedida — BLOQUEADO');alarm();return;}
-  const t=state.trailer,semi=t.semi;
-  const allPass=state.unitAnalyses.every(a=>a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true));
-  const done=CHECKLIST.filter(c=>state.checklist[c.id]).length;
-  let uRows='';
-  state.unitAnalyses.forEach((a,u)=>{const d=a.dist,sec=a.eng.sec;
-   uRows+=`<tr><td>U${u+1}</td><td>${fmt(a.totalW)}</td><td>${fmt(d.steer)}</td>${semi?`<td>${fmt(d.drive)}</td>`:''}<td>${fmt(d.trailer)}</td><td>${fmt(d.gross)}</td><td>${semi?(d.tx/12).toFixed(1)+"'/"+d.k2d+'"':'—'}</td><td>${sec?sec.chains+'ch+'+sec.straps+'crr':''}</td><td style="color:${d.pass?'#059669':'#dc2626'};font-weight:700">${d.pass?'OK':'FAIL'}</td></tr>`;});
-  const hz=hazmatAnalysis();
+  const t=state.trailer,u0=state.U;
+  const hz=hzAnalysis();
+  const ph=state.photos.filter(Boolean).length;
   document.getElementById('certDoc').innerHTML=`
-   <div class="hd"><div><div style="font-weight:900;">📜 CERTIFICADO DE CARGA SEGURA — ARGOS</div>
-   <div style="font-size:.68rem;color:#475569;">${new Date().toLocaleString()} · Clima: ${state.weather.toUpperCase()} μ×${weatherMu().toFixed(2)} · Fatiga: ${hs.ok?'OK':'FAIL'}</div></div>
-   <div class="stamp ${allPass?'':'bad'}">${allPass?'LIBERADA':'NO LIBERAR'}</div></div>
-   <table><tr><th>Ud</th><th>Carga</th><th>Dir.</th>${semi?'<th>Trac</th>':''}<th>Tandem</th><th>GVW</th><th>TD/5ª</th><th>Amarre</th><th>Ejes</th></tr>${uRows}</table>
-   <div style="font-size:.7rem;">Bridge B §658 · WLL≥50% §393 · Checklist ${done}/${CHECKLIST.length} ${hz.any?'· ☢️ '+state.hazmat.map(h=>h.un).join(', '):''}</div>
+   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0f172a;padding-bottom:7px;margin-bottom:9px;flex-wrap:wrap;gap:8px;">
+    <div><div style="font-weight:900;">📜 CERTIFICADO DE CARGA SEGURA — ARGOS</div>
+    <div style="font-size:.66rem;color:#475569;">${new Date().toLocaleString()} · Piso: ${state.weather.toUpperCase()} μ×${wMu().toFixed(2)} · Viento ${state.wind}mph · Horas: ${document.getElementById('hD').value}/${document.getElementById('hO').value}/${document.getElementById('hW').value}</div></div>
+    <div class="stamp">LIBERADA</div></div>
+   <table><tr><th>Ud</th><th>Carga lbs</th><th>Dir.</th>${t.semi?'<th>Trac</th>':''}<th>Tandem</th><th>GVW</th><th>TD/5ª</th><th>Amarre</th></tr>
+   ${u0.map((u,i)=>`<tr><td>U${i+1}</td><td>${fmt(u.W)}</td><td>${fmt(u.ax.steer)}</td>${t.semi?`<td>${fmt(u.ax.drive)}</td>`:''}<td>${fmt(u.ax.trailer)}</td><td>${fmt(u.ax.gross)}</td><td>${t.semi?(u.ax.tx/12).toFixed(1)+"'/"+u.ax.k2d+'"':'—'}</td><td>${u.sec.chains}ch+${u.sec.straps}crr</td></tr>`).join('')}</table>
+   ${hz.any?`<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:8px;font-size:.72rem;"><b style="color:#dc2626;">☢️ PELIGROSOS:</b> ${state.hazmat.map(h=>h.un+' '+h.n+' (ERG-'+h.erg+')').join(' · ')} · Placas: ${hz.placardReq?'SÍ':'no'} ${hz.forbid.length?'<b>· ⚠ INCOMPATIBLES: '+hz.forbid.join(', ')+'</b>':''}</div>`:''}
+   ${ph?`<div style="margin-top:8px;"><b style="font-size:.7rem;">📷 EVIDENCIA FOTOGRÁFICA (${ph}/4):</b><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">${state.photos.map((d,i)=>d?`<div style="width:108px;"><img src="${d}" style="width:108px;height:80px;object-fit:cover;border:1px solid #94a3b8;border-radius:4px;"><div style="font-size:.55rem;text-align:center;">${['Bloqueo','Amarres','Piso/piezas','Placas'][i]}</div></div>`:'').join('')}</div></div>`:''}
    <div class="sig"><div>Operador montacargas</div><div>Supervisor patio</div><div>Operador tractor</div><div>Despachador</div></div>
-   <div style="font-size:.6rem;color:#64748b;margin-top:10px;">Cálculos simplificados como ayuda a la decisión. Validación final: báscula + supervisor.</div>`;
+   <div style="font-size:.58rem;color:#64748b;margin-top:9px;">Cálculos como ayuda a la decisión. Validación final: báscula certificada + supervisor. Bridge B §658 · WLL ≥50% §393 · ${CHECKLIST.filter(c=>state.checklist[c[0]]).length}/14 checklist.</div>`;
   document.getElementById('certModal').style.display='block';},
- openEmergencyCard(){
-  const hz=hazmatAnalysis();
+ openEmergency(){const hz=hzAnalysis();
   document.getElementById('certDoc').innerHTML=`
-   <div style="text-align:center;border-bottom:4px solid #dc2626;padding-bottom:8px;margin-bottom:10px;">
-    <div style="font-weight:900;font-size:1.3rem;color:#dc2626;">🆘 FICHA DE EMERGENCIA — CABINA</div>
-    <div style="font-size:.7rem;">ARGOS · ${new Date().toLocaleString()}</div></div>
-   <div style="font-size:1.4rem;font-weight:900;font-family:Consolas,monospace;text-align:center;">🇺🇸 CHEMTREC: 1-800-424-9300<br>🇲🇽 SETIQ: 800-00-214-00<br>Emergencias: 911</div>
-   <table><tr><th>Unidad</th><th>Peso</th><th>Veredicto</th></tr>
-   ${state.unitAnalyses.map((a,u)=>`<tr><td>U${u+1}</td><td>${fmt(a.totalW)} lbs</td><td>${a.dist.pass?'OK':'SOBREPESO'}</td></tr>`).join('')||'<tr><td colspan="3">Sin flota</td></tr>'}</table>
-   ${hz.any?`<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:10px;margin:8px 0;">
-    <b style="color:#dc2626;">☢️ PELIGROSOS A BORDO:</b><table><tr><th>UN</th><th>Nombre</th><th>Cl</th><th>ERG</th><th>Acción</th></tr>
-    ${state.hazmat.map(h=>`<tr><td><b>${h.un}</b></td><td>${h.n}</td><td>${h.c}</td><td>${h.erg}</td><td style="font-size:.68rem;">${ERG_ACT[h.erg]}</td></tr>`).join('')}</table></div>`:'<div style="font-size:.75rem;margin:8px 0;">Sin peligrosos declarados.</div>'}
-   <div style="font-size:.72rem;"><b>REGLAS DE ORO:</b> 1) Tu vida primero. 2) Ante duda: PARA. 3) Nunca entres a un derrame sin equipo. 4) Fatiga = parar. 5) Re-amarrar tras cada parada.</div>`;
+   <div style="text-align:center;border-bottom:4px solid #dc2626;padding-bottom:7px;margin-bottom:9px;">
+    <div style="font-weight:900;font-size:1.25rem;color:#dc2626;">🆘 FICHA DE EMERGENCIA — CABINA</div>
+    <div style="font-size:.68rem;">ARGOS · ${new Date().toLocaleString()}</div></div>
+   <div style="font-size:1.3rem;font-weight:900;font-family:Consolas,monospace;text-align:center;">🇺🇸 CHEMTREC: 1-800-424-9300<br>🇲🇽 SETIQ: 800-00-214-00 · 911</div>
+   ${hz.any?`<table style="margin-top:8px;"><tr><th>UN</th><th>Nombre</th><th>Cl</th><th>ERG</th><th>Acción</th></tr>
+    ${state.hazmat.map(h=>`<tr><td><b>${h.un}</b></td><td>${h.n}</td><td>${h.c}</td><td>${h.erg}</td><td style="font-size:.64rem;">${ERG_ACT[h.erg]}</td></tr>`).join('')}</table>`:'<p style="font-size:.75rem;margin-top:6px;">Sin peligrosos declarados.</p>'}
+   <div style="font-size:.7rem;margin-top:8px;"><b>REGLAS DE ORO:</b> 1) Tu vida primero. 2) Ante duda: PARA. 3) Nunca entres a un derrame sin equipo. 4) Fatiga = parar. 5) Re-amarrar tras cada parada.</div>`;
   document.getElementById('certModal').style.display='block';},
- printCert(){document.body.classList.add('printing');window.print();setTimeout(()=>document.body.classList.remove('printing'),500);},
- shareQR(){if(!state.items.length){app.showToast('⚠ Agrega carga');return;}
-  const code=serializePlan();const isHttp=location.protocol.startsWith('http');
-  const txt=isHttp?`${location.origin}${location.pathname}#p=${encodeURIComponent(code)}`:code;
-  const box=document.getElementById('qrBox');box.innerHTML='';
-  if(window.QRCode&&!window.__qrFail){try{new QRCode(box,{text:txt,width:230,height:230,correctLevel:QRCode.CorrectLevel.L});
-   document.getElementById('qrNote').innerText='Flota: '+state.unitsUsed+' ud.';}catch(e){document.getElementById('qrNote').innerText='Usa Copiar.';}}
-  else document.getElementById('qrNote').innerText='Usa Copiar.';
-  document.getElementById('qrModal').style.display='block';},
- copyShareCode(){navigator.clipboard.writeText(serializePlan()).then(()=>app.showToast('📋 Copiado')).catch(()=>app.showToast('⚠ Manual'));},
- importModal(s){document.getElementById('impModal').style.display=s?'block':'none';},
- closeImport(){app.stopScan();app.importModal(false);},
- doImportText(){let d=document.getElementById('impText').value.trim();
-  const i=d.indexOf('#p=');if(i>=0)d=decodeURIComponent(d.slice(i+3).split(/[&\s]/)[0]);
-  if(loadPlanString(d))app.closeImport();},
- toggleScan:async()=>{if(scanStream){app.stopScan();return;}
-  if(!('BarcodeDetector'in window)){app.showToast('⚠ Sin soporte');return;}
-  try{scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-   const v=document.getElementById('scanVideo');v.style.display='block';v.srcObject=scanStream;v.play();
-   document.getElementById('scanBtnWrap').firstChild.innerText='⏹';
-   const det=new BarcodeDetector({formats:['qr_code']});
-   scanTimer=setInterval(async()=>{try{const cs=await det.detect(v);if(cs.length){
-    let d=cs[0].rawValue;const i=d.indexOf('#p=');if(i>=0)d=decodeURIComponent(d.slice(i+3).split(/[&\s]/)[0]);
-    app.stopScan();if(loadPlanString(d))app.closeImport();}}catch(e){}},350);}
-  catch(e){app.showToast('⚠ Sin cámara');}},
- stopScan(){if(scanTimer){clearInterval(scanTimer);scanTimer=null;}
-  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
-  const v=document.getElementById('scanVideo');v.style.display='none';v.srcObject=null;
-  const b=document.getElementById('scanBtnWrap').firstChild;if(b)b.innerText='📷 Escanear';},
- savePlan(){if(!state.items.length){app.showToast('⚠ Nada que guardar');return;}
-  let n=document.getElementById('planName').value.trim()||'Flota '+new Date().toLocaleDateString();
-  localStorage.setItem('argos_plan_'+n,serializePlan());
-  document.getElementById('planName').value='';app.renderSaved();app.showToast('💾 '+n);},
- renderSaved(){const el=document.getElementById('savedList');
-  const keys=Object.keys(localStorage).filter(k=>k.startsWith('argos_plan_')||k.startsWith('omega_plan_')).sort().reverse();
-  if(!keys.length){el.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:.82rem;">Sin planes.</div>';return;}
-  el.innerHTML=keys.map(k=>{const n=k.replace(/^(argos_plan_|omega_plan_)/,'');
-   return `<div class="saved-item"><div style="flex:1;"><strong>${n}</strong></div>
-   <button class="btn-success btn-sm" onclick="app.loadSaved('${k.replace(/'/g,"\\'")}')">Abrir</button>
-   <button class="btn-danger btn-sm" onclick="app.deleteSaved('${k.replace(/'/g,"\\'")}')">✖</button></div>`;}).join('');},
- loadSaved(k){const d=localStorage.getItem(k);if(d&&loadPlanString(d))app.showToast('📂 Abierto');},
- deleteSaved(k){localStorage.removeItem(k);app.renderSaved();app.showToast('🗑️');},
- autoSave(){try{localStorage.setItem('argos_last',serializePlan());}catch(e){}},
+ /* fotos */
+ initPhotos(){const inp=document.getElementById('photoInput');
+  document.getElementById('photoGrid').innerHTML=state.photos.map((d,i)=>d?
+   `<div class="photo-slot"><img src="${d}"><span class="x" onclick="PHOTO.del(${i})">✕</span></div>`:
+   `<div class="photo-slot" onclick="PHOTO.pick(${i})">📷<br>${['Bloqueo frontal','Amarres','Piso/piezas','Placas'][i]}</div>`).join('');
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;
+   const r=new FileReader();r.onload=ev=>{const img=new Image();
+    img.onload=()=>{const c=document.createElement('canvas'),s=Math.min(1,420/Math.max(img.width,img.height));
+     c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+     c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+     state.photos[state._pi]=c.toDataURL('image/jpeg',.6);app.initPhotos();app.save();toast('📷 Foto adjuntada');};
+    img.src=ev.target.result;};r.readAsDataURL(f);e.target.value='';};},
+ /* share */
+ sharePlan(){const code='ARGOS1|'+document.getElementById('trailerType').value+'|'+state.items.map(i=>[i.type,i.l,i.w,i.h,i.weight,(i.fill||1)].join(',')).join(';');
+  prompt('Copia este código y compártelo:',code);},
+ loadPlan(){const code=prompt('Pega el código ARGOS1|...');if(!code)return;
+  try{const p=code.split('|');if(p[0]!=='ARGOS1'||!TRAILERS[p[1]])throw 0;
+   document.getElementById('trailerType').value=p[1];app.updateTrailer();
+   state.items=p[2].split(';').filter(Boolean).map(s=>{const v=s.split(',');
+    return{id:Math.random().toString(36).substr(2,9),type:v[0],l:+v[1],w:+v[2],h:+v[3],weight:+v[4],fill:+v[5],placed:false,x:0,y:0,z:0,seq:0,support:null,unit:-1};});
+   app.renderItems();app.save();optimizeAll(false);}catch(e){toast('⚠ Código no válido');}},
+ save(){try{localStorage.setItem('argos_v2',JSON.stringify({tk:document.getElementById('trailerType').value,
+  items:state.items.map(i=>({type:i.type,l:i.l,w:i.w,h:i.h,weight:i.weight,fill:i.fill}))}));}catch(e){}},
  exportPNG(){
-  const prev=state.activeUnit,units=state.unitsUsed||1,perU=topCanvas.height+sideCanvas.height+52;
-  const out=document.createElement('canvas');
-  out.width=Math.max(topCanvas.width,sideCanvas.width);out.height=units*perU+30;
-  const c=out.getContext('2d');
-  c.fillStyle=state.theme==='light'?'#e2e8f0':'#000206';c.fillRect(0,0,out.width,out.height);
-  let y=4;
-  for(let u=0;u<units;u++){state.activeUnit=u;drawAll();
-   const a=state.unitAnalyses[u],ok=a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true);
-   c.fillStyle=state.theme==='light'?'#0f172a':'#7dd3fc';c.font='bold 16px '+FONT;c.textAlign='left';
-   c.fillText(`U${u+1}/${units} — ${state.trailer.name} — ${fmt(a?a.totalW:0)} lbs`,22,y+20);
+  const units=state.units||1,perU=topC.height+rearC.height+sideC.height+isoC.height+120;
+  const out=document.createElement('canvas');out.width=1300;out.height=units*perU+40;
+  const c=out.getContext('2d');c.fillStyle='#000206';c.fillRect(0,0,out.width,out.height);
+  const saved=state.activeUnit;
+  let y=6;
+  for(let u=0;u<units;u++){state.activeUnit=u;state.sel=1;app.renderAll();
+   const U=state.U[u],ok=U.ax.pass&&U.sec.ok;
+   c.fillStyle='#7dd3fc';c.font='bold 17px '+FONT;c.textAlign='left';
+   c.fillText(`UNIDAD ${u+1} — ${state.trailer.name} — ${fmt(U.W)} lbs — orden 1→${uPlaced(u).length}`,20,y+22);
    c.fillStyle=ok?'#22c55e':'#ef4444';c.textAlign='right';
-   c.fillText(ok?'✔ LIBERADA':'✖ NO LIBERAR',out.width-22,y+20);
-   c.drawImage(topCanvas,0,y+30);c.drawImage(sideCanvas,0,y+30+topCanvas.height+6);y+=perU;}
-  state.activeUnit=prev;drawAll();
-  const l=document.createElement('a');l.download='argos-plan.png';l.href=out.toDataURL();l.click();
-  app.showToast('🖼️ Exportado');},
- showToast(m){const t=document.getElementById('toast');t.innerHTML=m;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);}
+   c.fillText(ok?'✔ LIBERADA':'✖ NO LIBERAR',1280,y+22);
+   c.drawImage(topC,0,y+34);c.drawImage(rearC,0,y+34+topC.height+8);
+   c.drawImage(sideC,0,y+34+topC.height+rearC.height+16);
+   c.drawImage(isoC,0,y+34+topC.height+rearC.height+sideC.height+24);
+   y+=perU;}
+  state.activeUnit=saved;state.sel=1;app.renderAll();
+  const l=document.createElement('a');l.download='argos-plan.png';l.href=out.toDataURL();l.click();toast('🖼️ PNG');},
+ printSheet(){
+  if(!state.units){toast('⚠ Calcula primero');return;}
+  const saved=state.activeUnit;let html='';
+  for(let u=0;u<state.units;u++){state.activeUnit=u;app.renderAll();
+   const U=state.U[u];
+   html+=`<div style="page-break-after:always;">
+    <div class="ttl" style="font-size:17px;font-weight:900;">UNIDAD ${u+1} — ${state.trailer.name} · ${fmt(U.W)} lbs ${U.ax.pass?'✔':'✖'}</div>
+    <div style="font-size:11px;">Orden 1→${uPlaced(u).length} (del fondo hacia las puertas) · pies desde puertas · ${new Date().toLocaleString()} · ARGOS</div>
+    <img src="${topC.toDataURL()}" style="width:100%;border:1px solid #999;">
+    <img src="${rearC.toDataURL()}" style="width:100%;border:1px solid #999;">
+    <table style="width:100%;border-collapse:collapse;font-size:10px;">
+    <tr><th>#</th><th>Pieza</th><th>lbs</th><th>Mete (ft puertas)</th><th>Lado</th><th>Nivel</th></tr>
+    ${uPlaced(u).sort((a,b)=>a.seq-b.seq).map(it=>`<tr><td><b>${it.seq}</b></td><td>${LABELS[it.type]}</td><td>${fmt(it.weight)}</td>
+     <td><b>${Math.round((state.trailer.L-(it.x+it.l))/12*10)/10} ft</b></td><td>${sideOf(it).split(' ')[0]}</td><td>${it.z>0?'Niv '+Math.round(it.z)+'"':'Piso'}</td></tr>`).join('')}</table></div>`;}
+  state.activeUnit=saved;app.renderAll();
+  const ps=document.createElement('div');ps.id='printTmp';
+  ps.style.cssText='position:fixed;top:0;left:0;background:#fff;color:#000;z-index:9999;padding:8px;';
+  ps.innerHTML=html;
+  ps.style.display='none';
+  document.body.appendChild(ps);
+  const old=document.querySelectorAll('body > .container, body > .card, #botFab, #botPanel, .toast, #certModal');
+  old.forEach(e=>e.style.display='none');
+  ps.style.display='block';
+  window.print();
+  setTimeout(()=>{ps.remove();old.forEach(e=>e.style.display='');},600);}
 };
+const PHOTO={pick(i){state._pi=i;document.getElementById('photoInput').click();},del(i){state.photos[i]=null;app.initPhotos();app.save();}};
+/* clic en vistas */
+topC.addEventListener('click',e=>{const r=topC.getBoundingClientRect(),mx=(e.clientX-r.left)*topC.width/r.width,my=(e.clientY-r.top)*topC.height/r.height;
+ const t=state.trailer,tl=t.semi?240:0,m=46;
+ const sc=Math.min((topC.width-m*2-tl)/t.L,(topC.height-m*2-46)/t.W);
+ const nx=m+tl*sc,oy=(topC.height-t.W*sc)/2-4;
+ const hit=uPlaced(state.activeUnit).find(it=>{const x=nx+it.x*sc,y=oy+it.y*sc;return mx>=x&&mx<=x+it.l*sc&&my>=y&&my<=y+it.w*sc;});
+ if(hit){state.sel=hit.seq;app.renderAll();}});
+rearC.addEventListener('click',e=>{const r=rearC.getBoundingClientRect(),mx=(e.clientX-r.left)*rearC.width/r.width,my=(e.clientY-r.top)*rearC.height/r.height;
+ const t=state.trailer,m=92,maxH=t.deckH+t.H+30;
+ const sc=Math.min((rearC.width-m*2)/t.W,(rearC.height-m*1.6)/maxH);
+ const cx0=(rearC.width-t.W*sc)/2,gy=rearC.height-70;
+ const hit=uPlaced(state.activeUnit).find(it=>{const dz=deckZ(t,it);
+  const x=cx0+it.y*sc,w=it.w*sc,yT=gy-(dz+it.z+it.h)*sc;
+  return mx>=x&&mx<=x+w&&my>=yT&&my<=yT+it.h*sc;});
+ if(hit){state.sel=hit.seq;app.renderAll();}});
 
-/* EXAMEN */
-const EXAM={person:'',idx:0,correct:0,questions:[],done:false,
- render(){const el=document.getElementById('opsBody');
-  if(!EXAM.questions.length||EXAM.done){
-   const att=JSON.parse(localStorage.getItem('argos_exams')||'[]');
-   const last=att[0];
-   el.innerHTML=`<div style="text-align:center;padding:8px;">
-    <div style="font-weight:800;margin-bottom:5px;">🎓 Examen de Certificación</div>
-    <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:8px;">20 preguntas · ≥80% aprueba · constancia imprimible</div>
-    ${last?`<div class="eng-row"><span class="k">Último</span><span class="v" style="color:${last.pct>=80?'var(--success)':'var(--danger)'}">${last.name}: ${last.pct}%</span></div>`:''}
-    <div class="flex" style="justify-content:center;margin-top:8px;">
-     <div style="flex:2;"><input id="examName" placeholder="Nombre del evaluado"></div>
-     <div style="flex:0;"><button class="btn-primary" onclick="EXAM.start()">▶ COMENZAR</button></div></div></div>`;
-   EXAM.done=false;return;}
-  const q=EXAM.questions[EXAM.idx];
-  el.innerHTML=`<div class="eng-row"><span class="k">Pregunta ${EXAM.idx+1}/${EXAM.questions.length}</span><span class="v">✔ ${EXAM.correct}</span></div>
-   <div class="gauge" style="margin:5px 0 10px;"><div class="gauge-fill" style="width:${(EXAM.idx/EXAM.questions.length)*100}%;background:var(--accent);"></div></div>
-   <div style="font-weight:700;margin-bottom:8px;">${q.q}</div>
-   ${q.o.map((o,i)=>`<span class="q-opt" onclick="EXAM.answer(${i},this)">${'ABC'[i]}) ${o}</span>`).join('')}`;},
- start(){const n=document.getElementById('examName').value.trim();
-  if(!n){app.showToast('⚠ Escribe el nombre');return;}
-  EXAM.person=n;EXAM.done=false;
-  EXAM.questions=[...EXAM_POOL].sort(()=>Math.random()-.5).slice(0,20);
-  EXAM.idx=0;EXAM.correct=0;EXAM.render();},
- answer(i,elm){const q=EXAM.questions[EXAM.idx],ok=i===q.a;
-  if(ok)EXAM.correct++;
-  const opts=elm.parentElement.querySelectorAll('.q-opt');
-  opts.forEach((e,j)=>{if(j===q.a)e.classList.add('right');else if(e===elm)e.classList.add('wrong');});
-  setTimeout(()=>{EXAM.idx++;
-   if(EXAM.idx>=EXAM.questions.length)EXAM.finish();else EXAM.render();},650);},
- finish(){const pct=Math.round(100*EXAM.correct/EXAM.questions.length),pass=pct>=80;
-  const folio='ARGOS-EX-'+Date.now().toString(36).toUpperCase();
-  const att=JSON.parse(localStorage.getItem('argos_exams')||'[]');
-  att.unshift({name:EXAM.person,pct,date:new Date().toLocaleString(),folio});
-  try{localStorage.setItem('argos_exams',JSON.stringify(att.slice(0,30)));}catch(e){}
-  EXAM.done=true;if(!pass)alarm();
-  document.getElementById('certDoc').innerHTML=`
-   <div class="hd"><div><div style="font-weight:900;">🎓 CONSTANCIA DE CAPACITACIÓN — ARGOS</div>
-   <div style="font-size:.68rem;color:#475569;">Seguridad de Carga · ${new Date().toLocaleString()}</div></div>
-   <div class="stamp ${pass?'':'bad'}">${pass?'APROBADO':'REPROBADO'}</div></div>
-   <p><b>Evaluado:</b> ${EXAM.person}</p><p><b>Calificación:</b> ${EXAM.correct}/20 (${pct}%) — mín. 80%</p>
-   <p><b>Folio:</b> ${folio}</p>
-   <p style="font-size:.72rem;">Temas: fuerzas §393 (0.8g/0.5g, WLL 50%), Bridge B §658, límites de ejes, pila, volcadura, sloshing §393.117, HOS fatiga, HAZMAT/ERG, emergencias.</p>
-   <div class="sig"><div>Instructor</div><div>Evaluado</div></div>`;
-  document.getElementById('certModal').style.display='block';EXAM.render();}
-};
-
-/* ================================================================
-   🤖 BOT AUDITOR "ARGOS IA" — entrevista de calidad pre-carga
-   ================================================================ */
-const BOT={
- step:-1,pending:null,cargoNotes:[],
- toggle(){const p=document.getElementById('botPanel');p.classList.toggle('open');
-  document.getElementById('botDot').style.display='none';
-  if(p.classList.contains('open')&&this.step===-1&&!state.items.length)this.greet();},
+/* ================= 🤖 BOT AUDITOR ================= */
+const BOT={step:-1,
+ toggle(){document.getElementById('botPanel').classList.toggle('open');
+  if(!document.getElementById('botChat').children.length)this.greet();},
  show(){const p=document.getElementById('botPanel');if(!p.classList.contains('open'))this.toggle();},
- say(who,text,cls){const c=document.getElementById('botChat');
-  const d=document.createElement('div');d.className='bub '+who+(cls?' '+cls:'');d.innerHTML=text;
-  c.appendChild(d);c.scrollTop=c.scrollHeight;},
- typing(fn){const c=document.getElementById('botChat');
-  const d=document.createElement('div');d.className='typing';d.id='bTyp';d.textContent='ARGOS IA está revisando…';
+ say(w,t,cls){const c=document.getElementById('botChat'),d=document.createElement('div');
+  d.className='bub '+w+(cls?' '+cls:'');d.innerHTML=t;c.appendChild(d);c.scrollTop=c.scrollHeight;},
+ typing(fn){const c=document.getElementById('botChat'),d=document.createElement('div');
+  d.className='bub bot';d.style.fontStyle='italic';d.style.opacity=.7;d.textContent='ARGOS IA revisando…';
   c.appendChild(d);c.scrollTop=c.scrollHeight;
-  setTimeout(()=>{d.remove();fn();},450);},
- quick(list){const q=document.getElementById('botQuick');q.innerHTML='';
-  list.forEach(o=>{const b=document.createElement('button');b.className='qk';b.textContent=o.label;
-   b.onclick=()=>{this.say('user',o.label);if(o.fn)o.fn();else this.handle(o.value!==undefined?o.value:o.label);};q.appendChild(b);});},
- greet(){
-  this.say('bot',`👋 <b>Soy ARGOS IA, su auditor de calidad de carga.</b>\n\nMi trabajo: asegurarme de que NINGUNA unidad salga con un riesgo que podamos detectar hoy. Voy a hacerle unas preguntas breves y críticas antes de que se mueva una sola pieza.\n\n¿Comenzamos la auditoría pre-carga?`);
-  document.getElementById('botState').textContent='AUDITORÍA';
-  this.quick([{label:'✅ Comenzar auditoría',fn:()=>this.askVeh()},{label:'Saltar (carga manual)',value:'saltar'}]);},
- startAudit(force){this.show();
-  if(force){document.getElementById('botChat').innerHTML='';
-   this.say('bot',`🔐 <b>AUDITORÍA PRE-CARGA — ARGOS IA</b>\nSin atajos: verificaremos vehículo, carga, equipo, clima, fatiga y sustancias peligrosas. Empecemos.`);}
-  else if(!document.getElementById('botChat').children.length)this.greet();
-  if(force)this.askVeh();},
- askVeh(){this.step=0;this.cargoNotes=[];
-  this.say('bot',`<b>1/6 · VEHÍCULO</b>\n¿Qué unidad va a cargar? (puedes cambiarla después)`);
-  this.quick(Object.keys(TRAILERS).slice(0,8).map(k=>({label:TRAILERS[k].name,value:'veh:'+k}))
-   .concat([{label:'Más vehículos…',value:'veh:more'}]));},
- askCargo(){this.step=1;
-  this.say('bot',`<b>2/6 · CARGA</b>\nDescríbame la carga en una línea: cantidad, tipo y peso.\n\nEjemplos:\n• "<i>26 pallets de 1500 libras</i>"\n• "<i>8 rollos de acero de 5000</i>"\n• "<i>3 tanques líquidos al 50%, 4200 lbs</i>"`);
-  this.quick([{label:'Ya cargué el manifiesto a mano',value:'cargo:manual'},{label:'Sin carga (solo revisar)',value:'cargo:none'}]);},
- askFork(){this.step=2;
-  this.say('bot',`<b>3/6 · MONTACARGAS</b>\n¿Capacidad del equipo del patio y su centro de carga?\nEj: "<i>5000 a 24</i>"`);
-  this.quick([{label:'5000 lbs @ 24"',value:'5000 24'},{label:'8000 lbs @ 24"',value:'8000 24'},{label:'10000 lbs @ 36"',value:'10000 36'}]);},
- askWeather(){this.step=3;
-  this.say('bot',`<b>4/6 · CLIMA Y VIENTO</b>\n¿Condición del piso en ruta? ¿Y viento estimado en mph?\nEj: "<i>lluvia, viento 25</i>"`);
-  this.quick([{label:'☀️ Seco, sin viento',value:'dry 0'},{label:'🌧️ Lluvia',value:'rain 0'},{label:'🧊 Hielo',value:'ice 0'},{label:'Viento fuerte >30',value:'dry 35'}]);},
- askHos(){this.step=4;
-  this.say('bot',`<b>5/6 · FATIGA DEL OPERADOR</b>\nHoras de conducción hoy / en servicio / acumuladas de la semana.\nEj: "<i>8 10 40</i>"`);
-  this.quick([{label:'0 / 2 / 10 (fresco)',value:'0 2 10'},{label:'8 / 10 / 40',value:'8 10 40'},{label:'11 / 13 / 60 (límite)',value:'11 13 60'}]);},
- askHz(){this.step=5;
-  this.say('bot',`<b>6/6 · MATERIAL PELIGROSO</b>\n¿Lleva HAZMAT? Dime el nombre o UN.\nEj: "<i>gasolina</i>" o "<i>UN1203</i>"`);
-  this.quick([{label:'No lleva HAZMAT',value:'hz:none'},{label:'Gasolina',value:'hz:UN1203'},{label:'Diésel',value:'hz:UN1993'},{label:'Propano',value:'hz:UN1978'}]);},
- handle(txt){
-  const t=txt.toLowerCase().trim();
-  /* Comandos globales */
-  if(this.step===-1||t==='saltar'){this.step=-2;document.getElementById('botState').textContent='CONSULTA';
-   this.say('bot',`Entendido. Estaré vigilando 👁️.\nPuedes preguntarme en cualquier momento: <i>"¿por qué salió rechazada?"</i>, <i>"¿qué tandem uso?"</i>, <i>"¿cuántas correas necesito?"</i>, <i>"¿cómo va el riesgo?"</i> — o escribe <b>auditoría</b> para el cuestionario completo.`);
-   this.quick([{label:'🤖 Iniciar auditoría',fn:()=>this.startAudit(true)},{label:'❓ ¿Por qué rechazada?',value:'¿por qué rechazada?'},{label:'📊 ¿Cómo va el riesgo?',value:'riesgo'}]);return;}
-  /* Auditoría por pasos */
-  if(this.step===0){ /* vehículo */
-   let k=null;
-   if(t.startsWith('veh:')){k=t.slice(4);if(k==='more'){this.say('bot','Escribe el nombre tal como aparece: dry van 53, reefer, flatbed 48, step deck, lowboy, contenedor 40, contenedor 20, box truck, volteo, tanque…');return;}
-    const found=Object.keys(TRAILERS).find(kk=>kk.includes(k)||TRAILERS[kk].name.toLowerCase().includes(t.replace('veh:','')));k=found||k;}
-   else{k=Object.keys(TRAILERS).find(kk=>t.includes(kk)||TRAILERS[kk].name.toLowerCase().includes(t)||t.includes('van 53')&&kk==='dryvan53'||t.includes('tanque')&&kk==='tanker43');}
-   if(!k){this.say('bot','No identifiqué el vehículo. Toca un botón o escribe p. ej. "dry van 53".');return;}
+  setTimeout(()=>{d.remove();fn();},500);},
+ quick(l){const q=document.getElementById('botQuick');q.innerHTML='';
+  l.forEach(o=>{const b=document.createElement('button');b.className='qk';b.textContent=o[0];
+   b.onclick=()=>{this.say('user',o[0]);this.handle(o[1]);};q.appendChild(b);});},
+ greet(){this.say('bot',`👋 <b>Soy ARGOS IA, tu auditor de calidad.</b>\nPregunto lo crítico antes de que se mueva una pieza.\n¿Empezamos?`);
+  this.quick([['✅ Auditoría completa','audit'],['Saltar (manual)','saltar']]);},
+ askVeh(){this.step=0;this.say('bot','<b>1/6 VEHÍCULO</b> — ¿cuál unidad?');
+  this.quick(Object.keys(TRAILERS).slice(0,6).map(k=>[TRAILERS[k].name,'veh:'+k]).concat([['Otro (escríbelo)','more']]));},
+ askCargo(){this.step=1;this.say('bot','<b>2/6 CARGA</b> — descríbela: <i>"26 pallets de 1500 libras"</i>');
+  this.quick([['Ya cargué manual','cargado'],['Usar 26 pallets 1500','26 pallets de 1500 libras']]);},
+ askFork(){this.step=2;this.say('bot','<b>3/6 MONTACARGAS</b> — capacidad y centro de carga: <i>"5000 a 24"</i>');
+  this.quick([['5000 @ 24','5000 24'],['8000 @ 24','8000 24'],['10000 @ 36','10000 36']]);},
+ askWx(){this.step=3;this.say('bot','<b>4/6 CLIMA</b> — piso y viento: <i>"lluvia, viento 25"</i>');
+  this.quick([['Seco sin viento','dry 0'],['Lluvia','rain 0'],['Hielo','ice 0'],['Viento fuerte','dry 35']]);},
+ askHos(){this.step=4;this.say('bot','<b>5/6 FATIGA</b> — horas conducción/servicio/semana: <i>"8 10 40"</i>');
+  this.quick([['Fresco (0 2 10)','0 2 10'],['Jornada (8 10 40)','8 10 40'],['Límite (11 13 60)','11 13 60']]);},
+ askHz(){this.step=5;this.say('bot','<b>6/6 HAZMAT</b> — ¿qué lleva? o "no"');
+  this.quick([['No lleva','hz:none'],['Gasolina','hz:UN1203'],['Diésel','hz:UN1993'],['Propano','hz:UN1978'],['Oxidante','hz:UN1479']]);},
+ finish(){this.say('bot','📋 <b>ACTA DE AUDITORÍA — procesando…</b>');
+  this.typing(()=>{if(!state.items.length){this.say('finding','⚠ No hay carga declarada. Agrégala y repite la auditoría.');return;}
+   const ok=optimizeAll(true);app.renderAll();
+   const U=state.U[0];
+   let m=`<b>ACTA:</b> ${state.trailer.name} · ${state.items.length} pz · flota ${state.units} ud\nClima: ${state.weather} · Fatiga: ${hosOK()?'OK':'🚨EXCEDIDA'}\n`;
+   if(U){m+=`U1: ${U.ax.pass?'✔ ejes':'✖ ejes'} · ${U.sec.ok?'✔ amarre':'✖ amarre'}\n`;
+    if(state.trailer.semi&&U.ax.pass)m+=`Receta: TD <b>${(U.ax.tx/12).toFixed(1)}ft</b> · 5ª <b>${U.ax.k2d}"</b>\n`;
+    m+=`Amarre: <b>${U.sec.chains} cadenas + ${U.sec.straps} correas</b>${U.sec.block?' + BLOQUEO FRONTAL':''}\n`;}
+   m+=`\n${ok&&hosOK()?'✔ <b>AUTORIZO LA CARGA</b>':'🚨 <b>NO AUTORIZO — corrige hallazgos</b>'}`;
+   this.say('bot',m,ok&&hosOK()?'okmsg':'finding');
+   this.quick([['📜 Checklist/Certificado (panel izq)','ck'],['¿Por qué rechazada?','rechaz'],['Nueva auditoría','audit']]);});},
+ handle(t){t=(t||'').toLowerCase().trim();
+  if(t==='audit'){this.typing(()=>this.askVeh());return;}
+  if(t==='saltar'){this.step=-2;this.say('bot','Vigilando 👁️. Pregúntame: <i>"¿por qué rechazada?"</i>, <i>"tandem"</i>, <i>"correas"</i>, <i>"riesgo"</i> — o escribe <b>audit</b>.');
+   this.quick([['🤖 Auditoría','audit'],['¿Por qué rechazada?','rechaz'],['¿Qué tandem?','tandem']]);return;}
+  if(t==='ck'){this.say('bot','El checklist está en el panel izquierdo (✅). Al 100% + flota liberada + fatiga OK se habilita el 📜 Certificado con tus 4 fotos.');return;}
+  if(this.step===0){if(t==='more'){this.say('bot','Escribe: dry van 53, reefer, flatbed 48, lowboy, tanque…');return;}
+   let k=Object.keys(TRAILERS).find(kk=>t.includes(kk)||TRAILERS[kk].name.toLowerCase().includes(t)||t.includes('van 53')&&kk==='dryvan53'||t.includes('tanque')&&kk==='tanker43');
+   if(!k){this.say('bot','No identifiqué. Toca un botón.');return;}
    document.getElementById('trailerType').value=k;app.updateTrailer();
-   this.say('okmsg',`✔ Registrado: <b>${TRAILERS[k].name}</b> — capacidad ${fmt(TRAILERS[k].cap)} lbs, interior ${TRAILERS[k].L}"×${TRAILERS[k].W}"×${TRAILERS[k].H}".`);
+   this.say('okmsg','✔ '+TRAILERS[k].name+' — cap '+fmt(TRAILERS[k].cap)+' lbs');
    this.typing(()=>this.askCargo());return;}
-  if(this.step===1){ /* carga */
-   if(t==='cargo:manual'){this.say('okmsg','✔ Usaré el manifiesto manual ('+state.items.length+' piezas).');this.typing(()=>this.askFork());return;}
-   if(t==='cargo:none'){this.say('bot','Sin carga. Añádela cuando quieras (o escribe "auditoría" para repetir este paso).');this.typing(()=>this.askFork());return;}
-   const parsed=this.parseCargo(txt);
-   if(!parsed){this.say('bot','🤔 No entendí. Intenta: "26 pallets de 1500 libras" o "5 rollos de acero 5000".');return;}
-   parsed.forEach(p=>state.items.push({id:randId(),type:p.type,l:p.l,w:p.w,h:p.h,weight:p.weight,fill:p.fill,placed:false,x:0,y:0,z:0,order:0,support:null,unit:-1}));
-   app.renderItems();app.autoSave();
+  if(this.step===1){
+   if(t==='cargado'){this.say('okmsg','✔ Manifiesto manual ('+state.items.length+' pz).');this.typing(()=>this.askFork());return;}
+   const parsed=this.parseCargo(t);
+   if(!parsed){this.say('bot','🤔 Ej: "26 pallets de 1500 libras"');return;}
+   parsed.forEach(p=>state.items.push({...p,id:Math.random().toString(36).substr(2,9),placed:false,x:0,y:0,z:0,seq:0,support:null,unit:-1}));
+   app.renderItems();app.save();
    const W=state.items.reduce((s,i)=>s+i.weight,0),cap=state.trailer.cap;
-   let msg=`✔ Registré: <b>${parsed.length} pieza(s)</b>.\n`+parsed.map(p=>`• ${CARGO_LABELS[p.type]} ${p.l}×${p.w}×${p.h}" — ${fmt(p.weight)} lbs${p.fill?' · '+Math.round(p.fill*100)+'%':''}`).join('\n')+`\n<b>Peso total: ${fmt(W)} lbs</b> / capacidad ${fmt(cap)} lbs.`;
-   if(W>cap)msg+=`\n\n⚠️ <b>HALLAZGO:</b> la carga EXCEDE la capacidad de una unidad. El motor la dividirá automáticamente en ~${Math.ceil(W/cap)} camiones. Continúo.`;
-   this.say('bot',msg);
-   this.quick([{label:'➕ Agregar más carga',fn:()=>this.askCargo()},{label:'✔ Es todo, continuar',fn:()=>this.typing(()=>this.askFork())}]);return;}
-  if(this.step===2){ /* montacargas */
-   const nums=t.match(/\d+(\.\d+)?/g)||[];
-   const cap=+(nums[0]||5000),lc=+(nums[1]||24);
-   document.getElementById('fkCap').value=cap;document.getElementById('fkLC').value=lc;app.setFork();
-   this.say('okmsg',`✔ Montacargas: <b>${fmt(cap)} lbs</b> @ centro de carga ${lc}".`);this.typing(()=>this.askWeather());return;}
-  if(this.step===3){ /* clima */
-   let w='dry',wind=0;
-   const nums=t.match(/\d+/g)||[];
-   if(t.includes('lluvia')||t.includes('rain'))w='rain';
-   if(t.includes('hielo')||t.includes('ice')||t.includes('nieve'))w='ice';
-   if(t.startsWith('dry')||t.startsWith('rain')||t.startsWith('ice')){w=t.split(' ')[0];wind=+(t.split(' ')[1]||0);}
-   else if(nums.length)wind=+nums[nums.length-1];
-   state.weather=w;state.wind=wind;
-   this.say('okmsg',`✔ Clima: <b>${{dry:'☀️ Seco',rain:'🌧️ Lluvia (μ×0.65)',ice:'🧊 Hielo (μ×0.40)'}[w]}</b>${wind?' · viento '+wind+' mph':''}.\nEl motor recalculará fricción y volcadura con esto.`);
-   this.typing(()=>this.askHos());return;}
-  if(this.step===4){ /* fatiga */
-   const nums=t.match(/\d+/g)||[0,0,0];
-   state.hos={drive:+(nums[0]||0),onDuty:+(nums[1]||0),week:+(nums[2]||0)};
-   const hs=hosStatus();
-   if(!hs.ok){
-    this.say('finding',`🚨 <b>HALLAZGO CRÍTICO — FATIGA:</b>\nLas horas declaradas (${state.hos.drive}h/${state.hos.onDuty}h/${state.hos.week}h) EXCEDEN los límites FMCSA (11/14/60-70).\n\nCon estos datos el certificado quedará <b>BLOQUEADO</b> y la unidad NO debe salir: la fatiga causa ~13% de las muertes en carretera.\n\n¿Confirmas que los datos son correctos?`);
-    this.quick([{label:'Sí, son correctos (se parará al operador)',value:'hosok'},{label:'Corregir horas',fn:()=>this.typing(()=>this.askHos())}]);return;}
-   this.say('okmsg',`✔ Horas dentro de límites: ${state.hos.drive}h/${state.hos.onDuty}h/${state.hos.week}h — ${hs.lvl}.`);
-   this.typing(()=>this.askHz());return;}
-  if(this.step===5){ /* hazmat */
-   if(t==='hz:none'||t.includes('no ')||t==='no'){state.hazmat=[];
-    this.say('okmsg','✔ Sin materiales peligrosos declarados.');
-    this.typing(()=>this.finish());return;}
-   let h=null;
-   if(t.startsWith('hz:')){const q=t.slice(3);h=HAZMAT.find(x=>x.un.toLowerCase().includes(q)||x.n.toLowerCase().includes(q));}
-   else h=HAZMAT.find(x=>t.includes(x.un.toLowerCase())||x.n.toLowerCase().split(' ').some(w=>w.length>3&&t.includes(w)));
-   if(!h){this.say('bot','No identifiqué el químico. Toca un botón o escribe el nombre (gasolina, cloro, propano, ácido sulfúrico…).');return;}
-   state.hazmat.push({...h});
-   this.say('bot',`✔ A bordo: <b>${h.un} ${h.n}</b> (Clase ${h.c} · Guía ERG-${h.erg}).\n¿Lleva algo más?`);
-   this.quick([{label:'✔ Es todo',value:'hz:done'},{label:'Gasolina',value:'hz:UN1203'},{label:'Propano',value:'hz:UN1978'},{label:'Cloro',value:'hz:UN1017'},{label:'Nitrato oxidante',value:'hz:UN1479'}]);return;}
-  if(t==='hosok'){this.say('finding','Registrado. El plan quedará marcado ✖ NO LIBERAR por fatiga. El operador descansará 10h antes de salir. Continúo con HAZMAT.');this.typing(()=>this.askHz());return;}
-  if(t==='hz:done'){this.typing(()=>this.finish());return;}
-  /* MODO CONSULTA */
-  if(t.includes('auditor')||t.includes('auditar')){this.startAudit(true);return;}
-  if(t.includes('por qué')||t.includes('rechaz')){
-   const A=activeAnalysis();
-   if(!A){this.say('bot','Aún no hay análisis. Presiona ⚖️ CALCULAR TODO o pide una auditoría.');return;}
-   const d=A.dist,sec=A.eng.sec;
-   let msg=`🔎 <b>ANÁLISIS — U${state.activeUnit+1}:</b>\n① Báscula: ${d.pass?'✔ aprobada':'✖ RECHAZADA'}\n`;
-   if(!d.pass){if(d.steer>12000)msg+=`   · Direccional excedida por ${fmt(d.steer-12000)} lbs\n`;
-    if(state.trailer.semi&&d.drive>34000)msg+=`   · Tracción excedida por ${fmt(d.drive-34000)} lbs\n`;
-    if(d.trailer>34000)msg+=`   · Tandem excedida por ${fmt(d.trailer-34000)} lbs\n`;
-    if(d.gross>80000)msg+=`   · GVW excedido por ${fmt(d.gross-80000)} lbs\n`;
-    msg+=`→ SOLUCIÓN: mover tandems a <b>${(d.tx/12).toFixed(1)} ft</b> y quinta a <b>${d.k2d}"</b>, o dividir carga.`;}
-   if(sec&&!sec.ok)msg+=`② Amarre: ✖ INSUFICIENTE → instala <b>${sec.chains} cadenas G70 + ${sec.straps} correas</b>${sec.needsFront?' + <b>BLOQUEO FRONTAL</b>':''}.`;
-   const top=A.eng.risks[0];
-   if(top)msg+=`\nRiesgo mayor (R${top.R}): ${top.t}\n→ ${top.M}`;
-   this.say('bot',msg);return;}
-  if(t.includes('tandem')||t.includes('quinta')||t.includes('eje')){
-   const A=activeAnalysis();
-   if(A&&A.dist)this.say('bot',`⚖️ Receta de ejes (U${state.activeUnit+1}):\nTandems: <b>${(A.dist.tx/12).toFixed(1)} ft</b> del frente (${A.dist.holes>=0?'+':''}${A.dist.holes} agujeros de 4")\nQuinta rueda: <b>${A.dist.k2d}"</b> del eje de tracción\n\nCon esto los 4 grupos quedan bajo límite y cumple Bridge B.`);
-   else this.say('bot','Primero calcula el plan (⚖️ CALCULAR TODO) para darte la receta exacta.');
-   return;}
-  if(t.includes('correa')||t.includes('cadena')||t.includes('amarre')){
-   const A=activeAnalysis();
-   if(A&&A.eng.sec){const s=A.eng.sec;
-    this.say('bot',`🔗 Receta de amarre (U${state.activeUnit+1}):\n<b>${s.chains}× cadena G70</b> (WLL 4,700 lbs)\n<b>${s.straps}× correa 2"</b> (WLL 1,000 lbs)\n${s.mats?'<b>+ rubber mats</b> (μ bajo)\n':''}${s.needsFront?'<b>+ BLOQUEO FRONTAL obligatorio</b>\n':''}\nWLL agregado ${fmt(s.wllAgg)} vs requerido ${fmt(s.W*0.5)} (50% regla §393).`);}
-   else this.say('bot','Calcula el plan primero y te doy la receta exacta.');
-   return;}
-  if(t.includes('riesgo')||t.includes('cómo voy')||t.includes('como voy')){
-   if(!state.unitsUsed){this.say('bot','Sin cálculo aún. Presiona ⚖️ CALCULAR TODO.');return;}
-   const all=state.unitAnalyses.every(a=>a&&a.dist.pass&&(a.eng.sec?a.eng.sec.ok:true));
-   const crit=state.unitAnalyses.some(a=>a.eng.risks.some(r=>r.R>=15));
-   let msg=all?'🚛 Flota: <b>LIBERADA</b>':'🚛 Flota: <b>NO LIBERADA</b>';
-   msg+=crit?' · con riesgo CRÍTICO':' · sin riesgos críticos';
-   state.unitAnalyses.forEach((a,i)=>{const r=a.eng.risks[0];
-    msg+=`\nU${i+1}: ${a.dist.pass?'✔':'✖'} ${r?'· mayor riesgo R'+r.R+': '+r.t:''}`;});
-   this.say('bot',msg);return;}
-  if(t.includes('certificado')||t.includes('certific')){
-   this.say('bot','El certificado se emite desde ✅ Checklist (panel Ingeniería) SOLO si: flota liberada + 16 puntos verificados + fatiga OK. Así de estricto soy.');
-   return;}
-  if(t.includes('hola')||t.includes('buenas')){this.say('bot','👁️ Aquí ARGOS IA. ¿Auditoría nueva o pregunta del plan actual?',[]);this.quick([{label:'🤖 Auditoría',fn:()=>this.startAudit(true)},{label:'¿Cómo va el riesgo?',value:'riesgo'}]);return;}
-  this.say('bot','Puedo ayudarte con: <i>"¿por qué rechazada?"</i>, <i>"tandem/quinta"</i>, <i>"amarre/correas"</i>, <i>"riesgo"</i>, <i>"certificado"</i> — o escribe <b>auditoría</b> para el cuestionario completo.');},
- parseCargo(txt){
-  const t=txt.toLowerCase();
-  const defs=[
-   [/tanque|cisterna|liquido|líquido/,{type:'tank',dims:[52,48,52],base:4200}],
-   [/pallet|tarima/,{type:'pallet',dims:[48,40,48],base:1500}],
-   [/tote|ibc/,{type:'tote',dims:[48,48,50],base:2500}],
-   [/rollo|coil|acero/,{type:'coil',dims:[60,60,40],base:5000}],
-   [/maquin/,{type:'machinery',dims:[72,96,60],base:8000}],
-   [/barril|tambor|drum/,{type:'drum',dims:[23,23,35],base:450}],
-   [/caja|crate/,{type:'crate',dims:[60,48,60],base:3000}]];
-  let def=null;for(const d of defs){if(d[0].test(t)){def=d[1];break;}}
+   let m=`✔ ${parsed.length} pieza(s) · total ${fmt(W)} lbs / cap ${fmt(cap)}`;
+   if(W>cap)m+=`\n⚠️ HALLAZGO: excede — dividiré en ~${Math.ceil(W/cap)} camiones`;
+   this.say('bot',m);this.quick([['✔ Continuar','next'],['➕ Más carga','cargo']]);
+   if(t.includes('next')||this._waitNext){}
+   if(t!=='next'&&!this._added){this._added=true;return;}
+   this._added=false;this.typing(()=>this.askFork());return;}
+  if(t==='next'){this.typing(()=>this.askFork());return;}
+  if(this.step===2){const n=t.match(/\d+/g)||['5000','24'];
+   this.say('okmsg','✔ Montacargas '+fmt(+n[0])+' lbs @ '+(n[1]||24)+'"');this.typing(()=>this.askWx());return;}
+  if(this.step===3){let w='dry',wd=0;const n=t.match(/\d+/g)||[];
+   if(t.includes('lluvia')||t==='rain')w='rain';if(t.includes('hielo')||t.includes('nieve')||t==='ice')w='ice';
+   if(n.length)wd=+n[n.length-1];
+   document.getElementById('wWeather').value=w;document.getElementById('wWind').value=wd;app.recalc();
+   this.say('okmsg','✔ Clima: '+w+' · viento '+wd+'mph (μ×'+wMu().toFixed(2)+')');this.typing(()=>this.askHos());return;}
+  if(this.step===4){const n=t.match(/\d+/g)||['0','0','0'];
+   document.getElementById('hD').value=n[0]||0;document.getElementById('hO').value=n[1]||0;document.getElementById('hW').value=n[2]||0;app.recalc();
+   if(!hosOK()){this.say('finding','🚨 HALLAZGO CRÍTICO: fatiga excedida → certificado BLOQUEADO, el operador descansa 10h. ¿Confirmas?');
+    this.quick([['Sí, correcto','hosok'],['Corregir','hos']]);return;}
+   this.say('okmsg','✔ Horas dentro de límite');this.typing(()=>this.askHz());return;}
+  if(t==='hosok'){this.say('finding','Registrado: unidad NO saldrá hasta descansar. Sigue HAZMAT.');this.typing(()=>this.askHz());return;}
+  if(this.step===5){
+   if(t==='hz:none'||t==='no'){this.typing(()=>this.finish());return;}
+   if(t.startsWith('hz:')){const h=HAZMAT.find(x=>x.un===t.slice(3).toUpperCase());
+    if(h){state.hazmat.push({...h});app.renderHz();app.recalc();
+     this.say('okmsg','✔ A bordo: '+h.un+' '+h.n+' (ERG-'+h.erg+')');}
+    this.quick([['Es todo','hz:done'],['Diésel','hz:UN1993'],['Propano','hz:UN1978']]);return;}
+   if(t==='hz:done'){this.typing(()=>this.finish());return;}
+   const h=HAZMAT.find(x=>t.includes(x.n.toLowerCase().split(' ')[0]));
+   if(h){state.hazmat.push({...h});app.renderHz();app.recalc();this.say('okmsg','✔ '+h.un+' '+h.n);
+    this.quick([['Es todo','hz:done'],['Gasolina','hz:UN1203']]);return;}
+   this.say('bot','Toca un botón o escribe "no".');return;}
+  /* modo consulta */
+  if(t.includes('rechaz')||t.includes('por qué')){
+   const U=AU();if(!U){this.say('bot','Calcula primero (⚖️).');return;}
+   let m='🔎 U'+(state.activeUnit+1)+': ';
+   if(!U.ax.pass)m+='✖ EJES → TD '+(U.ax.tx/12).toFixed(1)+"' o divide. ";
+   if(U.sec.block)m+='✖ BLOQUEO FRONTAL obligatorio. ';
+   if(U.sec.muEff<.3)m+='μ bajo → rubber mats. ';
+   this.say('bot',m||'Todo en orden ✔.');return;}
+  if(t.includes('tandem')||t.includes('quinta')){const U=AU();
+   this.say('bot',U&&U.ax.pass?`TD <b>${(U.ax.tx/12).toFixed(1)} ft</b> (${U.ax.holes>=0?'+':''}${U.ax.holes} agujeros) · 5ª <b>${U.ax.k2d}"</b>`:'Calcula primero.');return;}
+  if(t.includes('correa')||t.includes('cadena')||t.includes('amarre')){const U=AU();
+   this.say('bot',U?`<b>${U.sec.chains} cadenas G70 + ${U.sec.straps} correas</b>${U.sec.block?' + BLOQUEO FRONTAL':''} (WLL ${fmt(U.sec.wll)} ≥ 50% de ${fmt(U.W)})`:'Calcula primero.');return;}
+  if(t.includes('riesgo')||t.includes('como voy')){this.say('bot',state.units?state.U.map((u,i)=>`U${i+1}: ${u.ax.pass&&u.sec.ok?'✔':'✖'} ${fmt(u.W)} lbs`).join('\n'):'Calcula primero.');return;}
+  this.say('bot','Puedo: <b>audit</b> · "¿por qué rechazada?" · "tandem" · "correas" · "riesgo"');},
+ parseCargo(t){const defs=[[/(tanque|cisterna)/,{type:'tank',d:[52,48,52],b:4200}],[/pallet|tarima/,{type:'pallet',d:[48,40,48],b:1500}],[/tote|ibc/,{type:'tote',d:[48,48,50],b:2500}],[/rollo|coil|acero/,{type:'coil',d:[60,60,40],b:5000}],[/maquin/,{type:'machinery',d:[72,96,60],b:8000}],[/barril|drum/,{type:'drum',d:[23,23,35],b:450}],[/caja|crate/,{type:'crate',d:[60,48,60],b:3000}]];
+  let def=null;for(const d of defs)if(d[0].test(t)){def=d[1];break;}
   if(!def)return null;
-  let fill=null;const fm=t.match(/(\d+)\s*%/);if(fm)fill=+fm[1]/100;
-  let weight=null;
-  const wm=t.match(/(?:de|pesa|peso)?\s*(\d+(?:\.\d+)?)\s*(?:lbs|libras|lb)/);
-  if(wm)weight=+wm[1];
-  const km=t.match(/(\d+(?:\.\d+)?)\s*(?:kg|kilos)/);
-  if(km)weight=+km[1]*2.205;
-  const nums=(t.match(/\d+(?:\.\d+)?/g)||[]).map(Number);
-  let qty=1;
-  if(weight===null){ /* sin peso explícito: primer número > peso base? */
-   if(nums.length){const big=Math.max(...nums);
-    if(big>def.base*0.5){weight=big;qty=nums.find(n=>n!==big&&n>0&&n<=200)||1;}
-    else{qty=nums.find(n=>n>0)||1;weight=def.base;}}
-   else{qty=1;weight=def.base;}}
-  else{const rest=nums.filter(n=>n!==weight&&!(fill!==null&&n===fill*100));
-   qty=rest.find(n=>n>0&&n<=500)||1;}
-  const out=[];
-  for(let i=0;i<Math.min(qty,300);i++)out.push({type:def.type,l:def.dims[0],w:def.dims[1],h:def.dims[2],weight,fill:def.type==='tank'?(fill!==null?fill:0.5):1});
+  const fillM=t.match(/(\d+)\s*%/);let fill=def.type==='tank'?(fillM?+fillM[1]/100:.5):1;
+  const wm=t.match(/(\d+(?:\.\d+)?)\s*(?:lbs|libras|lb)/);let weight=wm?+wm[1]:def.b;
+  const nums=(t.match(/\d+/g)||[]).map(Number).filter(n=>n!==weight&&!(fillM&&n===+fillM[1]));
+  let qty=nums.find(n=>n>0&&n<=300)||1;
+  const out=[];for(let i=0;i<Math.min(qty,300);i++)out.push({type:def.type,l:def.d[0],w:def.d[1],h:def.d[2],weight,fill});
   return out;},
- finish(){
-  this.say('bot','📋 <b>AUDITORÍA COMPLETA. Procesando con el motor de ingeniería…</b>');
-  const W=state.items.reduce((s,i)=>s+i.weight,0);
-  this.typing(()=>{
-   const res=app.optimize(true);
-   const A=activeAnalysis();
-   let msg=`<b>ACTA DE AUDITORÍA PRE-CARGA</b>\n────────────────\n`;
-   msg+=`Vehículo: ${state.trailer.name}\nCarga: ${state.items.length} pz · ${fmt(W)} lbs\nFlota requerida: <b>${state.unitsUsed} unidad(es)</b>\nClima: ${{dry:'seco',rain:'lluvia',ice:'hielo'}[state.weather]} · viento ${state.wind} mph\nFatiga: ${hosStatus().ok?'OK':'🚨 EXCEDIDA'}\nHAZMAT: ${state.hazmat.length?state.hazmat.map(h=>h.un).join(', '):'ninguno'}\n────────────────\n`;
-   if(A){const d=A.dist,sec=A.eng.sec;
-    msg+=`U1 → ① ${d.pass?'✔ Aprueba báscula':'✖ RECHAZADA'} · ② ${sec?(sec.ok?'✔ Amarre seguro':'✖ Amarre insuficiente'):'—'}\n`;
-    if(state.trailer.semi&&d.pass)msg+=`Receta: tandems <b>${(d.tx/12).toFixed(1)} ft</b> · quinta <b>${d.k2d}"</b>\n`;
-    if(sec)msg+=`Amarre: <b>${sec.chains} cadenas + ${sec.straps} correas</b>${sec.mats?' + mats':''}${sec.needsFront&&!sec.hasBulk?' + BLOQUEO FRONTAL':''}\n`;
-    const top=A.eng.risks[0];
-    if(top)msg+=`\n⚠️ Mayor riesgo (R${top.R}): <b>${top.t}</b>\n→ ${top.M}`;}
-   const allOk=res&&res.ok&&!res.critical;
-   msg+=`\n────────────────\n<b>${allOk?'✔ VEREDICTO: AUTORIZO LA CARGA':'🚨 VEREDICTO: NO AUTORIZO — corrige los hallazgos'}</b>`;
-   this.say('bot',msg,allOk?'okmsg':'finding');
-   document.getElementById('botState').textContent=allOk?'✔ APROBADO':'✖ HALLAZGOS';
-   if(!allOk)alarm();
-   this.say('bot','Sigo vigilando 👁️. Pregúntame lo que necesites o revisa el plano RX y las órdenes de montacargas.');
-   this.quick([{label:'📜 Emitir certificado',fn:()=>app.openCert()},{label:'¿Cómo va el riesgo?',value:'riesgo'},{label:'🤖 Nueva auditoría',fn:()=>this.startAudit(true)}]););}
+ send(){const i=document.getElementById('botInput'),v=i.value.trim();if(!v)return;i.value='';
+  this.say('user',v);this.handle(v);}
 };
-BOT.send=function(){
- const inp=document.getElementById('botInput'),v=inp.value.trim();
- if(!v)return;inp.value='';
- this.say('user',v);
- this.handle(v);};
-
-/* ================= SIMULADOR ================= */
-const TRAIN={
- cv:null,ctx:null,score:+(localStorage.getItem('argos_ts')||0),
- key:null,pick:-1,running:false,raf:null,t0:0,
- S:{
-  brake_noblock:{name:'🛑 Frenado SIN bloqueo (μ=0.40)',type:'brake',mu:.4,W:20000,block:0,ans:1,
-   opts:['Queda en su lugar','SE DESLIZA e impacta la cabina','El tráiler vuelca'],
-   exp:'0.8g=16,000 lbs vs fricción 8,000 lbs. Desliza e impacta.',ref:'§393.102'},
-  brake_block:{name:'🛑✅ Frenado CON bloqueo 4×4',type:'brake',mu:.4,W:20000,block:1,ans:0,
-   opts:['RETENIDA','Rompe el bloqueo','Inestable'],exp:'Bloqueo+fricción superan la demanda.',ref:'§393.102'},
-  strap_fail:{name:'⛓️ 2 correas para 24,000 lbs',type:'brake',mu:.25,W:24000,block:0,ans:1,
-   opts:['Aguantan','DESLIZA — insuficiente','Triplican fricción'],exp:'Fricción 6,000 vs demanda 19,200. WLL 4% vs 50% exigido.',ref:'§393'},
-  corner_high:{name:'🌀 Curva COG ALTO (1.45)',type:'corner',roll:1.45,aLat:.55,ans:2,
-   opts:['Pasa bien','Solo desliza','VUELCA'],exp:'COG fuera de margen: vuelco antes de perder agarre.',ref:'§392'},
-  corner_low:{name:'🌀 Curva COG BAJO (0.85)',type:'corner',roll:.85,aLat:.4,ans:0,
-   opts:['PASA','Vuelca igual','Frena seco'],exp:'Índice <1.0: seguro.',ref:'Práctica'},
-  slosh_half:{name:'🌊 Cisterna 50% SIN deflectores',type:'slosh',fill:.5,baf:false,ans:1,
-   opts:['Nada','Oleaje ×2.8 golpea','Frena corto'],exp:'50% = oleaje máximo.',ref:'§393.117'},
-  slosh_baffle:{name:'🌊✅ Cisterna 50% CON deflectores',type:'slosh',fill:.5,baf:true,ans:0,
-   opts:['×1.9 controlable','Igual','Los vacía'],exp:'Baffles −45%. Regla: ≥90%/≤20%.',ref:'§393.117'},
-  slosh_full:{name:'🌊 Cisterna LLENA 97%',type:'slosh',fill:.97,baf:false,ans:0,
-   opts:['Mínimo ×1.05','Máximo ×2.8','Se derrama'],exp:'Lleno = poca ola. Peligroso es el MEDIO LLENO.',ref:'§393.117'}
- },
- init(){this.cv=document.getElementById('trainCanvas');this.ctx=this.cv.getContext('2d');
-  document.getElementById('trSc').innerHTML=Object.keys(this.S).map(k=>`<option value="${k}">${this.S[k].name}</option>`).join('');
-  this.updateScore();this.select();},
- updateScore(){document.getElementById('trScore').innerText=this.score+' pts';},
- select(){this.stop();this.key=document.getElementById('trSc').value;this.pick=-1;
-  document.getElementById('trResult').innerHTML='';
-  const s=this.S[this.key];
-  document.getElementById('trPred').innerHTML='<label style="margin-bottom:5px;">🤔 ¿Qué pasará?</label>'+
-   s.opts.map((o,i)=>`<div class="pred-opt" id="po${i}" onclick="TRAIN.pick=${i};TRAIN.markPick()"><b>${'ABC'[i]})</b> ${o}</div>`).join('');
-  this.idle();},
- markPick(){this.S[this.key].opts.forEach((o,i)=>{const e=document.getElementById('po'+i);if(e)e.className='pred-opt'+(i===this.pick?' picked':'');});},
- stop(){if(this.raf)cancelAnimationFrame(this.raf);this.raf=null;this.running=false;},
- idle(){const c=this.ctx,W=this.cv.width,H=this.cv.height;
-  const g=c.createRadialGradient(W/2,H/2,30,W/2,H/2,W*.7);g.addColorStop(0,'#08152a');g.addColorStop(1,'#000206');
-  c.fillStyle=g;c.fillRect(0,0,W,H);
-  c.fillStyle='#7dd3fc';c.font='bold 15px Consolas';c.textAlign='center';
-  c.fillText('ELIGE TU PREDICCIÓN Y PRESIONA ▶ EJECUTAR',W/2,H/2);},
- run(){if(this.running)return;if(this.pick<0){app.showToast('⚠ Elige predicción');return;}
-  this.running=true;this.t0=performance.now();
-  const step=now=>{if(!this.running)return;const t=(now-this.t0)/1000;
-   this.frame(t);if(t<8)this.raf=requestAnimationFrame(step);else this.finish();};
-  this.raf=requestAnimationFrame(step);},
- frame(t){const s=this.S[this.key],c=this.ctx,W=this.cv.width,H=this.cv.height;
-  const g=c.createRadialGradient(W/2,H/2,30,W/2,H/2,W*.7);g.addColorStop(0,'#08152a');g.addColorStop(1,'#000206');
-  c.fillStyle=g;c.fillRect(0,0,W,H);
-  c.strokeStyle='rgba(148,163,184,.4)';c.lineWidth=2;c.setLineDash([14,10]);
-  const off=(t*260)%48;c.beginPath();for(let x=-48+off;x<W;x+=48){c.moveTo(x,H-70);c.lineTo(x+20,H-70);}c.stroke();c.setLineDash([]);
-  const G=s.type==='brake'?((t>1.5&&t<8)?.55:0):s.type==='corner'?s.aLat*Math.min(1,Math.max(0,(t-1.2)/2.2)):.55*(t>1.5?Math.min(1,(t-1.5)/.7):0)*sloshMultOf(s.fill,s.baf);
-  c.fillStyle='#7dd3fc';c.font='bold 13px Consolas';c.textAlign='left';c.fillText('FUERZA: '+G.toFixed(2)+' g',24,32);
-  const gp=Math.min(1,G/1.4);c.fillStyle=gp>.65?'#ef4444':gp>.35?'#f59e0b':'#10b981';
-  roundRect(c,24,44,220,14,7);c.fill();
-  if(s.type==='brake')this.brake(c,t,s,H);else if(s.type==='corner')this.corner(c,t,s,W,H);else this.slosh(c,t,s,W,H);},
- brake(c,t,s,H){const fy=H-80,fx=170,tw=820;
-  c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=14;
-  c.fillStyle='rgba(37,99,235,.14)';c.strokeStyle='rgba(125,211,252,.85)';c.lineWidth=2.5;
-  roundRect(c,fx,fy-170,tw,170,6);c.fill();c.stroke();c.restore();
-  c.fillStyle='rgba(125,211,252,.85)';c.fillRect(fx-6,fy-170,6,170);
-  [fx+90,fx+tw-140,fx+tw-70].forEach(x=>{c.strokeStyle='rgba(219,234,254,.95)';c.lineWidth=2.5;
-   c.beginPath();c.arc(x,fy+22,22,0,7);c.stroke();});
-  const resist=s.mu*386+(s.block?350:0),rel=0.55*386-resist,td=Math.max(0,t-1.5);
-  if(rel>5){let cx=fx+tw*.5+0.5*rel*td*td*.16;
-   const stop=fx+16+55;let imp=false;
-   if(cx+55>=stop){cx=stop-55;imp=td>.2;}
-   c.save();c.shadowColor=imp?'#ef4444':'#fbbf24';c.shadowBlur=14;
-   c.fillStyle=imp?'rgba(239,68,68,.4)':'rgba(251,191,36,.35)';
-   c.strokeStyle=imp?'#ef4444':'#fbbf24';c.lineWidth=2.5;
-   roundRect(c,cx,fy-110,110,110,4);c.fill();c.stroke();c.restore();
-   c.fillStyle='#fff';c.font='bold 13px Consolas';c.textAlign='center';c.fillText('CARGA',cx+55,fy-50);
-   if(imp){const v=rel*td*.16,aS=v*v/16,F=s.W*aS/386;
-    c.fillStyle='#ef4444';c.font='bold 16px Consolas';
-    c.fillText('💥 IMPACTO ≈ '+fmt(F)+' lbs ('+(aS/386).toFixed(1)+'g)',fx+tw/2,fy-190);}}
-  else{const cx0=fx+tw*.5;
-   c.save();c.shadowColor='#10b981';c.shadowBlur=14;
-   c.fillStyle='rgba(16,185,129,.3)';c.strokeStyle='#10b981';c.lineWidth=2.5;
-   roundRect(c,cx0,fy-110,110,110,4);c.fill();c.stroke();c.restore();
-   if(s.block){c.fillStyle='#b45309';c.fillRect(fx+2,fy-26,26,26);}
-   c.fillStyle='#10b981';c.font='bold 14px Consolas';c.textAlign='center';c.fillText('✔ RETENIDA',cx0+55,fy-124);}
-  c.fillStyle=t>1.5?'#f59e0b':'#7dd3fc';c.font='bold 13px Consolas';c.textAlign='center';
-  c.fillText(t>1.5?'🔴 FRENADO 0.55g':'▶ CRUCERO 55 mph',fx+tw/2,H-32);},
- corner(c,t,s,W,H){const cx=W/2,by=H-90,p=Math.min(1,Math.max(0,(t-1.2)/2.2));
-  const flip=s.roll>1&&p>=1;
-  c.save();c.translate(cx,by);c.rotate(flip?.9:.5*p);
-  c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=14;
-  c.fillStyle='rgba(37,99,235,.14)';c.strokeStyle='rgba(125,211,252,.85)';c.lineWidth=2.5;
-  roundRect(c,-190,-220,380,220,6);c.fill();c.stroke();c.restore();
-  c.strokeStyle='rgba(219,234,254,.95)';c.lineWidth=2.5;
-  [-120,0,120].forEach(x=>{c.beginPath();c.arc(cx+x,by+22,22,0,7);c.stroke();});
-  c.save();c.translate(cx,by);c.rotate(flip?.9:.5*p);
-  c.fillStyle='#ef4444';c.shadowColor='#ef4444';c.shadowBlur=12;
-  c.beginPath();c.arc(0,-160,9,0,7);c.fill();c.restore();
-  if(flip){c.fillStyle='#ef4444';c.font='bold 24px Consolas';c.textAlign='center';c.fillText('💥 ¡VUELCO!',cx,70);}
-  c.fillStyle='#7dd3fc';c.font='bold 13px Consolas';c.textAlign='center';
-  c.fillText('🌀 VISTA TRASERA · índice '+s.roll.toFixed(2),cx,H-28);},
- slosh(c,t,s,W,H){const fy=H-80,fx=150,tw=880,ty=fy-190;
-  c.save();c.shadowColor='rgba(59,130,246,.8)';c.shadowBlur=14;
-  c.fillStyle='rgba(37,99,235,.12)';c.strokeStyle='rgba(125,211,252,.85)';c.lineWidth=2.5;
-  roundRect(c,fx,ty,tw,190,95);c.fill();c.stroke();c.restore();
-  if(s.baf){c.strokeStyle='rgba(125,211,252,.6)';c.lineWidth=2;
-   for(let x=fx+110;x<fx+tw-60;x+=120){c.beginPath();c.moveTo(x,ty+30);c.lineTo(x,ty+160);c.stroke();}}
-  [fx+100,fx+tw-160,fx+tw-80].forEach(x=>{c.strokeStyle='rgba(219,234,254,.95)';c.lineWidth=2.5;
-   c.beginPath();c.arc(x,fy+22,22,0,7);c.stroke();});
-  const env=t>1.5?Math.min(1,(t-1.5)/.7):0,wave=Math.sin(t*9);
-  const lv=ty+190*(1-s.fill)+18,amp=(1-s.fill)*46*env;
-  c.save();c.beginPath();roundRect(c,fx+6,ty+6,tw-12,178,89);c.clip();
-  const lg=c.createLinearGradient(0,lv,0,fy);lg.addColorStop(0,'rgba(34,211,238,.55)');lg.addColorStop(1,'rgba(14,116,144,.75)');
-  c.fillStyle=lg;c.beginPath();c.moveTo(fx,lv);
-  for(let x=fx;x<=fx+tw;x+=16){const p=(x-fx)/tw;
-   c.lineTo(x,lv+amp*Math.sin(p*7-t*9)+env*60*(1-p)*sloshMultOf(s.fill,s.baf)/2.8);}
-  c.lineTo(fx+tw,fy);c.lineTo(fx,fy);c.closePath();c.fill();c.restore();
-  if(env>.15){const m=sloshMultOf(s.fill,s.baf),ax=fx-14,ay=ty+85;
-   c.strokeStyle='#ef4444';c.fillStyle='#ef4444';c.lineWidth=4;
-   c.beginPath();c.moveTo(ax-95,ay);c.lineTo(ax-15,ay);c.stroke();
-   c.beginPath();c.moveTo(ax-15,ay);c.lineTo(ax-35,ay-11);c.lineTo(ax-35,ay+11);c.closePath();c.fill();
-   c.font='bold 13px Consolas';c.textAlign='left';c.fillText('🌊 ×'+m.toFixed(1),ax-92,ay-14);}
-  c.fillStyle=t>1.5?'#f59e0b':'#7dd3fc';c.font='bold 13px Consolas';c.textAlign='center';
-  c.fillText(t>1.5?'🔴 FRENADO · llenado '+Math.round(s.fill*100)+'%':'▶ CRUCERO — en calma',fx+tw/2,H-32);},
- finish(){this.stop();const s=this.S[this.key],ok=this.pick===s.ans;
-  if(ok){this.score+=10;localStorage.setItem('argos_ts',this.score);this.updateScore();}
-  s.opts.forEach((o,i)=>{const e=document.getElementById('po'+i);
-   if(e)e.className='pred-opt '+(i===s.ans?'right':(i===this.pick?'wrong':''));});
-  document.getElementById('trResult').innerHTML=`<div class="item-card" style="border-color:${ok?'var(--success)':'var(--danger)'};">
-   <div style="flex:1;"><strong style="color:${ok?'var(--success)':'var(--danger)'};">${ok?'✔ ¡CORRECTO! +10 pts':'✖ Correcto: '+'ABC'[s.ans]+') '+s.opts[s.ans]}</strong><br>
-   <span style="font-size:.8rem;color:var(--text-muted);">${s.exp}</span><br>
-   <span style="font-size:.7rem;color:var(--accent);font-family:Consolas,monospace;">📖 ${s.ref}</span></div></div>`;}
-};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('qrModal').style.display='none';app.closeImport();}});
-
+document.getElementById('hzSel').innerHTML=HAZMAT.map((h,i)=>`<option value="${i}">${h.un} · ${h.n}</option>`).join('');
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('certModal').style.display='none';});
 /* INIT */
-app.setPreset();app.updateTrailer();app.renderSaved();app.renderOps();
-TRAIN.init();
-let restored=false;
-if(location.hash.startsWith('#p=')){try{const d=decodeURIComponent(location.hash.slice(3));
- if(loadPlanString(d,true)){restored=true;app.showToast('📂 Plan desde QR');}history.replaceState(null,'',location.pathname);}catch(e){}}
-if(!restored&&localStorage.getItem('argos_last')){
- const last=localStorage.getItem('argos_last');
- if(last.split('|')[2]&&last.split('|')[2].length&&loadPlanString(last,true))app.showToast('📂 Sesión restaurada');}
-app.updateStats();drawAll();
-/* El bot saluda a los 1.2s — auditor de calidad presente desde el inicio */
-setTimeout(()=>{BOT.show();BOT.greet();},1200);
+app.updateTrailer();app.initPhotos();app.renderConditions();app.renderHz();
+try{const s=JSON.parse(localStorage.getItem('argos_v2')||'null');
+ if(s&&s.items&&s.items.length){document.getElementById('trailerType').value=s.tk;app.updateTrailer();
+  s.items.forEach(i=>state.items.push({...i,id:Math.random().toString(36).substr(2,9),placed:false,x:0,y:0,z:0,seq:0,support:null,unit:-1}));
+  app.renderItems();toast('📂 Última sesión restaurada');}}catch(e){}
+setTimeout(()=>{BOT.show();BOT.greet();},1000);
 </script>
 </body>
 </html>
